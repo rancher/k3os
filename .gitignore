@@ -1,0 +1,9 @@
+/.dapper
+/.cache
+/.trash-cache
+/bin
+/dist
+*.swp
+/trash.lock
+.idea
+.trash-conf
