@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+cd $(dirname $0)/..
+rm -rf build dist bin images/*/build state
+
+docker rmi $(docker images --filter dangling=true -q) || true
+git clean -dxf

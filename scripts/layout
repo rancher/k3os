@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+source $(dirname $0)/version
+cd $(dirname $0)/..
+
+ARTIFACTS=$(pwd)/dist/artifacts
+BUILD=build
+INITRD_DIR=${BUILD}/initrd
+export ARTIFACTS BUILD INITRD_DIR VERSION
+
+./scripts/layout-initrd
+./scripts/layout-kernel
+
+cd $(dirname $0)/../build/initrd
+md5sum $(find -type f | sort -u ) | md5sum - | awk '{print $1}' > .id

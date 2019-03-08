@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+cd $(dirname $0)/..
+
+source scripts/version
+
+BUILD=$(pwd)/build
+INITRD_DIR=${BUILD}/initrd
+ARTIFACTS=$(pwd)/dist/artifacts
+
+mkdir -p ${ARTIFACTS}
+
+cd ${INITRD_DIR}
+
+echo Creating ${ARTIFACTS}/${INITRD}
+find | cpio -H newc -o | gzip > ${ARTIFACTS}/${INITRD}
+echo Done creating ${ARTIFACTS}/${INITRD}

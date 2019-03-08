@@ -1,0 +1,84 @@
+FROM ubuntu:bionic
+# FROM arm64=arm64v8/ubuntu:bionic
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        cpio \
+        curl \
+        dosfstools \
+        gccgo \
+        genisoimage \
+        gettext \
+        git \
+        isolinux \
+        less \
+        libblkid-dev \
+        libmount-dev \
+        libselinux1-dev \
+        locales \
+        module-init-tools \
+        mtools \
+        openssh-client \
+        pkg-config \
+        qemu \
+        qemu-kvm \
+        rsync \
+        sudo \
+        syslinux-common \
+        vim \
+        wget \
+        xorriso \
+        xz-utils \
+        telnet
+
+########## Dapper Configuration #####################
+
+ENV DAPPER_ENV VERSION DEBUG
+ENV DAPPER_DOCKER_SOCKET true
+ENV DAPPER_SOURCE /go/src/github.com/niusmallnan/k3os
+ENV DAPPER_OUTPUT ./bin ./dist ./build/initrd ./build/kernel
+ENV DAPPER_RUN_ARGS --privileged
+ENV TRASH_CACHE ${DAPPER_SOURCE}/.trash-cache
+ENV SHELL /bin/bash
+WORKDIR ${DAPPER_SOURCE}
+
+########## General Configuration #####################
+ARG DAPPER_HOST_ARCH
+ENV ARCH $DAPPER_HOST_ARCH
+
+ARG KERNEL_VERSION=4.14.85-rancher
+ARG KERNEL_URL_amd64=https://github.com/rancher/os-kernel/releases/download/v${KERNEL_VERSION}/linux-${KERNEL_VERSION}-x86.tar.gz
+ARG KERNEL_URL_arm64=https://github.com/rancher/os-kernel/releases/download/v${KERNEL_VERSION}/linux-${KERNEL_VERSION}-arm64.tar.gz
+
+ARG ROOTFS_VERSION=v2018.02.7-4
+ARG ROOTFS_URL_amd64=https://github.com/rancher/os-base/releases/download/${ROOTFS_VERSION}/os-base_amd64.tar.xz
+ARG ROOTFS_URL_arm64=https://github.com/rancher/os-base/releases/download/${ROOTFS_VERSION}/os-base_arm64.tar.xz
+
+ENV KERNEL_VERSION=${KERNEL_VERSION} \
+    KERNEL_URL=KERNEL_URL_${ARCH} \
+    KERNEL_URL_amd64=${KERNEL_URL_amd64} \
+    KERNEL_URL_arm64=${KERNEL_URL_arm64} \
+    ROOTFS_URL=ROOTFS_URL_${ARCH} \
+    ROOTFS_URL_amd64=${ROOTFS_URL_amd64} \
+    ROOTFS_URL_arm64=${ROOTFS_URL_arm64} \
+    DOWNLOADS=/usr/src/downloads
+
+RUN mkdir -p ${DOWNLOADS}
+
+# Download kernel
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+RUN echo "... Downloading  ${!KERNEL_URL}"; \
+    if [ -n "${!KERNEL_URL}" ]; then \
+        curl -fL ${!KERNEL_URL} > ${DOWNLOADS}/kernel.tar.gz \
+    ;fi
+
+RUN cd ${DOWNLOADS} && \
+    curl -pfL ${!ROOTFS_URL} | tar xvJf -
+
+ENTRYPOINT ["./scripts/entry"]
+CMD ["ci"]
+
+
+

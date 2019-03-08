@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+    DIRTY="-dirty"
+fi
+
+COMMIT=$(git rev-parse --short HEAD)
+GIT_TAG=$(git tag -l --contains HEAD | head -n 1)
+
+if [ -z "$VERSION" ]; then
+    if [[ -z "$DIRTY" && -n "$GIT_TAG" ]]; then
+        VERSION=$GIT_TAG
+    else
+        VERSION="${COMMIT}${DIRTY}"
+    fi
+fi
+
+INITRD=initrd-${VERSION}
+export VERSION COMMIT INITRD GIT_TAG DIRTY
+
+# Suffix
+export SUFFIX=""
+if [ -n "${ARCH}" ] && [ "${ARCH}" != "amd64" ]; then
+    # TODO: why is this not exported?
+    SUFFIX="_${ARCH}"
+fi
+
+echo " Building ${VERSION} from ${COMMIT} on ${ARCH}"
