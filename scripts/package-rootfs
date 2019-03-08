@@ -5,10 +5,6 @@ cd $(dirname $0)/..
 
 source scripts/version
 
-BUILD=$(pwd)/build
-INITRD_DIR=${BUILD}/initrd
-ARTIFACTS=$(pwd)/dist/artifacts
-
 mkdir -p ${ARTIFACTS}
 
 tar czf ${ARTIFACTS}/rootfs${SUFFIX}.tar.gz --exclude lib/modules --exclude lib/firmware -C ${INITRD_DIR} .

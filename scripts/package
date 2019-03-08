@@ -3,6 +3,11 @@ set -e
 
 cd $(dirname $0)/..
 
+ARTIFACTS=$(pwd)/dist/artifacts
+BUILD=build
+INITRD_DIR=${BUILD}/initrd
+export ARTIFACTS BUILD INITRD_DIR VERSION
+
 ./scripts/package-rootfs
 ./scripts/package-initrd
 ./scripts/package-iso

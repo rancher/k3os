@@ -7,5 +7,5 @@ if [ -e ${DAPPER_SOURCE}/assets/rootfs.tar ]; then
     cp ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar
 fi
 
-tar xvf ${DOWNLOADS}/rootfs.tar -C ${INITRD_DIR}
+tar xf ${DOWNLOADS}/rootfs.tar -C ${INITRD_DIR}
 
