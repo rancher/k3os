@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+mkdir -p ${INITRD_DIR}
+
 # Override using a local rootfs build
 if [ -e ${DAPPER_SOURCE}/assets/rootfs.tar ]; then
     echo "copying ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar"

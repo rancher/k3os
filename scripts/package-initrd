@@ -7,8 +7,8 @@ source scripts/version
 
 mkdir -p ${ARTIFACTS}
 
-cd ${INITRD_DIR}
-
+pushd ${INITRD_DIR}
 echo Creating ${ARTIFACTS}/${INITRD}
 find | cpio -H newc -o | gzip > ${ARTIFACTS}/${INITRD}
 echo Done creating ${ARTIFACTS}/${INITRD}
+popd

@@ -15,19 +15,19 @@ cat scripts/syslinux/isolinux_label.cfg | LABEL=${VERSION} envsubst > ${DIST}/bo
 cat scripts/syslinux/global.cfg | envsubst > ${DIST}/boot/global.cfg
 cp scripts/syslinux/rancher.png ${DIST}/boot/
 
-CD=${BUILD}/cd
-rm -rf ${CD}/
-mkdir -p ${CD}/boot
+bootiso=${BUILD}/bootiso
+rm -rf ${bootiso}/
+mkdir -p ${bootiso}/boot
 
-cp ${ARTIFACTS}/${INITRD}                      ${CD}/boot/
-cp ${ARTIFACTS}/vmlinuz-${KERNEL_VERSION}      ${CD}/boot/
+cp ${ARTIFACTS}/${INITRD}                      ${bootiso}/boot/
+cp ${ARTIFACTS}/vmlinuz-${KERNEL_VERSION}      ${bootiso}/boot/
 
-cp -r ${DIST}/boot/*                           ${CD}/boot/
-cp /usr/lib/ISOLINUX/isolinux.bin              ${CD}/boot/isolinux/
-cp /usr/lib/syslinux/modules/bios/ldlinux.c32  ${CD}/boot/isolinux/
-cp /usr/lib/syslinux/modules/bios/*.c32        ${CD}/boot/isolinux/
+cp -r ${DIST}/boot/*                           ${bootiso}/boot/
+cp /usr/lib/ISOLINUX/isolinux.bin              ${bootiso}/boot/isolinux/
+cp /usr/lib/syslinux/modules/bios/ldlinux.c32  ${bootiso}/boot/isolinux/
+cp /usr/lib/syslinux/modules/bios/*.c32        ${bootiso}/boot/isolinux/
 
-pushd ${CD}
+pushd ${bootiso}
 xorriso -as mkisofs \
     -l -J -R -V "K3OS" \
     -no-emul-boot -boot-load-size 4 -boot-info-table \

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-mkdir -p bin dist build/initrd
+mkdir -p bin dist build
 if [ -e ./scripts/$1 ]; then
     ./scripts/"$@"
 else
