@@ -11,3 +11,4 @@ fi
 
 tar xf ${DOWNLOADS}/rootfs.tar -C ${INITRD_DIR}
 
+cp -rf rootfs/* ${INITRD_DIR}/
