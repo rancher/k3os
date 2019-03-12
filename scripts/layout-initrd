@@ -3,12 +3,10 @@ set -e
 
 mkdir -p ${INITRD_DIR}
 
-# Override using a local rootfs build
-if [ -e ${DAPPER_SOURCE}/assets/rootfs.tar ]; then
-    echo "copying ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar"
-    cp ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar
+# Override using a local initrdfs build
+if [ -e ${DAPPER_SOURCE}/assets/initrdfs.tar ]; then
+    echo "copying ${DAPPER_SOURCE}/assets/initrdfs.tar ${DOWNLOADS}/initrdfs.tar"
+    cp ${DAPPER_SOURCE}/assets/initrdfs.tar ${DOWNLOADS}/initrdfs.tar
 fi
 
-tar xf ${DOWNLOADS}/rootfs.tar -C ${INITRD_DIR}
-
-cp -rf rootfs/* ${INITRD_DIR}/
+tar xf ${DOWNLOADS}/initrdfs.tar -C ${INITRD_DIR}

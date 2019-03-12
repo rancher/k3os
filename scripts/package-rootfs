@@ -5,6 +5,6 @@ cd $(dirname $0)/..
 
 source scripts/version
 
-mkdir -p ${ARTIFACTS}
+tar czf ${ARTIFACTS}/rootfs${SUFFIX}.tar.gz --exclude lib/modules --exclude lib/firmware -C ${ROOTFS_DIR} .
 
-tar czf ${ARTIFACTS}/rootfs${SUFFIX}.tar.gz --exclude lib/modules --exclude lib/firmware -C ${INITRD_DIR} .
+mksquashfs ${ROOTFS_DIR} ${ARTIFACTS}/rootfs${SUFFIX}.squashfs
