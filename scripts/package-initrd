@@ -5,17 +5,8 @@ cd $(dirname $0)/..
 
 source scripts/version
 
-# add modules.squashfs
-cp ${ARTIFACTS}/modules.squashfs ${INITRD_DIR}/
-
-# add firmware.squashfs
-cp ${ARTIFACTS}/firmware.squashfs ${INITRD_DIR}/
-
 # add rootfs.squashfs
 cp ${ARTIFACTS}/rootfs.squashfs ${INITRD_DIR}/
-
-# add images-*.tar.gz - images to preload in the OS
-#
 
 pushd ${INITRD_DIR}
 echo Creating ${ARTIFACTS}/${INITRD}

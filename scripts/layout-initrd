@@ -10,3 +10,5 @@ if [ -e ${DAPPER_SOURCE}/assets/initrdfs.tar ]; then
 fi
 
 tar xf ${DOWNLOADS}/initrdfs.tar -C ${INITRD_DIR}
+
+cp assets/initrdfs/init ${INITRD_DIR}/

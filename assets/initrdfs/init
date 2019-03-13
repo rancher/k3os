@@ -1,0 +1,18 @@
+#!/bin/busybox sh
+
+# Mount the /proc and /sys filesystems.
+mkdir /proc && mount -t proc none /proc
+mkdir /sys && mount -t sysfs none /sys
+
+# Do your stuff here.
+echo "This script just mounts and boots the rootfs, nothing else!"
+
+mkdir /state
+mount -t squashfs -o loop /rootfs.squashfs /state
+
+# Clean up.
+umount /proc
+umount /sys
+
+# Boot the real thing.
+exec switch_root /state /sbin/init

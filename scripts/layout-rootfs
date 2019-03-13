@@ -11,4 +11,9 @@ fi
 
 tar xf ${DOWNLOADS}/rootfs.tar -C ${ROOTFS_DIR}
 
-cp -rf rootfs/* ${ROOTFS_DIR}/
+cp -rf assets/rootfs/* ${ROOTFS_DIR}/
+
+# construct rootfs
+mkdir -p ${ROOTFS_DIR}/usr/lib/modules ${ROOTFS_DIR}/usr/lib/firmware
+mkdir -p ${ROOTFS_DIR}/writable
+mkdir -p ${ROOTFS_DIR}/var/lib/k3os/squashfs
