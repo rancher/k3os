@@ -1,0 +1,36 @@
+#!/bin/sh
+
+DEVICE=$(blkid -L RANCHER)
+if [ -z "${DEVICE}" ]; then
+    echo "No LABEL=RANCHER device, so we use tmpfs"
+
+    ## for ssh
+    mkdir -p /tmp/system-data/etc/ssh
+    cp -arf /etc/ssh/* /tmp/system-data/etc/ssh
+    mount -t tmpfs tmpfs /etc/ssh
+    cp -arf /tmp/system-data/etc/ssh/* /etc/ssh
+
+    ## for dhcpcd
+    mount -t tmpfs tmpfs /var/db/dhcpcd
+
+    # clean tmp dir
+    rm -rf /tmp/system-data
+    exit 0
+fi
+
+# hard code for test
+mount ${DEVICE} /writable
+mkdir /writable/system-data /writable/user-data /writable/tmp
+
+## for ssh
+mkdir -p /writable/system-data/etc/ssh
+cp -arf /etc/ssh /writable/tmp
+mount -o bind /writable/system-data/etc/ssh /etc/ssh
+cp -arf /writable/tmp/ssh/* /etc/ssh
+
+## for dhcpcd
+mkdir -p /writable/system-data/vardb/dhcpcd
+mount -o bind /writable/system-data/vardb/dhcpcd /var/db/dhcpcd
+
+# clean tmp dir
+rm -rf /writable/tmp

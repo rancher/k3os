@@ -1,0 +1,17 @@
+#!/bin/sh
+
+case "$1" in
+  start)
+        echo "Start writablefs"
+        /sbin/writablefs
+        ;;
+  stop)
+        ;;
+  restart|reload)
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $?
