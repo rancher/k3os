@@ -17,3 +17,4 @@ cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 mkdir -p ${ROOTFS_DIR}/usr/lib/modules ${ROOTFS_DIR}/usr/lib/firmware
 mkdir -p ${ROOTFS_DIR}/writable
 mkdir -p ${ROOTFS_DIR}/var/lib/k3os/squashfs
+mkdir -p ${ROOTFS_DIR}/boot

@@ -1,0 +1,30 @@
+#!/bin/sh
+
+DEVICE=$1
+
+if [ -b ${DEVICE} ]; then
+
+    # format and partition, using BIOS/MBR
+    # TODO: support GPT+EFI?
+    # reference: https://wiki.archlinux.org/index.php/Parted
+    parted ${DEVICE} mklabel msdos
+    parted ${DEVICE} mkpart primary ext4 0% 500MB
+    parted ${DEVICE} mkpart primary ext4 500MB 100%
+    parted ${DEVICE} set 1 boot on
+    mkfs.ext4 -L RANCHER_BOOT ${DEVICE}1
+    mkfs.ext4 -L RANCHER_STATE ${DEVICE}2
+
+    mkdir -p /tmp/boot_tmp
+    mount -t iso9660 -o loop /dev/sr0 /tmp/boot_tmp
+
+    # mount boot device and copy boot files
+    mount ${DEVICE}1 /boot
+    cp -arf /tmp/boot_tmp/boot/* /boot
+
+    umount /boot
+    umount /tmp/boot_tmp
+    rm -rf /tmp/boot_tmp
+fi
+
+
+

@@ -1,8 +1,13 @@
 #!/bin/sh
 
-DEVICE=$(blkid -L RANCHER)
-if [ -z "${DEVICE}" ]; then
-    echo "No LABEL=RANCHER device, so we use tmpfs"
+BOOT_DEVICE=$(blkid -L RANCHER_BOOT)
+if [ ! -z "${BOOT_DEVICE}" ]; then
+    mount ${BOOT_DEVICE} /boot
+fi
+
+STATE_DEVICE=$(blkid -L RANCHER_STATE)
+if [ -z "${STATE_DEVICE}" ]; then
+    echo "No LABEL=RANCHER_STATE device, so we use tmpfs"
 
     ## for ssh
     mkdir -p /tmp/system-data/etc/ssh
@@ -19,7 +24,7 @@ if [ -z "${DEVICE}" ]; then
 fi
 
 # hard code for test
-mount ${DEVICE} /writable
+mount ${STATE_DEVICE} /writable
 mkdir /writable/system-data /writable/user-data /writable/tmp
 
 ## for ssh
