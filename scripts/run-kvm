@@ -13,9 +13,9 @@ while [ "$#" -gt 0 ]; do
         --debug)
             DEBUG=1
             ;;
-        --append-init)
+        --append)
             shift 1
-            APPEND_INIT="${APPEND_INIT} $1"
+            QEMU_APPEND="${QEMU_APPEND} $1"
             ;;
         --memory)
             shift 1
@@ -53,6 +53,7 @@ if [ ! -e ${HD} ]; then
     qemu-img create -f qcow2 -o size=10G ${HD}
 fi
 
+KERNEL_ARGS="${DEFAULT_KERNEL_ARGS} ${QEMU_APPEND}"
 
 exec qemu-system-x86_64 \
         -nographic \
@@ -61,6 +62,7 @@ exec qemu-system-x86_64 \
         -rtc base=utc,clock=host \
         -kernel ${KERNEL} \
         -initrd ${INITRD} \
+        -append "${KERNEL_ARGS}" \
         -enable-kvm \
         -cpu host \
         -m 2048 \

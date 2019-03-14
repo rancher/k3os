@@ -48,4 +48,4 @@ QEMUARCH=${qemuarch["${ARCH}"]}
 TTYCONS=${ttycons["${ARCH}"]}
 
 
-DEFAULT_KERNEL_ARGS="printk.devkmsg=on "
+DEFAULT_KERNEL_ARGS="printk.devkmsg=on console=${TTYCONS}"
