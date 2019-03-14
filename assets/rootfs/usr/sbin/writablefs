@@ -18,6 +18,9 @@ if [ -z "${STATE_DEVICE}" ]; then
     ## for dhcpcd
     mount -t tmpfs tmpfs /var/db/dhcpcd
 
+    ## for init default
+    mount -t tmpfs tmpfs /etc/default
+
     # clean tmp dir
     rm -rf /tmp/system-data
     exit 0
@@ -25,7 +28,7 @@ fi
 
 # hard code for test
 mount ${STATE_DEVICE} /writable
-mkdir /writable/system-data /writable/user-data /writable/tmp
+mkdir -p /writable/system-data /writable/user-data /writable/tmp
 
 ## for ssh
 mkdir -p /writable/system-data/etc/ssh
@@ -36,6 +39,10 @@ cp -arf /writable/tmp/ssh/* /etc/ssh
 ## for dhcpcd
 mkdir -p /writable/system-data/vardb/dhcpcd
 mount -o bind /writable/system-data/vardb/dhcpcd /var/db/dhcpcd
+
+## for init default
+mkdir -p /writable/system-data/etc/default
+mount -o bind /writable/system-data/etc/default /etc/default
 
 # clean tmp dir
 rm -rf /writable/tmp

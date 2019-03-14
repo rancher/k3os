@@ -1,6 +1,7 @@
 #!/bin/sh
 
 mount -t devtmpfs devtmpfs /dev
+mkdir -p /dev/pts /dev/shm
 
 BASE_DIR=/var/lib/k3os/squashfs
 mount -t squashfs -o loop ${BASE_DIR}/modules.squashfs /usr/lib/modules
