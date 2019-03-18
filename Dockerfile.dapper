@@ -53,11 +53,11 @@ ARG KERNEL_VERSION=4.14.85-rancher
 ARG KERNEL_URL_amd64=https://github.com/rancher/os-kernel/releases/download/v${KERNEL_VERSION}/linux-${KERNEL_VERSION}-x86.tar.gz
 ARG KERNEL_URL_arm64=https://github.com/rancher/os-kernel/releases/download/v${KERNEL_VERSION}/linux-${KERNEL_VERSION}-arm64.tar.gz
 
-ARG INITRDFS_URL_amd64=https://github.com/rancher/os-initrd-base/releases/download/v2018.02.7-1/os-initrd-base-amd64.tar.gz
-ARG INITRDFS_URL_arm64=https://github.com/rancher/os-initrd-base/releases/download/v2018.02.7-1/os-initrd-base-arm64.tar.gz
+ARG INITRDFS_URL_amd64=http://147.75.100.195/k3os/initrd/amd64.tar.xz
+#ARG INITRDFS_URL_arm64=https://github.com/rancher/os-initrd-base/releases/download/v2018.02.7-1/os-initrd-base-arm64.tar.gz
 
-ARG ROOTFS_URL_amd64=https://github.com/rancher/os-base/releases/download/v2018.02.7-4/os-base_amd64.tar.xz
-ARG ROOTFS_URL_arm64=https://github.com/rancher/os-base/releases/download/v2018.02.7-4/os-base_arm64.tar.xz
+ARG ROOTFS_URL_amd64=http://147.75.100.195/k3os/rootfs/amd64.tar.xz
+#ARG ROOTFS_URL_arm64=https://github.com/rancher/os-base/releases/download/v2018.02.7-4/os-base_arm64.tar.xz
 
 ENV KERNEL_VERSION=${KERNEL_VERSION} \
     KERNEL_URL=KERNEL_URL_${ARCH} \
@@ -73,19 +73,7 @@ ENV KERNEL_VERSION=${KERNEL_VERSION} \
 
 RUN mkdir -p ${DOWNLOADS}
 
-# Download kernel
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-RUN echo "... Downloading  ${!KERNEL_URL}"; \
-    if [ -n "${!KERNEL_URL}" ]; then \
-        curl -fL ${!KERNEL_URL} > ${DOWNLOADS}/kernel.tar.gz \
-    ;fi
-
-RUN cd ${DOWNLOADS} && \
-    curl -pfL ${!ROOTFS_URL} | tar xvJf - && \
-    curl -sL -o initrdfs.tar ${!INITRDFS_URL}
 
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]
-
-
-

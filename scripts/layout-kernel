@@ -5,6 +5,11 @@ set -e
 if [ -e ${DAPPER_SOURCE}/assets/kernel.tar.gz ]; then
     echo "copying ${DAPPER_SOURCE}/assets/kernel.tar.gz ${DOWNLOADS}/kernel.tar.gz"
     cp ${DAPPER_SOURCE}/assets/kernel.tar.gz ${DOWNLOADS}/kernel.tar.gz
+else
+    echo "... Downloading  ${!KERNEL_URL}"; \
+    if [ -n "${!KERNEL_URL}" ]; then
+        curl -fL ${!KERNEL_URL} > ${DOWNLOADS}/kernel.tar.gz
+    fi
 fi
 
 mkdir -p ${KERNEL_DIR}

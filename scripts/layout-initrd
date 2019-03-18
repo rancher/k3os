@@ -7,6 +7,11 @@ mkdir -p ${INITRD_DIR}
 if [ -e ${DAPPER_SOURCE}/assets/initrdfs.tar ]; then
     echo "copying ${DAPPER_SOURCE}/assets/initrdfs.tar ${DOWNLOADS}/initrdfs.tar"
     cp ${DAPPER_SOURCE}/assets/initrdfs.tar ${DOWNLOADS}/initrdfs.tar
+else
+    pushd /tmp
+    curl -sSL ${!INITRDFS_URL} | tar xvJf -
+    mv rootfs.tar ${DOWNLOADS}/initrdfs.tar
+    popd
 fi
 
 tar xf ${DOWNLOADS}/initrdfs.tar -C ${INITRD_DIR}

@@ -7,6 +7,11 @@ mkdir -p ${ROOTFS_DIR}
 if [ -e ${DAPPER_SOURCE}/assets/rootfs.tar ]; then
     echo "copying ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar"
     cp ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar
+else
+    pushd /tmp
+    curl -sSL ${!ROOTFS_URL} | tar xvJf -
+    mv rootfs.tar ${DOWNLOADS}/rootfs.tar
+    popd
 fi
 
 tar xf ${DOWNLOADS}/rootfs.tar -C ${ROOTFS_DIR}
