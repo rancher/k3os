@@ -32,7 +32,8 @@ RUN apt-get update \
         xorriso \
         xz-utils \
         squashfs-tools \
-        telnet
+        telnet \
+        runc
 
 ########## Dapper Configuration #####################
 

@@ -18,9 +18,45 @@ tar xf ${DOWNLOADS}/rootfs.tar -C ${ROOTFS_DIR}
 
 cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 
-# construct rootfs
-mkdir -p ${ROOTFS_DIR}/usr/lib/modules ${ROOTFS_DIR}/usr/lib/firmware
-mkdir -p ${ROOTFS_DIR}/writable
-mkdir -p ${ROOTFS_DIR}/var/lib/k3os/squashfs
-mkdir -p ${ROOTFS_DIR}/boot
-mkdir -p ${ROOTFS_DIR}/etc/default
+# running these scripts in the runc container
+cat << EOF > ${ROOTFS_DIR}/config.sh
+#!/bin/sh
+mkdir -p /home/ \
+         /usr/lib/modules \
+         /usr/lib/firmware \
+         /writable \
+         /boot \
+         /var/lib/k3os/squashfs \
+         /etc/default
+
+passwd -l root
+addgroup -g 1100 rancher
+addgroup -g 1103 sudo
+adduser -u 1100 -G rancher -D -h /home/rancher -s /bin/bash rancher
+adduser rancher sudo
+
+echo '%sudo ALL=(ALL) ALL' >> /etc/sudoers.d/k3os
+echo 'rancher ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/k3os
+
+sed -i -e 's/duid/clientid/g' /etc/dhcpcd.conf
+echo "*.*                /var/log/syslog" >> /etc/rsyslog.conf
+
+# cleanup
+rm -f /root/.bash_history
+EOF
+chmod +x ${ROOTFS_DIR}/config.sh
+
+
+# construct rootfs via runc
+pushd ${BUILD}
+
+# TODO: we should generate the runc spec file
+#runc spec
+#sed -i 's/"readonly": true/"readonly": false/g' config.json
+#sed -i 's/"sh"/"\/config.sh"/g' config.json
+cp ../scripts/runc-spec/rootfs-config.json config.json
+runc run build-rootfs
+popd
+
+# cleanup
+rm -f ${ROOTFS_DIR}/config.sh
