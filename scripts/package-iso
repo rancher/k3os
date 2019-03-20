@@ -12,7 +12,7 @@ mkdir -p ${DIST}/boot/isolinux/
 cat scripts/syslinux/isolinux.cfg | envsubst > ${DIST}/boot/isolinux/isolinux.cfg
 cat scripts/syslinux/isolinux_label.cfg | LABEL=${VERSION} envsubst > ${DIST}/boot/linux-current.cfg
 cat scripts/syslinux/global.cfg | envsubst > ${DIST}/boot/global.cfg
-cp scripts/syslinux/rancher.png ${DIST}/boot/
+#cp scripts/syslinux/rancher.png ${DIST}/boot/
 
 bootiso=${BUILD}/bootiso
 rm -rf ${bootiso}/

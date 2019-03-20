@@ -21,6 +21,15 @@ if [ -z "${STATE_DEVICE}" ]; then
     ## for init default
     mount -t tmpfs tmpfs /etc/default
 
+    ## for logrotate.d
+    mount -t tmpfs tmpfs /etc/logrotate.d
+
+    ## for rsyslog
+    mount -t tmpfs tmpfs /etc/rsyslog.d
+
+    ## for hosts
+    mount -t tmpfs tmpfs /etc/hosts
+
     ## for home
     mount -t tmpfs tmpfs /home/rancher
     chown rancher:rancher /home/rancher
@@ -41,12 +50,24 @@ mount -o bind /writable/system-data/etc/ssh /etc/ssh
 cp -arf /writable/tmp/ssh/* /etc/ssh
 
 ## for dhcpcd
-mkdir -p /writable/system-data/vardb/dhcpcd
-mount -o bind /writable/system-data/vardb/dhcpcd /var/db/dhcpcd
+mkdir -p /writable/system-data/var/db/dhcpcd
+mount -o bind /writable/system-data/var/db/dhcpcd /var/db/dhcpcd
 
 ## for init default
 mkdir -p /writable/system-data/etc/default
 mount -o bind /writable/system-data/etc/default /etc/default
+
+## for logrotate.d
+mkdir -p /writable/system-data/etc/logrotate.d
+mount -o bind /writable/system-data/etc/logrotate.d /etc/logrotate.d
+
+## for rsyslog
+mkdir -p /writable/system-data/etc/rsyslog.d
+mount -o bind /writable/system-data/etc/rsyslog.d /etc/rsyslog.d
+
+## for hosts
+cat /etc/hosts > /writable/system-data/etc/hosts
+mount -o bind /writable/system-data/etc/hosts /etc/hosts
 
 ## for home
 mkdir -p /writable/user-data/home/rancher

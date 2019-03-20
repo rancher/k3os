@@ -60,3 +60,6 @@ popd
 
 # cleanup
 rm -f ${ROOTFS_DIR}/config.sh
+rm -f ${ROOTFS_DIR}/etc/group-
+rm -f ${ROOTFS_DIR}/etc/shadow-
+rm -f ${ROOTFS_DIR}/etc/passwd-
