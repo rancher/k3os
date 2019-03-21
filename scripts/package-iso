@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-source $(dirname $0)/version
-cd $(dirname $0)/..
-
 ISO=${ARTIFACTS}/k3os.iso
 
 bootiso=${BUILD}/bootiso
@@ -11,9 +8,10 @@ rm -rf ${bootiso}/
 
 # add bios and efi64 loader files
 # it's for installing to disk
-mkdir -p ${bootiso}/bios ${bootiso}/mbr
+mkdir -p ${bootiso}/bios ${bootiso}/efi64 ${bootiso}/mbr
 cp -rf ${BOOTLOADER_DIR}/bios/* ${bootiso}/bios
 cp -rf ${BOOTLOADER_DIR}/mbr/* ${bootiso}/mbr
+cp -rf ${BOOTLOADER_DIR}/efi64/* ${bootiso}/efi64
 
 
 # add isolinux for booting from ISO
@@ -28,8 +26,7 @@ cp ${ARTIFACTS}/${INITRD}                      ${bootiso}/boot/
 cp ${ARTIFACTS}/vmlinuz-${KERNEL_VERSION}      ${bootiso}/boot/
 
 cp /usr/lib/ISOLINUX/isolinux.bin              ${bootiso}/boot/isolinux/
-cp /usr/lib/syslinux/modules/bios/ldlinux.c32  ${bootiso}/boot/isolinux/
-cp /usr/lib/syslinux/modules/bios/*.c32        ${bootiso}/boot/isolinux/
+cp ${BOOTLOADER_DIR}/bios/*                    ${bootiso}/boot/isolinux/
 
 pushd ${bootiso}
 xorriso -as mkisofs \

@@ -1,9 +1,5 @@
 #!/bin/bash
 set -e
 
-cd $(dirname $0)/..
-
-source scripts/version
-
 mksquashfs ${KERNEL_DIR}/lib/firmware ${ARTIFACTS}/firmware.squashfs
 mksquashfs ${KERNEL_DIR}/lib/modules ${ARTIFACTS}/modules.squashfs
