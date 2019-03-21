@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+source $(dirname $0)/version
+cd $(dirname $0)/..
+
+#mksquashfs ${BOOTLOADER_DIR}/bios ${ARTIFACTS}/bios.squashfs
+#mksquashfs ${BOOTLOADER_DIR}/efi64 ${ARTIFACTS}/efi64.squashfs

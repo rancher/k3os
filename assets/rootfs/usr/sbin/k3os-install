@@ -5,7 +5,7 @@ DEVICE=$1
 if [ -b ${DEVICE} ]; then
 
     # format and partition, using BIOS/MBR
-    # TODO: support GPT+EFI?
+    # TODO: support EFI/GPT?
     # reference: https://wiki.archlinux.org/index.php/Parted
     parted ${DEVICE} mklabel msdos
     parted ${DEVICE} mkpart primary ext4 0% 500MB
@@ -14,24 +14,29 @@ if [ -b ${DEVICE} ]; then
     mkfs.ext4 -L RANCHER_BOOT ${DEVICE}1
     mkfs.ext4 -L RANCHER_STATE ${DEVICE}2
 
-    mkdir -p /tmp/boot_tmp
-    mount -t iso9660 -o loop /dev/sr0 /tmp/boot_tmp
+    BOOT_TMP=/tmp/boot_tmp
+    mkdir -p ${BOOT_TMP}
+    mount -t iso9660 -o loop /dev/sr0 ${BOOT_TMP}
 
     # mount boot device and copy boot files
     mount ${DEVICE}1 /boot
     pushd /boot
     # copy initrd and syslinux
-    cp -arf /tmp/boot_tmp/boot/* .
-    rm -rf isolinux
+    cp ${BOOT_TMP}/boot/initrd-* .
+    cp ${BOOT_TMP}/boot/vmlinuz-* .
+    cp ${BOOT_TMP}/boot/*.cfg .
+    # install syslinux to boot partition
+    # only for bios mode
+    mkdir -p ./syslinux
+    dd bs=440 count=1 if=${BOOT_TMP}/mbr/mbr.bin of=${DEVICE}
+    cp ${BOOT_TMP}/bios/* ./syslinux
+    extlinux --install ./syslinux
+    cp ${BOOT_TMP}/boot/isolinux/isolinux.cfg ./syslinux/syslinux.cfg
     popd
 
-    # TODO: install syslinux to boot partition
-    # we should use an installer like ROS
-    # the installer should be a container of container
-
     umount /boot
-    umount /tmp/boot_tmp
-    rm -rf /tmp/boot_tmp
+    umount ${BOOT_TMP}
+    rm -rf ${BOOT_TMP}
 fi
 
 

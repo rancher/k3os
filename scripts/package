@@ -8,8 +8,10 @@ BUILD=build
 INITRD_DIR=${BUILD}/initrd
 ROOTFS_DIR=${BUILD}/rootfs
 KERNEL_DIR=${BUILD}/kernel
-export ARTIFACTS BUILD INITRD_DIR ROOTFS_DIR KERNEL_DIR VERSION
+BOOTLOADER_DIR=${BUILD}/bootloader
+export ARTIFACTS BUILD INITRD_DIR ROOTFS_DIR KERNEL_DIR BOOTLOADER_DIR VERSION
 
+./scripts/package-bootloader
 ./scripts/package-kernel
 ./scripts/package-rootfs
 ./scripts/package-initrd

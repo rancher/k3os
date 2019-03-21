@@ -12,9 +12,6 @@ cp ${ARTIFACTS}/modules.squashfs ${SQUASHFS_DIR}/
 # add firmware.squashfs
 cp ${ARTIFACTS}/firmware.squashfs ${SQUASHFS_DIR}/
 
-# add images-*.tar.gz - images to preload in the OS
-#
-
 tar czf ${ARTIFACTS}/rootfs${SUFFIX}.tar.gz --exclude lib/modules --exclude lib/firmware -C ${ROOTFS_DIR} .
 
 # rootfs.squashfs should include kernel squashfs

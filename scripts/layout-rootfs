@@ -18,6 +18,9 @@ tar xf ${DOWNLOADS}/rootfs.tar -C ${ROOTFS_DIR}
 
 cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 
+# add syslinux binary
+cp ${BOOTLOADER_DIR}/bin/* ${ROOTFS_DIR}/usr/bin/
+
 # running these scripts in the runc container
 cat << EOF > ${ROOTFS_DIR}/config.sh
 #!/bin/sh
