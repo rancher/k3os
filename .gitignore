@@ -7,4 +7,5 @@
 /trash.lock
 .idea
 .trash-conf
-/assets/*.tar
+/assets/*.tar*
+/build
