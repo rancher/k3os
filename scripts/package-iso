@@ -36,3 +36,12 @@ xorriso -as mkisofs \
     -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
     -o $ISO .
 popd
+
+##
+# These can be used to make EFI bootable ISO
+#    -eltorito-alt-boot \
+#    -e boot/isolinux/efiboot.img \
+#    -no-emul-boot \
+#    -isohybrid-gpt-basdat \
+#
+##
