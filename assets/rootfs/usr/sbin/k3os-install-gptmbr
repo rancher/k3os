@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# support for legacy bios + MBR
+# support for legacy bios + GPT
 #
 
 if [ "$#" -ne 1 ]; then
@@ -18,10 +18,10 @@ fi
 #    1. https://wiki.archlinux.org/index.php/Parted
 #    2. https://www.gnu.org/software/parted/manual/html_node/set.html
 if [[ -z "$(blkid -L RANCHER_BOOT)" && -z "$(blkid -L RANCHER_STATE)" ]]; then
-    parted -s ${DEVICE} mklabel msdos
+    parted -s ${DEVICE} mklabel gpt
     parted -s ${DEVICE} mkpart primary ext4 0% 500MB
     parted -s ${DEVICE} mkpart primary ext4 500MB 100%
-    parted -s ${DEVICE} set 1 boot on
+    parted -s ${DEVICE} set 1 legacy_boot on
     mkfs.ext4 -F -L RANCHER_BOOT ${DEVICE}1
     mkfs.ext4 -F -L RANCHER_STATE ${DEVICE}2
 else
@@ -49,7 +49,7 @@ cp ${BOOT_TMP}/boot/*.cfg .
 # install syslinux to boot partition
 # only for bios mode
 mkdir -p ./syslinux
-dd bs=440 conv=notrunc count=1 if=${BOOT_TMP}/mbr/mbr.bin of=${DEVICE}
+dd bs=440 conv=notrunc count=1 if=${BOOT_TMP}/mbr/gptmbr.bin of=${DEVICE}
 cp ${BOOT_TMP}/bios/* ./syslinux
 extlinux --install ./syslinux
 cp ${BOOT_TMP}/boot/isolinux/isolinux.cfg ./syslinux/syslinux.cfg
