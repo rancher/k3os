@@ -1,0 +1,57 @@
+#!/bin/sh
+
+if [ "$#" -ne 1 ]; then
+    echo "#### You should specify a device, like: $0 /dev/sda"
+    exit 1
+fi
+
+DEVICE=$1
+if [ ! -b ${DEVICE} ]; then
+    echo "You should use an available device"
+    exit 1
+fi
+
+# format and partition, using BIOS/MBR
+# TODO: support EFI/GPT?
+# reference: https://wiki.archlinux.org/index.php/Parted
+if [[ -z "$(blkid -L RANCHER_BOOT)" && -z "$(blkid -L RANCHER_STATE)" ]]; then
+    parted -s ${DEVICE} mklabel msdos
+    parted -s ${DEVICE} mkpart primary ext4 0% 500MB
+    parted -s ${DEVICE} mkpart primary ext4 500MB 100%
+    parted -s ${DEVICE} set 1 boot on
+    mkfs.ext4 -F -L RANCHER_BOOT ${DEVICE}1
+    mkfs.ext4 -F -L RANCHER_STATE ${DEVICE}2
+else
+    echo "#### You have installed to disk"
+    exit 1
+fi
+
+ISO_DEVICE=$(blkid -L K3OS)
+if [ -z "${ISO_DEVICE}" ]; then
+    echo "#### There is no k3os ISO device"
+    exit 1
+fi
+
+BOOT_TMP=/tmp/boot_tmp
+mkdir -p ${BOOT_TMP}
+mount -t iso9660 -o loop ${ISO_DEVICE} ${BOOT_TMP}
+
+# mount boot device and copy boot files
+mount ${DEVICE}1 /boot
+pushd /boot
+# copy initrd and syslinux
+cp ${BOOT_TMP}/boot/initrd-* .
+cp ${BOOT_TMP}/boot/vmlinuz-* .
+cp ${BOOT_TMP}/boot/*.cfg .
+# install syslinux to boot partition
+# only for bios mode
+mkdir -p ./syslinux
+dd bs=440 conv=notrunc count=1 if=${BOOT_TMP}/mbr/mbr.bin of=${DEVICE}
+cp ${BOOT_TMP}/bios/* ./syslinux
+extlinux --install ./syslinux
+cp ${BOOT_TMP}/boot/isolinux/isolinux.cfg ./syslinux/syslinux.cfg
+popd
+
+umount /boot
+umount ${BOOT_TMP}
+rm -rf ${BOOT_TMP}
