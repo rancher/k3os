@@ -15,6 +15,12 @@ fi
 mkdir -p ${KERNEL_DIR}
 tar xf ${DOWNLOADS}/kernel.tar.gz -C ${KERNEL_DIR}
 
+# Use kernel-extra if possible
+if [ -e ${DAPPER_SOURCE}/assets/kernel-extra.tar.gz ]; then
+    cp ${DAPPER_SOURCE}/assets/kernel-extra.tar.gz ${DOWNLOADS}/kernel-extra.tar.gz
+    tar xf ${DOWNLOADS}/kernel-extra.tar.gz -C ${KERNEL_DIR}
+fi
+
 if [ -e ${KERNEL_DIR}/boot/vmlinuz-* ]; then
     echo "Copy ${KERNEL_DIR}/boot/vmlinuz-* to ${ARTIFACTS}/vmlinuz-${KERNEL_VERSION}"
     cp ${KERNEL_DIR}/boot/vmlinuz-* ${ARTIFACTS}/vmlinuz-${KERNEL_VERSION}
