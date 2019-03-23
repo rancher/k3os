@@ -17,12 +17,12 @@ fi
 # reference:
 #    1. https://wiki.archlinux.org/index.php/Parted
 #    2. https://www.gnu.org/software/parted/manual/html_node/set.html
-if [[ -z "$(blkid -L RANCHER_BOOT)" && -z "$(blkid -L RANCHER_STATE)" ]]; then
+if [[ -z "$(blkid -L RANCHER_BIOS)" && -z "$(blkid -L RANCHER_STATE)" ]]; then
     parted -s ${DEVICE} mklabel gpt
     parted -s ${DEVICE} mkpart primary ext4 0% 500MB
     parted -s ${DEVICE} mkpart primary ext4 500MB 100%
     parted -s ${DEVICE} set 1 legacy_boot on
-    mkfs.ext4 -F -L RANCHER_BOOT ${DEVICE}1
+    mkfs.ext4 -F -L RANCHER_BIOS ${DEVICE}1
     mkfs.ext4 -F -L RANCHER_STATE ${DEVICE}2
 else
     echo "#### You have installed to disk"

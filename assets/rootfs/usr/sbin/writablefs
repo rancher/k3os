@@ -1,8 +1,13 @@
 #!/bin/sh
 
-BOOT_DEVICE=$(blkid -L RANCHER_BOOT)
-if [ ! -z "${BOOT_DEVICE}" ]; then
-    mount ${BOOT_DEVICE} /boot
+BIOS_BOOT_DEVICE=$(blkid -L RANCHER_BIOS)
+if [ ! -z "${BIOS_BOOT_DEVICE}" ]; then
+    mount ${BIOS_BOOT_DEVICE} /boot
+fi
+
+EFI_BOOT_DEVICE=$(blkid -L RANCHER_EFI)
+if [ ! -z "${EFI_BOOT_DEVICE}" ]; then
+    mount ${EFI_BOOT_DEVICE} /boot
 fi
 
 STATE_DEVICE=$(blkid -L RANCHER_STATE)
