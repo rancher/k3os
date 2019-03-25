@@ -3,5 +3,6 @@ set -e
 
 cd $(dirname $0)/..
 
+./scripts/build
 ./scripts/layout
 ./scripts/package

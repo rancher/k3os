@@ -61,6 +61,11 @@ ARG INITRDFS_URL_amd64=http://147.75.100.195/k3os/initrd/amd64.tar.xz
 ARG ROOTFS_URL_amd64=http://147.75.100.195/k3os/rootfs/amd64.tar.xz
 #ARG ROOTFS_URL_arm64=https://github.com/rancher/os-base/releases/download/v2018.02.7-4/os-base_arm64.tar.xz
 
+ARG K3OS_REPO=niusmallnan
+ARG K3OS_RELEASES_YML=https://releases.rancher.com/k3os
+
+ARG DEFAULT_HOSTNAME=rancher
+
 ENV KERNEL_VERSION=${KERNEL_VERSION} \
     KERNEL_URL=KERNEL_URL_${ARCH} \
     KERNEL_URL_amd64=${KERNEL_URL_amd64} \
@@ -70,7 +75,19 @@ ENV KERNEL_VERSION=${KERNEL_VERSION} \
     INITRDFS_URL=INITRDFS_URL_${ARCH} \
     INITRDFS_URL_amd64=${INITRDFS_URL_amd64} \
     INITRDFS_URL_arm64=${INITRDFS_URL_arm64} \
-    DOWNLOADS=/usr/src/downloads
+    DOWNLOADS=/usr/src/downloads \
+    GOROOT=/usr/local/go \
+    GOPATH=/go \
+    GO_VERSION=1.12.1 \
+    GOARCH=$ARCH \
+    PATH=${GOPATH}/bin:${GOROOT}/bin:$PATH \
+    K3OS_REPO=${K3OS_REPO} \
+    K3OS_RELEASES_YML=${K3OS_RELEASES_YML} \
+    DEFAULT_HOSTNAME=${DEFAULT_HOSTNAME}
+ENV PATH=${GOPATH}/bin:${GOROOT}/bin:$PATH
+
+RUN wget -O - https://storage.googleapis.com/golang/go${GO_VERSION}.linux-${GOARCH}.tar.gz | tar -xzf - -C /usr/local && \
+    go get github.com/rancher/trash
 
 RUN mkdir -p ${DOWNLOADS}
 

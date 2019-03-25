@@ -1,0 +1,18 @@
+#!/bin/bash
+set -ex
+
+k3os="$1"
+
+if [ "${!TOOLCHAIN}" != "" ]; then
+  export CC=/usr/bin/${!TOOLCHAIN}-gcc
+  export CGO_ENABLED=1
+fi
+
+OUTPUT=${OUTPUT:-bin/k3os}
+echo Building $OUTPUT
+BUILDDATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+
+pwd
+
+CONST="-X github.com/niusmallnan/k3os/config.OSVersion=${VERSION} -X github.com/niusmallnan/k3os/config.OSBuildDate='${BUILDDATE}'"
+go build -ldflags "$CONST -extldflags -static -s -w" -o ${OUTPUT}
