@@ -21,6 +21,9 @@ cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 # override the os-release file
 cat assets/rootfs/etc/os-release | envsubst > ${ROOTFS_DIR}/etc/os-release
 
+# add k3os binary
+cp bin/k3os ${ROOTFS_DIR}/usr/bin/
+
 # add syslinux binary
 cp ${BOOTLOADER_DIR}/bin/* ${ROOTFS_DIR}/usr/bin/
 
@@ -56,6 +59,8 @@ rm -f /root/.bash_history
 EOF
 chmod +x ${ROOTFS_DIR}/config.sh
 
+# add k3os-config.yml
+bin/k3os c generate < templates/k3os-config.tpl.yml > ${ROOTFS_DIR}/etc/k3os-config.yml
 
 # construct rootfs via runc
 pushd ${BUILD}
@@ -73,3 +78,4 @@ rm -f ${ROOTFS_DIR}/config.sh
 rm -f ${ROOTFS_DIR}/etc/group-
 rm -f ${ROOTFS_DIR}/etc/shadow-
 rm -f ${ROOTFS_DIR}/etc/passwd-
+rm -f ${ROOTFS_DIR}/etc/k3os-
