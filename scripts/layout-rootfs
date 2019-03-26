@@ -30,6 +30,7 @@ mkdir -p /home/ \
          /writable \
          /boot \
          /var/lib/k3os/squashfs \
+         /var/lib/k3os/conf \
          /etc/default
 
 passwd -l root
