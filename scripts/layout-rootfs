@@ -18,6 +18,9 @@ tar xf ${DOWNLOADS}/rootfs.tar -C ${ROOTFS_DIR}
 
 cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 
+# override the os-release file
+cat assets/rootfs/etc/os-release | envsubst > ${ROOTFS_DIR}/etc/os-release
+
 # add syslinux binary
 cp ${BOOTLOADER_DIR}/bin/* ${ROOTFS_DIR}/usr/bin/
 
