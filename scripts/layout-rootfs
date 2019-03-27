@@ -21,6 +21,9 @@ cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 # add syslinux binary
 cp ${BOOTLOADER_DIR}/bin/* ${ROOTFS_DIR}/usr/bin/
 
+# copy modprobe.d from KERNEL_DIR to rootfs
+cp -rf ${KERNEL_DIR}/lib/modprobe.d ${ROOTFS_DIR}/usr/lib/
+
 # running these scripts in the runc container
 cat << EOF > ${ROOTFS_DIR}/config.sh
 #!/bin/sh

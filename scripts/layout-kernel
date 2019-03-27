@@ -27,7 +27,4 @@ if [ -e ${KERNEL_DIR}/boot/vmlinuz-* ]; then
     cp ${KERNEL_DIR}/boot/vmlinuz-* ${KERNEL_DIR}/vmlinuz
 fi
 
-if [ -d ${KERNEL_DIR}/lib ]; then
-    #cp -rf ${BUILD}/kernel/lib ${INITRD_DIR}/usr/
-    depmod -b ${KERNEL_DIR} $(basename ${KERNEL_DIR}/lib/modules/*)
-fi
+depmod -b ${KERNEL_DIR} $(basename ${KERNEL_DIR}/lib/modules/*)
