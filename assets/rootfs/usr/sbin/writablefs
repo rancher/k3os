@@ -33,7 +33,8 @@ if [ -z "${STATE_DEVICE}" ]; then
     mount -t tmpfs tmpfs /etc/rsyslog.d
 
     ## for hosts
-    mount -t tmpfs tmpfs /etc/hosts
+    cat /etc/hosts > /tmp/hosts
+    mount -o bind /tmp/hosts /etc/hosts
 
     ## for home
     mount -t tmpfs tmpfs /home/rancher
