@@ -43,6 +43,10 @@ if [ -z "${STATE_DEVICE}" ]; then
     ## for k3os dir
     mount -t tmpfs tmpfs /var/lib/k3os/conf
 
+    ## for rancher dir
+    mount -t tmpfs tmpfs /etc/rancher
+    mount -t tmpfs tmpfs /var/lib/rancher
+
     # clean tmp dir
     rm -rf /tmp/system-data
     exit 0
@@ -86,6 +90,11 @@ chown rancher:rancher /home/rancher
 ## for k3os dir
 mkdir -p /writable/system-data/var/lib/k3os/conf
 mount -o bind /writable/system-data/var/lib/k3os/conf /var/lib/k3os/conf
+
+## for rancher dir
+mkdir -p /writable/system-data/etc/rancher /writable/system-data/var/lib/rancher
+mount -o bind /writable/system-data/etc/rancher /etc/rancher
+mount -o bind /writable/system-data/var/lib/rancher /var/lib/rancher
 
 # clean tmp dir
 rm -rf /writable/tmp

@@ -40,6 +40,8 @@ mkdir -p /home/ \
          /boot \
          /var/lib/k3os/squashfs \
          /var/lib/k3os/conf \
+         /var/lib/rancher \
+         /etc/rancher \
          /etc/default
 
 passwd -l root
