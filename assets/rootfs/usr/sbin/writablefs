@@ -44,7 +44,7 @@ if [ -z "${STATE_DEVICE}" ]; then
                 mount -o bind /tmp/hosts /etc/hosts
                 ;;
             *)
-                mount -t tmpfs tmpfs ${i}
+                mount -t tmpfs -o mode=755 tmpfs ${i}
                 ;;
         esac
     done
