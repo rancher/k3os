@@ -24,10 +24,12 @@ func entryPoint(c *cli.Context) error {
 }
 
 func setupNecessaryFs() {
-	if _, err := os.Stat(config.CloudConfigDir); err != nil && os.IsNotExist(err) {
+	if _, err := os.Stat(config.CloudConfigDir); os.IsNotExist(err) {
 		err := os.Mkdir(config.CloudConfigDir, 0644)
 		if err != nil {
 			logrus.Error(err)
 		}
+	} else if err != nil {
+		logrus.Error(err)
 	}
 }
