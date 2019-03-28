@@ -17,7 +17,6 @@ func init() {
 func Main() {
 	// TODO: rsyslog need to be added here.
 	app := cli.NewApp()
-
 	app.Author = "Rancher Labs, Inc."
 	app.Before = beforeFunc
 	app.EnableBashCompletion = true
@@ -31,6 +30,13 @@ func Main() {
 			Usage:       "configure settings",
 			HideHelp:    true,
 			Subcommands: configCommands(),
+		},
+		{
+			Name:            "entrypoint",
+			Hidden:          true,
+			HideHelp:        true,
+			SkipFlagParsing: true,
+			Action:          entryPoint,
 		},
 	}
 	app.Run(os.Args)

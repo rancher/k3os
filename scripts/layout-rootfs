@@ -54,6 +54,10 @@ echo 'rancher ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/k3os
 sed -i -e 's/duid/clientid/g' /etc/dhcpcd.conf
 echo "*.*                /var/log/syslog" >> /etc/rsyslog.conf
 
+# add necessary symbol-links
+rm -f /usr/bin/k3os-sysinit
+ln -s /usr/bin/k3os /usr/bin/k3os-sysinit
+
 # cleanup
 rm -f /root/.bash_history
 EOF
