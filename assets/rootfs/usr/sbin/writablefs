@@ -10,91 +10,78 @@ if [ ! -z "${EFI_BOOT_DEVICE}" ]; then
     mount ${EFI_BOOT_DEVICE} /boot
 fi
 
+TMP_DIR=/tmp/writablefs
+mkdir -p ${TMP_DIR}
+trap "rm -rf ${TMP_DIR}" EXIT
+
+
+# The magic dirs and files
+MAGICS="/etc/ssh
+        /var/db/dhcpcd
+        /etc/default
+        /etc/logrotate.d
+        /etc/rsyslog.d
+        /etc/hosts
+        /home/rancher
+        /var/lib/k3os/conf
+        /etc/rancher
+        /var/lib/rancher"
+
 STATE_DEVICE=$(blkid -L RANCHER_STATE)
 if [ -z "${STATE_DEVICE}" ]; then
     echo "No LABEL=RANCHER_STATE device, so we use tmpfs"
 
-    ## for ssh
-    mkdir -p /tmp/system-data/etc/ssh
-    cp -arf /etc/ssh/* /tmp/system-data/etc/ssh
-    mount -t tmpfs tmpfs /etc/ssh
-    cp -arf /tmp/system-data/etc/ssh/* /etc/ssh
+    for i in ${MAGICS}; do
+        case $i in
+            "/etc/ssh")
+                mkdir -p ${TMP_DIR}/etc/ssh
+                cp -arf ${i}/* ${TMP_DIR}/etc/ssh
+                mount -t tmpfs tmpfs /etc/ssh
+                cp -arf ${TMP_DIR}/etc/ssh/* /etc/ssh
+                ;;
+            "/etc/hosts")
+                cat /etc/hosts > /tmp/hosts
+                mount -o bind /tmp/hosts /etc/hosts
+                ;;
+            *)
+                mount -t tmpfs tmpfs ${i}
+                ;;
+        esac
+    done
 
-    ## for dhcpcd
-    mount -t tmpfs tmpfs /var/db/dhcpcd
+    chown -R rancher:rancher /home/rancher
 
-    ## for init default
-    mount -t tmpfs tmpfs /etc/default
-
-    ## for logrotate.d
-    mount -t tmpfs tmpfs /etc/logrotate.d
-
-    ## for rsyslog
-    mount -t tmpfs tmpfs /etc/rsyslog.d
-
-    ## for hosts
-    cat /etc/hosts > /tmp/hosts
-    mount -o bind /tmp/hosts /etc/hosts
-
-    ## for home
-    mount -t tmpfs tmpfs /home/rancher
-    chown rancher:rancher /home/rancher
-
-    ## for k3os dir
-    mount -t tmpfs tmpfs /var/lib/k3os/conf
-
-    ## for rancher dir
-    mount -t tmpfs tmpfs /etc/rancher
-    mount -t tmpfs tmpfs /var/lib/rancher
-
-    # clean tmp dir
-    rm -rf /tmp/system-data
     exit 0
 fi
 
-# hard code for test
+# mount the writable filesystem
+
 mount ${STATE_DEVICE} /writable
-mkdir -p /writable/system-data /writable/user-data /writable/tmp
 
-## for ssh
-mkdir -p /writable/system-data/etc/ssh
-cp -arf /etc/ssh /writable/tmp
-mount -o bind /writable/system-data/etc/ssh /etc/ssh
-cp -arf /writable/tmp/ssh/* /etc/ssh
+SYSTEMDATA_DIR=/writable/system-data
+USERDATA_DIR=/writable/user-data
+mkdir -p ${SYSTEMDATA_DIR} ${USERDATA_DIR}
 
-## for dhcpcd
-mkdir -p /writable/system-data/var/db/dhcpcd
-mount -o bind /writable/system-data/var/db/dhcpcd /var/db/dhcpcd
+for i in ${MAGICS}; do
+    case $i in
+        "/etc/ssh")
+            if [ ! -d ${SYSTEMDATA_DIR}/etc/ssh ]; then
+                mkdir -p ${SYSTEMDATA_DIR}/etc/ssh
+                cp -arf /etc/ssh/* ${SYSTEMDATA_DIR}/etc/ssh
+            fi
+            mount -o bind ${SYSTEMDATA_DIR}/etc/ssh /etc/ssh
+            ;;
+        "/etc/hosts")
+            if [ ! -f ${SYSTEMDATA_DIR}/etc/hosts ]; then
+                cat /etc/hosts > ${SYSTEMDATA_DIR}/etc/hosts
+            fi
+            mount -o bind ${SYSTEMDATA_DIR}/etc/hosts /etc/hosts
+            ;;
+        *)
+            mkdir -p ${SYSTEMDATA_DIR}/${i}
+            mount -o bind ${SYSTEMDATA_DIR}/${i} ${i}
+            ;;
+    esac
+done
 
-## for init default
-mkdir -p /writable/system-data/etc/default
-mount -o bind /writable/system-data/etc/default /etc/default
-
-## for logrotate.d
-mkdir -p /writable/system-data/etc/logrotate.d
-mount -o bind /writable/system-data/etc/logrotate.d /etc/logrotate.d
-
-## for rsyslog
-mkdir -p /writable/system-data/etc/rsyslog.d
-mount -o bind /writable/system-data/etc/rsyslog.d /etc/rsyslog.d
-
-## for hosts
-cat /etc/hosts > /writable/system-data/etc/hosts
-mount -o bind /writable/system-data/etc/hosts /etc/hosts
-
-## for home
-mkdir -p /writable/user-data/home/rancher
-mount -o bind /writable/user-data/home/rancher /home/rancher
-chown rancher:rancher /home/rancher
-
-## for k3os dir
-mkdir -p /writable/system-data/var/lib/k3os/conf
-mount -o bind /writable/system-data/var/lib/k3os/conf /var/lib/k3os/conf
-
-## for rancher dir
-mkdir -p /writable/system-data/etc/rancher /writable/system-data/var/lib/rancher
-mount -o bind /writable/system-data/etc/rancher /etc/rancher
-mount -o bind /writable/system-data/var/lib/rancher /var/lib/rancher
-
-# clean tmp dir
-rm -rf /writable/tmp
+chown -R rancher:rancher /home/rancher
