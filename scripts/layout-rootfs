@@ -50,6 +50,7 @@ addgroup -g 1103 sudo
 adduser -u 1100 -G rancher -D -h /home/rancher -s /bin/bash rancher
 adduser rancher sudo
 
+sed -i 's/rancher:!/rancher:*/g' /etc/shadow
 echo '%sudo ALL=(ALL) ALL' >> /etc/sudoers.d/k3os
 echo 'rancher ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/k3os
 

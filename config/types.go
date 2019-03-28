@@ -9,7 +9,14 @@ const (
 var (
 	OSVersion   string
 	OSBuildDate string
-	Additional  = []string{
+	// user's home directory requires writable permissions
+	// corresponding to /usr/sbin/writablefs:
+	//   e.g. /home/rancher is writable
+	//   e.g. others not writable
+	SSHUsers = []string{
+		"rancher",
+	}
+	Additional = []string{
 		"EXTRA_CMDLINE",
 	}
 )

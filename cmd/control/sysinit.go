@@ -5,7 +5,9 @@ import (
 
 	"github.com/niusmallnan/k3os/config"
 	pkgHostname "github.com/niusmallnan/k3os/pkg/hostname"
+	"github.com/niusmallnan/k3os/pkg/ssh"
 
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -24,10 +26,18 @@ func SysInitMain() {
 func sysInit(c *cli.Context) error {
 	cfg := config.LoadConfig("", false)
 	// setup k3os hostname
-	err := pkgHostname.SetHostname(cfg)
-	if err != nil {
+	if err := pkgHostname.SetHostname(cfg); err != nil {
 		return err
 	}
 	// setup k3os /etc/hosts
-	return pkgHostname.SyncHostname()
+	if err := pkgHostname.SyncHostname(); err != nil {
+		return err
+	}
+	// setup ssh authorized_keys
+	for _, username := range config.SSHUsers {
+		if err := ssh.SetAuthorizedKeys(username, cfg); err != nil {
+			logrus.Error(err)
+		}
+	}
+	return nil
 }
