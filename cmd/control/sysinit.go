@@ -5,6 +5,7 @@ import (
 
 	"github.com/niusmallnan/k3os/config"
 	pkgHostname "github.com/niusmallnan/k3os/pkg/hostname"
+	"github.com/niusmallnan/k3os/pkg/module"
 	"github.com/niusmallnan/k3os/pkg/ssh"
 
 	"github.com/sirupsen/logrus"
@@ -39,5 +40,6 @@ func sysInit(c *cli.Context) error {
 			logrus.Error(err)
 		}
 	}
-	return nil
+	// setup kernel modules
+	return module.LoadModules(cfg)
 }
