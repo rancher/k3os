@@ -27,7 +27,7 @@ type CloudConfig struct {
 }
 
 type Defaults struct {
-	Hostname string `yaml:"hostname,omitempty"`
+	Modules []string `yaml:"modules,omitempty"`
 }
 
 type K3OSConfig struct {
