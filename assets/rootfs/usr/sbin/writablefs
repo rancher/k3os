@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ $EUID -ne 0 ]; then
+    echo "This script must be run as root"
+    exit 1
+fi
+
 BIOS_BOOT_DEVICE=$(blkid -L RANCHER_BIOS)
 if [ ! -z "${BIOS_BOOT_DEVICE}" ]; then
     mount ${BIOS_BOOT_DEVICE} /boot
@@ -25,7 +30,9 @@ MAGICS="/etc/ssh
         /home/rancher
         /var/lib/k3os/conf
         /etc/rancher
-        /var/lib/rancher"
+        /var/lib/rancher
+        /mnt
+        /media"
 
 STATE_DEVICE=$(blkid -L RANCHER_STATE)
 if [ -z "${STATE_DEVICE}" ]; then
