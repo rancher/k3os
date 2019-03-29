@@ -27,7 +27,10 @@ func LoadModules(cfg *config.CloudConfig) error {
 	for sc.Scan() {
 		loaded[strings.SplitN(sc.Text(), " ", 2)[0]] = true
 	}
-	for _, m := range cfg.K3OS.Modules {
+	modules := cfg.K3OS.Defaults.Modules
+	additional := cfg.K3OS.Modules
+	modules = append(modules, additional...)
+	for _, m := range modules {
 		if loaded[m] {
 			continue
 		}

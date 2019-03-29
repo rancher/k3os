@@ -1,6 +1,9 @@
+hostname: {{.DEFAULT_HOSTNAME}}
 k3os:
   defaults:
-    hostname: {{.DEFAULT_HOSTNAME}}
+    modules:
+    - br_netfilter
+    - overlay
   upgrade:
     image: {{.K3OS_REPO}}/k3os
     url: {{.K3OS_RELEASES_YML}}/releases{{.SUFFIX}}.yml

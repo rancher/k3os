@@ -11,12 +11,7 @@ import (
 )
 
 func SetHostname(c *config.CloudConfig) error {
-	var hostname string
-	if c.Hostname == "" {
-		hostname = c.K3OS.Defaults.Hostname
-	} else {
-		hostname = c.Hostname
-	}
+	hostname := c.Hostname
 	if hostname == "" {
 		return nil
 	}

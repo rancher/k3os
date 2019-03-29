@@ -39,8 +39,8 @@ var schema = `{
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "hostname": {
-          "type": "string"
+        "modules": {
+          "$ref": "#/definitions/list_of_strings"
         }
       }
     },
