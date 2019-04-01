@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/niusmallnan/k3os/config"
+	"github.com/niusmallnan/k3os/pkg/command"
 	pkgHostname "github.com/niusmallnan/k3os/pkg/hostname"
 	"github.com/niusmallnan/k3os/pkg/module"
 	"github.com/niusmallnan/k3os/pkg/ssh"
@@ -46,5 +47,9 @@ func sysInit(c *cli.Context) error {
 		return err
 	}
 	// setup sysctl
-	return sysctl.ConfigureSysctl(cfg)
+	if err := sysctl.ConfigureSysctl(cfg); err != nil {
+		return err
+	}
+	// run command
+	return command.ExecuteCommand(cfg.Runcmd)
 }

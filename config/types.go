@@ -1,5 +1,7 @@
 package config
 
+import "fmt"
+
 const (
 	OsConfigFile    = "/etc/k3os-config.yml"
 	CloudConfigDir  = "/var/lib/k3os/conf/cloud-config.d"
@@ -23,7 +25,13 @@ var (
 
 type CloudConfig struct {
 	Hostname string     `yaml:"hostname,omitempty"`
+	Runcmd   []Command  `yaml:"runcmd,omitempty"`
 	K3OS     K3OSConfig `yaml:"k3os,omitempty"`
+}
+
+type Command struct {
+	String  string
+	Strings []string
 }
 
 type Defaults struct {
@@ -50,4 +58,39 @@ type UpgradeConfig struct {
 	Image    string `yaml:"image,omitempty"`
 	Rollback string `yaml:"rollback,omitempty"`
 	Policy   string `yaml:"policy,omitempty"`
+}
+
+func (c *Command) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var cmd interface{}
+	if err := unmarshal(&cmd); err != nil {
+		return err
+	}
+	switch cmd.(type) {
+	case string:
+		c.String = cmd.(string)
+	case []interface{}:
+		s, err := c.toStrings(cmd.([]interface{}))
+		if err != nil {
+			return err
+		}
+		c.Strings = s
+	default:
+		return fmt.Errorf("failed to unmarshal command: %#v", cmd)
+	}
+	return nil
+}
+
+func (c *Command) toStrings(s []interface{}) ([]string, error) {
+	if len(s) == 0 {
+		return nil, nil
+	}
+	r := make([]string, len(s))
+	for k, v := range s {
+		if sv, ok := v.(string); ok {
+			r[k] = sv
+		} else {
+			return nil, fmt.Errorf("cannot unmarshal '%v' of type %T into a string value", v, v)
+		}
+	}
+	return r, nil
 }
