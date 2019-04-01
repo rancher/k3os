@@ -7,6 +7,7 @@ import (
 	pkgHostname "github.com/niusmallnan/k3os/pkg/hostname"
 	"github.com/niusmallnan/k3os/pkg/module"
 	"github.com/niusmallnan/k3os/pkg/ssh"
+	"github.com/niusmallnan/k3os/pkg/sysctl"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -26,11 +27,11 @@ func SysInitMain() {
 
 func sysInit(c *cli.Context) error {
 	cfg := config.LoadConfig("", false)
-	// setup k3os hostname
+	// setup hostname
 	if err := pkgHostname.SetHostname(cfg); err != nil {
 		return err
 	}
-	// setup k3os /etc/hosts
+	// setup /etc/hosts
 	if err := pkgHostname.SyncHostname(); err != nil {
 		return err
 	}
@@ -41,5 +42,9 @@ func sysInit(c *cli.Context) error {
 		}
 	}
 	// setup kernel modules
-	return module.LoadModules(cfg)
+	if err := module.LoadModules(cfg); err != nil {
+		return err
+	}
+	// setup sysctl
+	return sysctl.ConfigureSysctl(cfg)
 }
