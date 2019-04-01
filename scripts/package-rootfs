@@ -1,14 +1,6 @@
 #!/bin/bash
 set -e
 
-SQUASHFS_DIR=${ROOTFS_DIR}/var/lib/k3os/squashfs
-# add modules.squashfs
-cp ${ARTIFACTS}/modules.squashfs ${SQUASHFS_DIR}/
-
-# add firmware.squashfs
-cp ${ARTIFACTS}/firmware.squashfs ${SQUASHFS_DIR}/
-
 tar czf ${ARTIFACTS}/rootfs${SUFFIX}.tar.gz --exclude lib/modules --exclude lib/firmware -C ${ROOTFS_DIR} .
 
-# rootfs.squashfs should include kernel squashfs
 mksquashfs ${ROOTFS_DIR} ${ARTIFACTS}/rootfs${SUFFIX}.squashfs

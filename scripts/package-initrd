@@ -4,6 +4,12 @@ set -e
 # add rootfs.squashfs
 cp ${ARTIFACTS}/rootfs.squashfs ${INITRD_DIR}/
 
+# add modules.squashfs
+cp ${ARTIFACTS}/modules.squashfs ${INITRD_DIR}/
+
+# add firmware.squashfs
+cp ${ARTIFACTS}/firmware.squashfs ${INITRD_DIR}/
+
 pushd ${INITRD_DIR}
 echo Creating ${ARTIFACTS}/${INITRD}
 find | cpio -H newc -o | gzip > ${ARTIFACTS}/${INITRD}

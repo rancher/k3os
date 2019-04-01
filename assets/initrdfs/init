@@ -4,11 +4,11 @@
 mkdir -p /proc && mount -t proc proc /proc
 mkdir -p /sys && mount -t sysfs sysfs /sys
 
-# Do your stuff here.
-echo "This script just mounts and boots the rootfs, nothing else!"
-
 mkdir -p /state
 mount -t squashfs -o loop /rootfs.squashfs /state
+
+mount -t squashfs -o loop /modules.squashfs /state/usr/lib/modules
+mount -t squashfs -o loop /firmware.squashfs /state/usr/lib/firmware
 
 # Clean up.
 umount /proc

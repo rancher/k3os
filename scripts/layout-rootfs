@@ -38,7 +38,6 @@ mkdir -p /home/ \
          /usr/lib/firmware \
          /writable \
          /boot \
-         /var/lib/k3os/squashfs \
          /var/lib/k3os/conf \
          /var/lib/rancher \
          /etc/rancher \
