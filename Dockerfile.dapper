@@ -7,9 +7,6 @@ RUN apt-get update \
         ca-certificates \
         cpio \
         curl \
-        dosfstools \
-        gccgo \
-        genisoimage \
         gettext \
         git \
         isolinux \
@@ -33,8 +30,8 @@ RUN apt-get update \
         xorriso \
         xz-utils \
         squashfs-tools \
-        telnet \
-        runc
+        runc \
+    && rm /bin/sh && ln -s /bin/bash /bin/sh
 
 ########## Dapper Configuration #####################
 
@@ -51,15 +48,17 @@ WORKDIR ${DAPPER_SOURCE}
 ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
 
-ARG KERNEL_VERSION=5.0.0-7.8-rancher1
-ARG KERNEL_URL_amd64=http://147.75.100.195/k3os/k3os-kernel/${KERNEL_VERSION}/kernel.tar.gz
+ARG KERNEL_VERSION=5.0.0-8.9-rancher1
+ARG KERNEL_URL_amd64=https://github.com/niusmallnan/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel_amd64.tar.gz
 #ARG KERNEL_URL_arm64=
 
-ARG INITRDFS_URL_amd64=http://147.75.100.195/k3os/initrd/amd64.tar.xz
-#ARG INITRDFS_URL_arm64=https://github.com/rancher/os-initrd-base/releases/download/v2018.02.7-1/os-initrd-base-arm64.tar.gz
+ARG INITRDFS_VERSION=2018.02.11-rancher1
+ARG INITRDFS_URL_amd64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/amd64.tar.xz
+#ARG INITRDFS_URL_arm64=
 
-ARG ROOTFS_URL_amd64=http://147.75.100.195/k3os/rootfs/amd64.tar.xz
-#ARG ROOTFS_URL_arm64=https://github.com/rancher/os-base/releases/download/v2018.02.7-4/os-base_arm64.tar.xz
+ARG ROOTFS_VERSION=2019.02.1-rancher1
+ARG ROOTFS_URL_amd64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/amd64.tar.xz
+#ARG ROOTFS_URL_arm64=
 
 ARG K3OS_REPO=niusmallnan
 ARG K3OS_RELEASES_YML=https://releases.rancher.com/k3os
@@ -88,10 +87,6 @@ ENV PATH=${GOPATH}/bin:${GOROOT}/bin:$PATH
 
 RUN wget -O - https://storage.googleapis.com/golang/go${GO_VERSION}.linux-${GOARCH}.tar.gz | tar -xzf - -C /usr/local && \
     go get github.com/rancher/trash
-
-RUN mkdir -p ${DOWNLOADS}
-
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]
