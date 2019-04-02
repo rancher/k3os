@@ -1,10 +1,14 @@
 package util
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
@@ -185,4 +189,72 @@ func UnmarshalValue(value string) (result interface{}) {
 		result = value
 	}
 	return
+}
+
+func HTTPDownloadToFile(url, dest string) error {
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	return WriteFileAtomic(dest, body, 0644)
+}
+
+func ExistsAndExecutable(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+
+	mode := info.Mode().Perm()
+	return mode&os.ModePerm != 0
+}
+
+func RunScript(path string, arg ...string) error {
+	if !ExistsAndExecutable(path) {
+		return nil
+	}
+
+	script, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+
+	magic := make([]byte, 2)
+	if _, err = script.Read(magic); err != nil {
+		return err
+	}
+
+	cmd := exec.Command("/bin/sh", path)
+	if string(magic) == "#!" {
+		cmd = exec.Command(path, arg...)
+	}
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+func FileCopy(src, dest string) error {
+	data, err := ioutil.ReadFile(src)
+	if err != nil {
+		return err
+	}
+	return WriteFileAtomic(dest, data, 0644)
+}
+
+func Yes(question string) bool {
+	fmt.Printf("%s [y/N]: ", question)
+	in := bufio.NewReader(os.Stdin)
+	line, err := in.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return strings.ToLower(line[0:1]) == "y"
 }

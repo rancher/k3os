@@ -38,6 +38,7 @@ func Main() {
 			SkipFlagParsing: true,
 			Action:          entryPoint,
 		},
+		installCommand,
 	}
 	app.Run(os.Args)
 }
