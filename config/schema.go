@@ -31,7 +31,10 @@ var schema = `{
         },
         "upgrade": {
           "$ref": "#/definitions/upgrade_config"
-        }
+        },
+		"network": {
+		  "$ref": "#/definitions/network_config"
+		}
       }
     },
     "defaults_config": {
@@ -76,6 +79,29 @@ var schema = `{
         }
       }
     },
+	"network_config": {
+	  "id": "#/definitions/network_config",
+	  "type": "object",
+	  "additionalProperties": false,
+	  "properties": {
+	    "dns": {
+		  "$ref": "#/definitions/dns_config"
+		}
+	  }
+	},
+	"dns_config": {
+	  "id": "#/definitions/dns_config",
+	  "type": "object",
+	  "additionalProperties": false,
+	  "properties": {
+	    "searches": {
+		  "$ref": "#/definitions/list_of_strings"
+		},
+		"nameservers": {
+		  "$ref": "#/definitions/list_of_strings"
+		}
+	  }
+	},
     "list_of_strings": {
       "type": "array",
       "items": {

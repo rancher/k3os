@@ -58,7 +58,9 @@ echo "*.*                /var/log/syslog" >> /etc/rsyslog.conf
 
 # add necessary symbol-links
 rm -f /usr/bin/k3os-sysinit
+rm -f /usr/bin/k3os-netinit
 ln -s /usr/bin/k3os /usr/bin/k3os-sysinit
+ln -s /usr/bin/k3os /usr/bin/k3os-netinit
 
 # cleanup
 rm -f /root/.bash_history

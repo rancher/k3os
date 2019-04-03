@@ -38,12 +38,18 @@ type Defaults struct {
 	Modules []string `yaml:"modules,omitempty"`
 }
 
+type DNSConfig struct {
+	Searches    []string `yaml:"searches,flow,omitempty"`
+	Nameservers []string `yaml:"nameservers,flow,omitempty"`
+}
+
 type K3OSConfig struct {
 	Defaults Defaults          `yaml:"defaults,omitempty"`
 	Modules  []string          `yaml:"modules,omitempty"`
 	SSH      SSHConfig         `yaml:"ssh,omitempty"`
 	Sysctl   map[string]string `yaml:"sysctl,omitempty"`
 	Upgrade  UpgradeConfig     `yaml:"upgrade,omitempty"`
+	Network  NetworkConfig     `yaml:"network,omitempty"`
 }
 
 type SSHConfig struct {
@@ -57,6 +63,10 @@ type UpgradeConfig struct {
 	URL      string `yaml:"url,omitempty"`
 	Rollback string `yaml:"rollback,omitempty"`
 	Policy   string `yaml:"policy,omitempty"`
+}
+
+type NetworkConfig struct {
+	DNS DNSConfig `yaml:"dns,omitempty"`
 }
 
 func (c *Command) UnmarshalYAML(unmarshal func(interface{}) error) error {

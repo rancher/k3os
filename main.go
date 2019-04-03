@@ -5,12 +5,13 @@ import (
 
 	"github.com/niusmallnan/k3os/cmd/control"
 
-	"github.com/moby/moby/pkg/reexec"
+	"github.com/docker/docker/pkg/reexec"
 	"github.com/sirupsen/logrus"
 )
 
 var entryPoints = map[string]func(){
 	"k3os-sysinit": control.SysInitMain,
+	"k3os-netinit": control.NetInitMain,
 }
 
 func init() {
