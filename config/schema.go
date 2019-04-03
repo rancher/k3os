@@ -68,9 +68,6 @@ var schema = `{
         "url": {
           "type": "string"
         },
-        "image": {
-          "type": "string"
-        },
         "rollback": {
           "type": "string"
         },

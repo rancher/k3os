@@ -51,7 +51,6 @@ func beforeFunc(c *cli.Context) error {
 }
 
 func versionPrinter(c *cli.Context) {
-	cfg := config.LoadConfig("", false)
-	n := fmt.Sprintf("%s:%s", cfg.K3OS.Upgrade.Image, config.OSVersion)
-	fmt.Fprintf(c.App.Writer, "version %s from k3os image %s\n", c.App.Version, n)
+	// TODO: print version and checksum for cli, kernel, rootfs
+	fmt.Fprintf(c.App.Writer, config.OSVersion)
 }

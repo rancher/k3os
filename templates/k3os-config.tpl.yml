@@ -5,6 +5,5 @@ k3os:
     - br_netfilter
     - overlay
   upgrade:
-    image: {{.K3OS_REPO}}/k3os
     url: {{.K3OS_RELEASES_YML}}/releases{{.SUFFIX}}.yml
     policy: download

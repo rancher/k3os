@@ -55,7 +55,6 @@ type SSHConfig struct {
 
 type UpgradeConfig struct {
 	URL      string `yaml:"url,omitempty"`
-	Image    string `yaml:"image,omitempty"`
 	Rollback string `yaml:"rollback,omitempty"`
 	Policy   string `yaml:"policy,omitempty"`
 }
