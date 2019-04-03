@@ -1,6 +1,7 @@
 package control
 
 import (
+	"github.com/niusmallnan/k3os/pkg/util"
 	"os"
 
 	"github.com/niusmallnan/k3os/config"
@@ -51,5 +52,9 @@ func sysInit(c *cli.Context) error {
 		return err
 	}
 	// run command
-	return command.ExecuteCommand(cfg.Runcmd)
+	if err := command.ExecuteCommand(cfg.Runcmd); err != nil {
+		return err
+	}
+	// run rc.local
+	return util.RunScript("/etc/rc.local")
 }
