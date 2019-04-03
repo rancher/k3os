@@ -43,7 +43,7 @@ mkdir -p /home/ \
          /var/lib/rancher \
          /etc/rancher \
          /etc/default
-
+echo "#!/bin/sh" > /etc/rc.local && chmod +x /etc/rc.local
 passwd -l root
 addgroup -g 1100 rancher
 addgroup -g 1103 sudo
