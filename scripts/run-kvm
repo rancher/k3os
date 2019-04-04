@@ -60,9 +60,7 @@ fi
 KERNEL_ARGS="${DEFAULT_KERNEL_ARGS} ${QEMU_APPEND}"
 
 if [ "$BOOT_ISO" == "1" ]; then
-    ISO_OPTS="-boot d -cdrom ./dist/artifacts/rancheros.iso \
-        -fsdev local,security_model=none,id=fsdev1,path=${HOME} \
-        -device virtio-9p-pci,id=fs1,fsdev=fsdev1,mount_tag=home "
+    ISO_OPTS="-boot d -cdrom ./dist/artifacts/k3os.iso"
         echo "----- $ISO_OPTS"
 
     exec qemu-system-${QEMUARCH} \
@@ -77,6 +75,7 @@ if [ "$BOOT_ISO" == "1" ]; then
             -net user,vlan=0,hostfwd=tcp::2222-:22,hostname=rancher-dev \
             -drive if=virtio,file=${HD}\
             -smp 1 \
+            ${ISO_OPTS} \
             -device virtio-rng-pci
 else
     exec qemu-system-x86_64 \
