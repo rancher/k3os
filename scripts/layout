@@ -12,7 +12,7 @@ KERNEL_DIR=${BUILD}/kernel
 BOOTLOADER_DIR=${BUILD}/bootloader
 export ARTIFACTS BUILD INITRD_DIR ROOTFS_DIR KERNEL_DIR BOOTLOADER_DIR VERSION
 
-mkdir -p ${ARTIFACTS}
+mkdir -p ${ARTIFACTS} ${DOWNLOADS}
 
 ./scripts/layout-bootloader
 ./scripts/layout-kernel

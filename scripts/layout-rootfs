@@ -12,7 +12,6 @@ else
     curl -sSL ${!ROOTFS_URL} | tar xvJf -
     mv rootfs.tar ${DOWNLOADS}/rootfs.tar
     popd
-    cp ${DOWNLOADS}/rootfs.tar assets/
 fi
 
 tar xf ${DOWNLOADS}/rootfs.tar -C ${ROOTFS_DIR}

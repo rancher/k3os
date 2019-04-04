@@ -10,7 +10,6 @@ else
     if [ -n "${!KERNEL_URL}" ]; then
         curl -fL ${!KERNEL_URL} > ${DOWNLOADS}/kernel.tar.gz
     fi
-    cp ${DOWNLOADS}/kernel.tar.gz assets/
 fi
 
 mkdir -p ${KERNEL_DIR}

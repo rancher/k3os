@@ -12,7 +12,6 @@ else
     curl -sSL ${!INITRDFS_URL} | tar xvJf -
     mv rootfs.tar ${DOWNLOADS}/initrdfs.tar
     popd
-    cp ${DOWNLOADS}/initrdfs.tar assets/
 fi
 
 tar xf ${DOWNLOADS}/initrdfs.tar -C ${INITRD_DIR}
