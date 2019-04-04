@@ -32,9 +32,9 @@ var schema = `{
         "upgrade": {
           "$ref": "#/definitions/upgrade_config"
         },
-		"network": {
-		  "$ref": "#/definitions/network_config"
-		}
+        "network": {
+          "$ref": "#/definitions/network_config"
+        }
       }
     },
     "defaults_config": {
@@ -79,29 +79,48 @@ var schema = `{
         }
       }
     },
-	"network_config": {
-	  "id": "#/definitions/network_config",
-	  "type": "object",
-	  "additionalProperties": false,
-	  "properties": {
-	    "dns": {
-		  "$ref": "#/definitions/dns_config"
-		}
-	  }
-	},
-	"dns_config": {
-	  "id": "#/definitions/dns_config",
-	  "type": "object",
-	  "additionalProperties": false,
-	  "properties": {
-	    "searches": {
-		  "$ref": "#/definitions/list_of_strings"
-		},
-		"nameservers": {
-		  "$ref": "#/definitions/list_of_strings"
-		}
-	  }
-	},
+    "network_config": {
+      "id": "#/definitions/network_config",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dns": {
+          "$ref": "#/definitions/dns_config"
+        },
+        "proxy": {
+          "$ref": "#/definitions/proxy_config"
+        }
+      }
+    },
+    "dns_config": {
+      "id": "#/definitions/dns_config",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "searches": {
+          "$ref": "#/definitions/list_of_strings"
+        },
+        "nameservers": {
+          "$ref": "#/definitions/list_of_strings"
+        }
+      }
+    },
+    "proxy_config": {
+      "id": "#/definitions/proxy_config",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "no_proxy": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        }
+      }
+    },
     "list_of_strings": {
       "type": "array",
       "items": {

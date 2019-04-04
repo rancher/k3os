@@ -52,6 +52,12 @@ type K3OSConfig struct {
 	Network  NetworkConfig     `yaml:"network,omitempty"`
 }
 
+type ProxyConfig struct {
+	Address  string `yaml:"address,omitempty"`
+	NoProxy  string `yaml:"no_proxy,omitempty"`
+	Protocol string `yaml:"protocol,omitempty"`
+}
+
 type SSHConfig struct {
 	Address        string   `yaml:"address,omitempty"`
 	AuthorizedKeys []string `yaml:"authorized_keys,omitempty"`
@@ -66,7 +72,8 @@ type UpgradeConfig struct {
 }
 
 type NetworkConfig struct {
-	DNS DNSConfig `yaml:"dns,omitempty"`
+	DNS   DNSConfig   `yaml:"dns,omitempty"`
+	Proxy ProxyConfig `yaml:"proxy,omitempty"`
 }
 
 func (c *Command) UnmarshalYAML(unmarshal func(interface{}) error) error {

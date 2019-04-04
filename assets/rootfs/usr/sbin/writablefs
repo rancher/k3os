@@ -22,6 +22,7 @@ trap "rm -rf ${TMP_DIR}" EXIT
 
 # The magic dirs and files
 MAGICS="/etc/ssh
+        /etc/profile.d
         /etc/rc.local
         /var/db/dhcpcd
         /etc/default
@@ -46,6 +47,12 @@ if [ -z "${STATE_DEVICE}" ]; then
                 cp -arf ${i}/* ${TMP_DIR}/etc/ssh
                 mount -t tmpfs tmpfs /etc/ssh
                 cp -arf ${TMP_DIR}/etc/ssh/* /etc/ssh
+                ;;
+            "/etc/profile.d")
+                mkdir -p ${TMP_DIR}/etc/profile.d
+                cp -arf ${i}/* ${TMP_DIR}/etc/profile.d
+                mount -t tmpfs tmpfs /etc/profile.d
+                cp -arf ${TMP_DIR}/etc/profile.d/* /etc/profile.d
                 ;;
             "/etc/hosts")
                 cat /etc/hosts > /tmp/hosts
@@ -82,6 +89,13 @@ for i in ${MAGICS}; do
                 cp -arf /etc/ssh/* ${SYSTEMDATA_DIR}/etc/ssh
             fi
             mount -o bind ${SYSTEMDATA_DIR}/etc/ssh /etc/ssh
+            ;;
+        "/etc/profile.d")
+            if [ ! -d ${SYSTEMDATA_DIR}/etc/profile.d ]; then
+                mkdir -p ${SYSTEMDATA_DIR}/etc/profile.d
+                cp -arf /etc/profile.d/* ${SYSTEMDATA_DIR}/etc/profile.d
+            fi
+            mount -o bind ${SYSTEMDATA_DIR}/etc/profile.d /etc/profile.d
             ;;
         "/etc/hosts")
             if [ ! -f ${SYSTEMDATA_DIR}/etc/hosts ]; then
