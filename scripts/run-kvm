@@ -60,7 +60,7 @@ fi
 KERNEL_ARGS="${DEFAULT_KERNEL_ARGS} ${QEMU_APPEND}"
 
 if [ "$BOOT_ISO" == "1" ]; then
-    ISO_OPTS="-boot d -cdrom ./dist/artifacts/k3os.iso"
+    ISO_OPTS="-boot c -cdrom ./dist/artifacts/k3os.iso"
         echo "----- $ISO_OPTS"
 
     exec qemu-system-${QEMUARCH} \
