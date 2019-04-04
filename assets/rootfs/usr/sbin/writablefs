@@ -51,6 +51,10 @@ if [ -z "${STATE_DEVICE}" ]; then
                 cat /etc/hosts > /tmp/hosts
                 mount -o bind /tmp/hosts /etc/hosts
                 ;;
+            "/etc/rc.local")
+                cat /etc/rc.local > /tmp/rc.local
+                mount -o bind /tmp/rc.local /etc/rc.local
+                ;;
             *)
                 mount -t tmpfs -o mode=755 tmpfs ${i}
                 ;;
