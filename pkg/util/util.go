@@ -204,6 +204,26 @@ func HTTPDownloadToFile(url, dest string) error {
 	return WriteFileAtomic(dest, body, 0644)
 }
 
+func HTTPLoadBytes(url string) ([]byte, error) {
+	var resp *http.Response
+	resp, err := http.Get(url)
+	if err == nil {
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("non-200 http response: %d", resp.StatusCode)
+		}
+
+		bytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		return bytes, nil
+	}
+
+	return nil, err
+}
+
 func ExistsAndExecutable(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {

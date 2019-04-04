@@ -38,6 +38,12 @@ func Main() {
 			SkipFlagParsing: true,
 			Action:          entryPoint,
 		},
+		{
+			Name:        "os",
+			Usage:       "operating system upgrade/downgrade",
+			HideHelp:    true,
+			Subcommands: osSubcommands(),
+		},
 		installCommand,
 	}
 	app.Run(os.Args)
