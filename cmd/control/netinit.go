@@ -24,5 +24,8 @@ func NetInitMain() {
 func netInit(c *cli.Context) error {
 	cfg := config.LoadConfig("", false)
 	// setup dns
-	return network.SettingDNS(cfg)
+	if err := network.SettingDNS(cfg); err != nil {
+		return err
+	}
+	return network.SettingProxy(cfg)
 }
