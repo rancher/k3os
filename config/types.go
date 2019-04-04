@@ -25,8 +25,8 @@ var (
 
 type CloudConfig struct {
 	Hostname string     `yaml:"hostname,omitempty"`
-	Runcmd   []Command  `yaml:"runcmd,omitempty"`
 	K3OS     K3OSConfig `yaml:"k3os,omitempty"`
+	Runcmd   []Command  `yaml:"runcmd,omitempty"`
 }
 
 type Command struct {
@@ -39,17 +39,22 @@ type Defaults struct {
 }
 
 type DNSConfig struct {
-	Searches    []string `yaml:"searches,flow,omitempty"`
 	Nameservers []string `yaml:"nameservers,flow,omitempty"`
+	Searches    []string `yaml:"searches,flow,omitempty"`
+}
+
+type InterfaceConfig struct {
+	Addresses []string `yaml:"addresses,flow,omitempty"`
+	Gateway   string   `yaml:"gateway,omitempty"`
 }
 
 type K3OSConfig struct {
 	Defaults Defaults          `yaml:"defaults,omitempty"`
 	Modules  []string          `yaml:"modules,omitempty"`
+	Network  NetworkConfig     `yaml:"network,omitempty"`
 	SSH      SSHConfig         `yaml:"ssh,omitempty"`
 	Sysctl   map[string]string `yaml:"sysctl,omitempty"`
 	Upgrade  UpgradeConfig     `yaml:"upgrade,omitempty"`
-	Network  NetworkConfig     `yaml:"network,omitempty"`
 }
 
 type ProxyConfig struct {
@@ -72,8 +77,9 @@ type UpgradeConfig struct {
 }
 
 type NetworkConfig struct {
-	DNS   DNSConfig   `yaml:"dns,omitempty"`
-	Proxy ProxyConfig `yaml:"proxy,omitempty"`
+	DNS        DNSConfig                  `yaml:"dns,omitempty"`
+	Interfaces map[string]InterfaceConfig `yaml:"interfaces,omitempty"`
+	Proxy      ProxyConfig                `yaml:"proxy,omitempty"`
 }
 
 func (c *Command) UnmarshalYAML(unmarshal func(interface{}) error) error {

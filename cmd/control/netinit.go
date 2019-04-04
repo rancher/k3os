@@ -23,6 +23,10 @@ func NetInitMain() {
 
 func netInit(c *cli.Context) error {
 	cfg := config.LoadConfig("", false)
+	// setup network
+	if err := network.SettingNetwork(cfg); err != nil {
+		return err
+	}
 	// setup dns
 	if err := network.SettingDNS(cfg); err != nil {
 		return err
