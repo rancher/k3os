@@ -87,6 +87,9 @@ var schema = `{
         "dns": {
           "$ref": "#/definitions/dns_config"
         },
+        "interfaces": {
+          "$ref": "#/definitions/interface_additional"
+        },
         "proxy": {
           "$ref": "#/definitions/proxy_config"
         }
@@ -102,6 +105,26 @@ var schema = `{
         },
         "nameservers": {
           "$ref": "#/definitions/list_of_strings"
+        }
+      }
+    },
+    "interface_additional": {
+      "id": "#/definitions/interface_additional",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/interface_config"
+      }
+    },
+    "interface_config": {
+      "id": "#/definitions/interface_config",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "addresses": {
+          "$ref": "#/definitions/list_of_strings"
+        },
+        "gateway": {
+          "type": "string"
         }
       }
     },
