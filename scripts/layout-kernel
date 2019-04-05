@@ -2,23 +2,22 @@
 set -e
 
 # Override using a local kernel build
-if [ -e ${DAPPER_SOURCE}/assets/kernel.tar.gz ]; then
-    echo "copying ${DAPPER_SOURCE}/assets/kernel.tar.gz ${DOWNLOADS}/kernel.tar.gz"
-    cp ${DAPPER_SOURCE}/assets/kernel.tar.gz ${DOWNLOADS}/kernel.tar.gz
+if [ -e ${DAPPER_SOURCE}/assets/kernel.tar.xz ]; then
+    echo "copying ${DAPPER_SOURCE}/assets/kernel.tar.xz ${DOWNLOADS}/kernel.tar.xz"
+    cp ${DAPPER_SOURCE}/assets/kernel.tar.xz ${DOWNLOADS}/kernel.tar.xz
 else
-    echo "... Downloading  ${!KERNEL_URL}"; \
     if [ -n "${!KERNEL_URL}" ]; then
-        curl -fL ${!KERNEL_URL} > ${DOWNLOADS}/kernel.tar.gz
+        curl -fL ${!KERNEL_URL} > ${DOWNLOADS}/kernel.tar.xz
     fi
 fi
 
 mkdir -p ${KERNEL_DIR}
-tar xf ${DOWNLOADS}/kernel.tar.gz -C ${KERNEL_DIR}
+tar xf ${DOWNLOADS}/kernel.tar.xz -C ${KERNEL_DIR}
 
 # Use kernel-extra if possible
-if [ -e ${DAPPER_SOURCE}/assets/kernel-extra.tar.gz ]; then
-    cp ${DAPPER_SOURCE}/assets/kernel-extra.tar.gz ${DOWNLOADS}/kernel-extra.tar.gz
-    tar xf ${DOWNLOADS}/kernel-extra.tar.gz -C ${KERNEL_DIR}
+if [ -e ${DAPPER_SOURCE}/assets/kernel-extra.tar.xz ]; then
+    cp ${DAPPER_SOURCE}/assets/kernel-extra.tar.xz ${DOWNLOADS}/kernel-extra.tar.xz
+    tar xf ${DOWNLOADS}/kernel-extra.tar.xz -C ${KERNEL_DIR}
 fi
 
 if [ -e ${KERNEL_DIR}/boot/vmlinuz-* ]; then
