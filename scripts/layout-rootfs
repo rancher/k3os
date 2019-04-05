@@ -4,17 +4,14 @@ set -e
 mkdir -p ${ROOTFS_DIR}
 
 # Override using a local rootfs build
-if [ -e ${DAPPER_SOURCE}/assets/rootfs.tar ]; then
-    echo "copying ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar"
-    cp ${DAPPER_SOURCE}/assets/rootfs.tar ${DOWNLOADS}/rootfs.tar
+if [ -e ${DAPPER_SOURCE}/assets/rootfs.tar.xz ]; then
+    echo "copying ${DAPPER_SOURCE}/assets/rootfs.tar.xz ${DOWNLOADS}/rootfs.tar.xz"
+    cp ${DAPPER_SOURCE}/assets/rootfs.tar.xz ${DOWNLOADS}/rootfs.tar.xz
 else
-    pushd /tmp
-    curl -sSL ${!ROOTFS_URL} | tar xvJf -
-    mv rootfs.tar ${DOWNLOADS}/rootfs.tar
-    popd
+    curl -fL ${!ROOTFS_URL} -o ${DOWNLOADS}/rootfs.tar.xz
 fi
 
-tar xf ${DOWNLOADS}/rootfs.tar -C ${ROOTFS_DIR}
+tar xf ${DOWNLOADS}/rootfs.tar.xz -C ${ROOTFS_DIR}
 
 cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 

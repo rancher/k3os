@@ -4,16 +4,13 @@ set -e
 mkdir -p ${INITRD_DIR}
 
 # Override using a local initrdfs build
-if [ -e ${DAPPER_SOURCE}/assets/initrdfs.tar ]; then
-    echo "copying ${DAPPER_SOURCE}/assets/initrdfs.tar ${DOWNLOADS}/initrdfs.tar"
-    cp ${DAPPER_SOURCE}/assets/initrdfs.tar ${DOWNLOADS}/initrdfs.tar
+if [ -e ${DAPPER_SOURCE}/assets/initrdfs.tar.xz ]; then
+    echo "copying ${DAPPER_SOURCE}/assets/initrdfs.tar.xz ${DOWNLOADS}/initrdfs.tar.xz"
+    cp ${DAPPER_SOURCE}/assets/initrdfs.tar.xz ${DOWNLOADS}/initrdfs.tar.xz
 else
-    pushd /tmp
-    curl -sSL ${!INITRDFS_URL} | tar xvJf -
-    mv rootfs.tar ${DOWNLOADS}/initrdfs.tar
-    popd
+    curl -fL ${!INITRDFS_URL} -o ${DOWNLOADS}/initrdfs.tar.xz
 fi
 
-tar xf ${DOWNLOADS}/initrdfs.tar -C ${INITRD_DIR}
+tar xf ${DOWNLOADS}/initrdfs.tar.xz -C ${INITRD_DIR}
 
 cp assets/initrdfs/init ${INITRD_DIR}/
