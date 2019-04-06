@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+
+source $(dirname $0)/version
+cd $(dirname $0)/..
+
+./scripts/default
+
+CHECKSUM_FILE=dist/artifacts/checksums.txt
+
+touch dist/publish.sh dist/publish_gss_${VERSION}.sh dist/publish_gss_latest.sh
+chmod 755 dist/publish.sh dist/publish_gss_${VERSION}.sh dist/publish_gss_latest.sh
+
+pushd dist/artifacts
+for file in $(ls ./); do
+    case $file in
+        "initrd-"* | "vmlinuz-"* | "k3os.iso")
+            echo "hub release edit -m ${VERSION} -a dist/artifacts/${file} ${VERSION}" >> ../publish.sh
+            echo "gsutil cp dist/artifacts/${file} gs://releases.rancher.com/k3os/latest/" >> ../publish_gss_latest.sh
+            echo "gsutil cp dist/artifacts/${file} gs://releases.rancher.com/k3os/${VERSION}/" >> ../publish_gss_${VERSION}.sh
+
+            for algo in sha256 md5; do
+                echo "$algo: $(${algo}sum $file)" >> ${DAPPER_SOURCE}/${CHECKSUM_FILE}
+            done
+            ;;
+    esac
+done
+popd
+
+echo "hub release edit -m ${VERSION} -a ${CHECKSUM_FILE} ${VERSION}" >> dist/publish.sh
+echo "gsutil cp ${CHECKSUM_FILE} gs://releases.rancher.com/os/latest/" >> ./dist/publish_gss_latest.sh
+echo "gsutil cp ${CHECKSUM_FILE} gs://releases.rancher.com/os/${VERSION}/" >> ./dist/publish_gss_${VERSION}.sh
