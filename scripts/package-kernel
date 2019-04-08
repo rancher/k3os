@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 
-mksquashfs ${KERNEL_DIR}/lib/firmware ${ARTIFACTS}/firmware.squashfs
-mksquashfs ${KERNEL_DIR}/lib/modules ${ARTIFACTS}/modules.squashfs
+mksquashfs ${KERNEL_DIR}/lib/firmware ${ARTIFACTS}/firmware${SUFFIX}.squashfs
+mksquashfs ${KERNEL_DIR}/lib/modules ${ARTIFACTS}/modules${SUFFIX}.squashfs

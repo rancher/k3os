@@ -15,14 +15,13 @@ if [ -z "$VERSION" ]; then
     fi
 fi
 
-INITRD=initrd-${VERSION}
-export VERSION COMMIT INITRD GIT_TAG DIRTY
-
 # Suffix
-export SUFFIX=""
+SUFFIX=""
 if [ -n "${ARCH}" ] && [ "${ARCH}" != "amd64" ]; then
-    # TODO: why is this not exported?
     SUFFIX="_${ARCH}"
 fi
+
+INITRD=initrd${SUFFIX}-${VERSION}
+export VERSION COMMIT INITRD GIT_TAG DIRTY SUFFIX
 
 echo " Building ${VERSION} from ${COMMIT} on ${ARCH}"

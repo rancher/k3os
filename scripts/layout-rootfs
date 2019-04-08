@@ -22,7 +22,9 @@ cat assets/rootfs/etc/os-release | envsubst > ${ROOTFS_DIR}/etc/os-release
 cp bin/k3os ${ROOTFS_DIR}/usr/bin/
 
 # add syslinux binary
-cp ${BOOTLOADER_DIR}/bin/* ${ROOTFS_DIR}/usr/bin/
+if [ "${ARCH}" == "amd64" ]; then
+    cp ${BOOTLOADER_DIR}/bin/* ${ROOTFS_DIR}/usr/bin/
+fi
 
 # copy modprobe.d from KERNEL_DIR to rootfs
 cp -rf ${KERNEL_DIR}/lib/modprobe.d ${ROOTFS_DIR}/usr/lib/

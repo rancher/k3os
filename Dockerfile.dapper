@@ -23,7 +23,6 @@ RUN apt-get update \
         qemu-kvm \
         rsync \
         sudo \
-        extlinux \
         syslinux-common \
         vim \
         wget \
@@ -48,17 +47,17 @@ WORKDIR ${DAPPER_SOURCE}
 ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
 
-ARG KERNEL_VERSION=5.0.0-8.9-rancher2
+ARG KERNEL_VERSION=5.0.0-8.9-rancher3
 ARG KERNEL_URL_amd64=https://github.com/niusmallnan/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_amd64.tar.xz
-#ARG KERNEL_URL_arm64=
+ARG KERNEL_URL_arm64=https://github.com/niusmallnan/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_arm64.tar.xz
 
-ARG INITRDFS_VERSION=2018.02.11-rancher2
-ARG INITRDFS_URL_amd64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/amd64.tar.xz
-#ARG INITRDFS_URL_arm64=
+ARG INITRDFS_VERSION=2018.02.11-rancher3
+ARG INITRDFS_URL_amd64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_amd64.tar.xz
+ARG INITRDFS_URL_arm64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_arm64.tar.xz
 
-ARG ROOTFS_VERSION=2019.02.1-rancher2
-ARG ROOTFS_URL_amd64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/amd64.tar.xz
-#ARG ROOTFS_URL_arm64=
+ARG ROOTFS_VERSION=2019.02.1-rancher3
+ARG ROOTFS_URL_amd64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_amd64.tar.xz
+ARG ROOTFS_URL_arm64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_arm64.tar.xz
 
 ARG K3OS_RELEASES_YML=https://releases.rancher.com/k3os
 
@@ -67,6 +66,7 @@ ARG DEFAULT_HOSTNAME=rancher
 ENV KERNEL_VERSION=${KERNEL_VERSION} \
     KERNEL_URL=KERNEL_URL_${ARCH} \
     KERNEL_URL_amd64=${KERNEL_URL_amd64} \
+    KERNEL_URL_arm64=${KERNEL_URL_arm64} \
     ROOTFS_URL=ROOTFS_URL_${ARCH} \
     ROOTFS_URL_amd64=${ROOTFS_URL_amd64} \
     ROOTFS_URL_arm64=${ROOTFS_URL_arm64} \
