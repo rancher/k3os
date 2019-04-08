@@ -67,14 +67,14 @@ func osUpgrade(c *cli.Context) error {
 	forceFlag := c.Bool("force")
 	//TODO: debug for output
 
-	if !forceFlag && !util.Yes("Continue with os upgrade") {
+	if !forceFlag && !util.Yes("continue with os upgrade") {
 		return nil
 	}
 	cfg := config.LoadConfig("", false)
 	upgradeURL := cfg.K3OS.Upgrade.URL
 	images, err := getImages(upgradeURL)
 	if err != nil {
-		logrus.Fatalf("Failed to get os list: %v", err)
+		logrus.Fatalf("failed to get os list: %v", err)
 	}
 
 	if imageVersion == "" {
@@ -90,12 +90,12 @@ func osUpgrade(c *cli.Context) error {
 	}
 
 	if imageObject.Version == "" {
-		logrus.Fatalf("Invalid image version for %s", imageVersion)
+		logrus.Fatalf("invalid image version for %s", imageVersion)
 	}
 
 	err = util.RunScript(OSUpgradeScript, imageObject.Initrd, imageObject.Vmlinuz, imageObject.Version, imageObject.Kernel)
 	if err != nil {
-		logrus.Fatalf("Failed to run upgrade script: %v", err)
+		logrus.Fatalf("failed to run upgrade script: %v", err)
 	}
 
 	if rebootFlag || forceFlag {
@@ -112,7 +112,7 @@ func osList(c *cli.Context) error {
 
 	images, err := getImages(upgradeURL)
 	if err != nil {
-		logrus.Fatalf("Failed to get os list: %v", err)
+		logrus.Fatalf("failed to get os list: %v", err)
 	}
 
 	fmt.Println("running:")

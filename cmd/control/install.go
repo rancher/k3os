@@ -24,7 +24,7 @@ const (
 
 var installCommand = cli.Command{
 	Name:     "install",
-	Usage:    "install K3OS to disk",
+	Usage:    "install k3os to disk",
 	HideHelp: true,
 	Action:   installAction,
 	Flags: []cli.Flag{
@@ -43,7 +43,7 @@ var installCommand = cli.Command{
 		},
 		cli.BoolFlag{
 			Name:  "force, f",
-			Usage: "[ DANGEROUS! Data loss can happen ] partition/format without prompting",
+			Usage: "[ DANGEROUS! data loss can happen ] partition/format without prompting",
 		},
 		cli.BoolFlag{
 			Name:  "no-reboot",
@@ -51,7 +51,7 @@ var installCommand = cli.Command{
 		},
 		cli.BoolFlag{
 			Name:  "debug",
-			Usage: "Run installer with debug output",
+			Usage: "run installer with debug output",
 		},
 	},
 }
@@ -65,16 +65,16 @@ func installAction(c *cli.Context) error {
 	//TODO: debug for output
 
 	if installDevice == "" {
-		logrus.Fatal("Can not proceed without -d <dev> specified")
+		logrus.Fatal("can not proceed without -d <dev> specified")
 	}
 
 	if cloudConfig == "" {
-		logrus.Warn("Cloud-config not provided: you might need to provide cloud-config on boot with k3os.ssh.authorized_keys")
+		logrus.Warn("cloud-config not provided: you might need to provide cloud-config on boot with k3os.ssh.authorized_keys")
 		// create an empty file
 		// TODO: direct the user to create a config file
 		emptyFile, err := os.Create(EmptyConfigTempFile)
 		if err != nil {
-			logrus.Fatalf("Failed to create empty config file, %v", err)
+			logrus.Fatalf("failed to create empty config file, %v", err)
 		}
 		cloudConfig = EmptyConfigTempFile
 		emptyFile.Close()
@@ -86,20 +86,20 @@ func installAction(c *cli.Context) error {
 
 	installBootScript := fmt.Sprintf("/usr/sbin/k3os-install-%s", installType)
 	if err := util.RunScript(installBootScript, installDevice); err != nil {
-		logrus.Fatalf("Failed to install boot things to disk, %v", err)
+		logrus.Fatalf("failed to install boot things to disk, %v", err)
 	}
 
 	if strings.HasPrefix(cloudConfig, "http://") || strings.HasPrefix(cloudConfig, "https://") {
 		if err := util.HTTPDownloadToFile(cloudConfig, UserConfigTempFile); err != nil {
-			logrus.Fatalf("Failed to get cloud-config via http(s): %s", cloudConfig)
+			logrus.Fatalf("failed to get cloud-config via http(s): %s", cloudConfig)
 		}
 	} else {
 		if err := util.FileCopy(cloudConfig, UserConfigTempFile); err != nil {
-			logrus.Fatalf("Failed to copy cloud-config: %s", cloudConfig)
+			logrus.Fatalf("failed to copy cloud-config: %s", cloudConfig)
 		}
 	}
 	if err := util.RunScript(InstallConfigScript, UserConfigTempFile); err != nil {
-		logrus.Fatalf("Failed to install config to disk, %v", err)
+		logrus.Fatalf("failed to install config to disk, %v", err)
 	}
 
 	if rebootFlag || forceFlag {
