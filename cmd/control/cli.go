@@ -21,7 +21,7 @@ func Main() {
 	app.Before = beforeFunc
 	app.EnableBashCompletion = true
 	app.Name = os.Args[0]
-	app.Usage = fmt.Sprintf("Control and configure K3OS(%s)", config.OSBuildDate)
+	app.Usage = fmt.Sprintf("control and configure K3OS(%s)", config.OSBuildDate)
 	app.Version = config.OSVersion
 	app.Commands = []cli.Command{
 		{
