@@ -53,9 +53,9 @@ type K3OSConfig struct {
 }
 
 type ProxyConfig struct {
-	Address  string `yaml:"address,omitempty"`
-	NoProxy  string `yaml:"no_proxy,omitempty"`
-	Protocol string `yaml:"protocol,omitempty"`
+	HttpProxy  string `yaml:"http_proxy,omitempty"`
+	HttpsProxy string `yaml:"https_proxy,omitempty"`
+	NoProxy    string `yaml:"no_proxy,omitempty"`
 }
 
 type SSHConfig struct {

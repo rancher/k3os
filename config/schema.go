@@ -110,13 +110,13 @@ var schema = `{
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "address": {
+        "http_proxy": {
+          "type": "string"
+        },
+        "https_proxy": {
           "type": "string"
         },
         "no_proxy": {
-          "type": "string"
-        },
-        "protocol": {
           "type": "string"
         }
       }
