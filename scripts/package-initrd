@@ -2,13 +2,13 @@
 set -e
 
 # add rootfs.squashfs
-cp ${ARTIFACTS}/rootfs${SUFFIX}.squashfs ${INITRD_DIR}/
+cp ${ARTIFACTS}/rootfs${SUFFIX}.squashfs ${INITRD_DIR}/rootfs.squashfs
 
 # add modules.squashfs
-cp ${ARTIFACTS}/modules${SUFFIX}.squashfs ${INITRD_DIR}/
+cp ${ARTIFACTS}/modules${SUFFIX}.squashfs ${INITRD_DIR}/modules.squashfs
 
 # add firmware.squashfs
-cp ${ARTIFACTS}/firmware${SUFFIX}.squashfs ${INITRD_DIR}/
+cp ${ARTIFACTS}/firmware${SUFFIX}.squashfs ${INITRD_DIR}/firmware.squashfs
 
 pushd ${INITRD_DIR}
 echo Creating ${ARTIFACTS}/${INITRD}
