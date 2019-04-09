@@ -61,6 +61,7 @@ if [ -z "${STATE_DEVICE}" ]; then
             "/etc/rc.local")
                 cat /etc/rc.local > /tmp/rc.local
                 mount -o bind /tmp/rc.local /etc/rc.local
+                chmod +x /etc/rc.local
                 ;;
             *)
                 mount -t tmpfs -o mode=755 tmpfs ${i}
