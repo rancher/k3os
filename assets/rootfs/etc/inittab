@@ -26,6 +26,8 @@ ttyS1::respawn:/sbin/agetty -a rancher -J -p ttyS1 linux
 ttyS2::respawn:/sbin/agetty -a rancher -J -p ttyS2 linux
 ttyS3::respawn:/sbin/agetty -a rancher -J -p ttyS3 linux
 
+ttyAMA0::respawn:/sbin/agetty -a rancher -J -p ttyAMA0 linux
+
 # Stuff to do before rebooting
 ::ctrlaltdel:/sbin/reboot
 ::shutdown:/bin/umount -a -r
