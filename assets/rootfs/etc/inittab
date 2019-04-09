@@ -10,24 +10,6 @@
 ::sysinit:/sbin/sysinit
 ::sysinit:/etc/init.d/rcS
 
-#
-# TODO: tty invocations should be rewritten by go
-#
-
-tty1::respawn:/sbin/agetty -a rancher -J -p tty1 linux
-tty2::respawn:/sbin/agetty -a rancher -J -p tty2 linux
-tty3::respawn:/sbin/agetty -a rancher -J -p tty3 linux
-tty4::respawn:/sbin/agetty -a rancher -J -p tty4 linux
-tty5::respawn:/sbin/agetty -a rancher -J -p tty5 linux
-tty6::respawn:/sbin/agetty -a rancher -J -p tty6 linux
-
-ttyS0::respawn:/sbin/agetty -a rancher -J -p ttyS0 linux
-ttyS1::respawn:/sbin/agetty -a rancher -J -p ttyS1 linux
-ttyS2::respawn:/sbin/agetty -a rancher -J -p ttyS2 linux
-ttyS3::respawn:/sbin/agetty -a rancher -J -p ttyS3 linux
-
-ttyAMA0::respawn:/sbin/agetty -a rancher -J -p ttyAMA0 linux
-
 # Stuff to do before rebooting
 ::ctrlaltdel:/sbin/reboot
 ::shutdown:/bin/umount -a -r

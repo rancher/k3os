@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# TODO:
+#   1. the ppid of agetty should be pid 1.
+#   2. don't have to activate all ttys, refer to systemd
+#
+
+NAME="k3os-ttyinit"
+
+start()
+{
+    printf "Starting ${NAME}: "
+    ${NAME} &
+}
+
+stop()
+{
+    printf "Stopping ${NAME}: "
+    killall $NAME
+}
+
+
+case "$1" in
+  start)
+      start
+      ;;
+  stop)
+      stop
+      ;;
+  restart|reload)
+      "$0" stop
+      sleep 1
+      "$0" start
+      ;;
+  *)
+      echo "Usage: $0 {start|stop|restart}"
+      exit 1
+esac
+
+exit $?

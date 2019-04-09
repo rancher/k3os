@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/niusmallnan/k3os/cmd/control"
+	"github.com/niusmallnan/k3os/cmd/ttyinit"
 
 	"github.com/docker/docker/pkg/reexec"
 	"github.com/sirupsen/logrus"
@@ -12,6 +13,7 @@ import (
 var entryPoints = map[string]func(){
 	"k3os-sysinit": control.SysInitMain,
 	"k3os-netinit": control.NetInitMain,
+	"k3os-ttyinit": ttyinit.Main,
 }
 
 func init() {
