@@ -59,26 +59,30 @@ fi
 
 KERNEL_ARGS="${DEFAULT_KERNEL_ARGS} ${QEMU_APPEND}"
 
+HD_OPTS="-drive if=virtio,file=${HD}"
+if [ "${QEMUARCH}" == "aarch64" ]; then
+    HD_OPTS="-drive if=none,id=hd0,file=${HD} -device virtio-blk-device,drive=hd0"
+fi
+
 if [ "$BOOT_ISO" == "1" ]; then
     ISO_OPTS="-boot c -cdrom ./dist/artifacts/k3os.iso"
-        echo "----- $ISO_OPTS"
+    echo "----- $ISO_OPTS"
 
     exec qemu-system-${QEMUARCH} \
             -nographic \
             -serial mon:stdio \
             -display none \
             -rtc base=utc,clock=host \
-            -enable-kvm \
-            -cpu host \
+            ${MACHINE} \
+            ${CPU} \
             -m 2048 \
-            -net nic,vlan=0,model=virtio \
-            -net user,vlan=0,hostfwd=tcp::2222-:22,hostname=rancher-dev \
-            -drive if=virtio,file=${HD}\
+            ${NETWORK} \
+            ${HD_OPTS} \
             -smp 1 \
             ${ISO_OPTS} \
             -device virtio-rng-pci
 else
-    exec qemu-system-x86_64 \
+    exec qemu-system-${QEMUARCH} \
             -nographic \
             -serial mon:stdio \
             -display none \
@@ -86,15 +90,12 @@ else
             -kernel ${KERNEL} \
             -initrd ${INITRD} \
             -append "${KERNEL_ARGS}" \
-            -enable-kvm \
-            -cpu host \
+            ${MACHINE} \
+            ${CPU} \
             -m 2048 \
-            -net nic,vlan=0,model=virtio \
-            -net user,vlan=0,hostfwd=tcp::2222-:22,hostname=rancher-dev \
-            -drive if=virtio,file=${HD}\
+            ${NETWORK} \
+            ${HD_OPTS} \
             -smp 1 \
-            -device virtio-rng-pci \
-            -fsdev local,security_model=none,id=fsdev1,path=/root \
-            -device virtio-9p-pci,id=fs1,fsdev=fsdev1,mount_tag=home
+            -device virtio-rng-pci
 fi
 
