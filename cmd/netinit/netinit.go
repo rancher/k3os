@@ -1,6 +1,7 @@
 package netinit
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/niusmallnan/k3os/config"
@@ -16,7 +17,7 @@ func Main() {
 	app.EnableBashCompletion = true
 	app.HideHelp = true
 	app.Name = os.Args[0]
-	app.Usage = "k3os network init"
+	app.Usage = fmt.Sprintf("%s K3OS(%s)", app.Name, config.OSBuildDate)
 	app.Version = config.OSVersion
 	app.Action = netInit
 	app.Run(os.Args)

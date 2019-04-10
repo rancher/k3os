@@ -1,6 +1,7 @@
 package sysinit
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/niusmallnan/k3os/config"
@@ -21,7 +22,7 @@ func Main() {
 	app.EnableBashCompletion = true
 	app.HideHelp = true
 	app.Name = os.Args[0]
-	app.Usage = "k3os system init"
+	app.Usage = fmt.Sprintf("%s K3OS(%s)", app.Name, config.OSBuildDate)
 	app.Version = config.OSVersion
 	app.Action = sysInit
 	app.Run(os.Args)
