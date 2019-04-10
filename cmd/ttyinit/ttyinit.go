@@ -46,7 +46,7 @@ func Main() {
 	app := cli.NewApp()
 
 	app.Name = os.Args[0]
-	app.Usage = fmt.Sprintf("%s K3OS\nbuilt: %s", app.Name, config.OSBuildDate)
+	app.Usage = fmt.Sprintf("%s K3OS(%s)", app.Name, config.OSBuildDate)
 	app.Version = config.OSVersion
 	app.Author = "Rancher Labs, Inc."
 
