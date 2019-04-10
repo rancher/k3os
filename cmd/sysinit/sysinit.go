@@ -1,4 +1,4 @@
-package control
+package sysinit
 
 import (
 	"os"
@@ -15,7 +15,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func SysInitMain() {
+func Main() {
 	app := cli.NewApp()
 	app.Author = "Rancher Labs, Inc."
 	app.EnableBashCompletion = true

@@ -1,4 +1,4 @@
-package control
+package netinit
 
 import (
 	"os"
@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func NetInitMain() {
+func Main() {
 	app := cli.NewApp()
 	app.Author = "Rancher Labs, Inc."
 	app.EnableBashCompletion = true
