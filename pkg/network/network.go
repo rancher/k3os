@@ -103,7 +103,8 @@ func settingAddress(link netlink.Link, address string) error {
 
 func settingGateway(gateway string, link netlink.Link) error {
 	if gateway == "" {
-		return errors.New("gateway can not be empty")
+		logrus.Warnf("interface %s's gateway property is not setting", link.Attrs().Name)
+		return nil
 	}
 	gw := net.ParseIP(gateway)
 	if gw == nil {
