@@ -24,8 +24,8 @@ fi
 #    2. https://www.gnu.org/software/parted/manual/html_node/set.html
 if [[ -z "$(blkid -L RANCHER_BIOS)" && -z "$(blkid -L RANCHER_STATE)" ]]; then
     parted -s ${DEVICE} mklabel msdos
-    parted -s ${DEVICE} mkpart primary ext4 0% 1000MB
-    parted -s ${DEVICE} mkpart primary ext4 1000MB 100%
+    parted -s ${DEVICE} mkpart primary ext4 0% 1024MiB
+    parted -s ${DEVICE} mkpart primary ext4 1024MiB 100%
     parted -s ${DEVICE} set 1 boot on
     mkfs.ext4 -F -L RANCHER_BIOS ${DEVICE}1
     mkfs.ext4 -F -L RANCHER_STATE ${DEVICE}2
