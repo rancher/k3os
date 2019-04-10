@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mount -t devtmpfs devtmpfs /dev
-mkdir -p /dev/pts /dev/shm
+#mount -t devtmpfs devtmpfs /dev
+#mkdir -p /dev/pts /dev/shm
 
 mount -a

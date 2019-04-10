@@ -40,7 +40,8 @@ mkdir -p /home/ \
          /var/lib/k3os/conf \
          /var/lib/rancher \
          /etc/rancher \
-         /etc/default
+         /etc/default \
+         /var/initrd
 echo "#!/bin/sh" > /etc/rc.local && chmod +x /etc/rc.local
 passwd -l root
 addgroup -g 1100 rancher
