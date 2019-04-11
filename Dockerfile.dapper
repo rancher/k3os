@@ -51,7 +51,7 @@ ARG KERNEL_VERSION=5.0.0-8.9-rancher3
 ARG KERNEL_URL_amd64=https://github.com/niusmallnan/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_amd64.tar.xz
 ARG KERNEL_URL_arm64=https://github.com/niusmallnan/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_arm64.tar.xz
 
-ARG INITRDFS_VERSION=2018.02.11-rancher3
+ARG INITRDFS_VERSION=2018.02.11-rancher4
 ARG INITRDFS_URL_amd64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_amd64.tar.xz
 ARG INITRDFS_URL_arm64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_arm64.tar.xz
 
