@@ -125,6 +125,9 @@ var schema = `{
         },
         "gateway": {
           "type": "string"
+        },
+        "metric": {
+         "type": "integer"
         }
       }
     },
