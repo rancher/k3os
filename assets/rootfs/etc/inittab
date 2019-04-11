@@ -7,7 +7,7 @@
 # Please refer to: https://github.com/mirror/busybox/blob/1_29_stable/examples/inittab
 #
 
-::sysinit:/sbin/sysinit
+::sysinit:/bin/mount -a
 ::sysinit:/etc/init.d/rcS
 
 # Stuff to do before rebooting
