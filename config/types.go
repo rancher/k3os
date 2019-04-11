@@ -46,6 +46,7 @@ type DNSConfig struct {
 type InterfaceConfig struct {
 	Addresses []string `yaml:"addresses,flow,omitempty"`
 	Gateway   string   `yaml:"gateway,omitempty"`
+	Metric    int      `yaml:"metric,omitempty"`
 }
 
 type K3OSConfig struct {
