@@ -54,18 +54,22 @@ pushd ${INITRD_TMP}
 zcat ${INITRD} | cpio -idm
 popd
 
-# copy squashfs to RANCHER_ASSET partition
+# move squashfs to RANCHER_ASSET partition
 ASSET_TMP=/tmp/asset_tmp
 mkdir -p ${ASSET_TMP}
 mount ${DEVICE}2 ${ASSET_TMP}
-cp ${INITRD_TMP}/firmware.squashfs ${ASSET_TMP}/
-# TODO: we should rebuild a smaller initrd
+mv ${INITRD_TMP}/firmware*.squashfs ${ASSET_TMP}/
+mv ${INITRD_TMP}/rootfs*.squashfs ${ASSET_TMP}/
 
 # mount boot device and copy boot files
 mount ${DEVICE}1 /boot
+# create the smaller initrd
+pushd ${INITRD_TMP}
+find | cpio -H newc -o | gzip -9 > /boot/$(basename ${INITRD})
+popd
+
 pushd /boot
-# copy the smaller initrd and syslinux
-cp ${BOOT_TMP}/boot/initrd-* .
+# copy vmlinuz and syslinux
 cp ${BOOT_TMP}/boot/vmlinuz-* .
 cp ${BOOT_TMP}/boot/*.cfg .
 # install syslinux to boot partition

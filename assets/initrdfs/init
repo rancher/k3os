@@ -1,4 +1,8 @@
 #!/bin/busybox sh
+#
+# TODO:
+# 1. Something went wrong. Dropping you to a shell. (rescue_shell)
+#
 
 # Mount the /proc and /sys filesystems.
 mkdir -p /proc && mount -t proc proc /proc
@@ -12,22 +16,24 @@ mkdir -p /dev/pts /dev/shm
 mkdir -p /lib/modules
 mount -t squashfs -o loop /modules.squashfs /lib/modules
 
-mkdir -p /state
-mount -t squashfs -o loop /rootfs.squashfs /state
-
 # start udev
 udevd -d
 udevadm trigger --action=add
 udevadm settle
 udevadm control --exit
 
+mkdir -p /state
 ASSET_DEVICE_LABEL=RANCHER_ASSET
 if [ -e /dev/disk/by-label/${ASSET_DEVICE_LABEL} ]; then
     echo "********Found RANCHER_ASSET Partition********"
-    mount LABEL=${ASSET_DEVICE_LABEL} /state/var/initrd
-    mount -t squashfs -o loop /state/var/initrd/firmware.squashfs /state/usr/lib/firmware
+    mkdir -p /var/initrd
+    mount LABEL=${ASSET_DEVICE_LABEL} /var/initrd
+    mount -t squashfs -o loop /var/initrd/rootfs.squashfs /state
+    mount -t squashfs -o loop /var/initrd/firmware.squashfs /state/usr/lib/firmware
+    mount -n -o move /var/initrd /state/var/initrd
 else
     echo "********Not Found RANCHER_ASSET Partition********"
+    mount -t squashfs -o loop /rootfs.squashfs /state
     if [ -e /firmware.squashfs ]; then
         mount -t squashfs -o loop /firmware.squashfs /state/usr/lib/firmware
     fi
