@@ -5,11 +5,6 @@ if [ $EUID -ne 0 ]; then
     exit 1
 fi
 
-BIOS_BOOT_DEVICE=$(blkid -L RANCHER_BIOS)
-if [ ! -z "${BIOS_BOOT_DEVICE}" ]; then
-    mount ${BIOS_BOOT_DEVICE} /boot
-fi
-
 EFI_BOOT_DEVICE=$(blkid -L RANCHER_EFI)
 if [ ! -z "${EFI_BOOT_DEVICE}" ]; then
     mount ${EFI_BOOT_DEVICE} /boot
@@ -76,8 +71,6 @@ fi
 
 # mount the writable filesystem
 
-mount ${STATE_DEVICE} /writable
-
 SYSTEMDATA_DIR=/writable/system-data
 USERDATA_DIR=/writable/user-data
 mkdir -p ${SYSTEMDATA_DIR} ${USERDATA_DIR}
@@ -118,5 +111,8 @@ for i in ${MAGICS}; do
             ;;
     esac
 done
+
+# bind mount boot dir
+mount -o bind /writable/boot /boot
 
 chown -R rancher:rancher /home/rancher

@@ -13,7 +13,7 @@ mkdir -p /dev/pts /dev/shm
 #
 # TODO: we should build a smaller modules for initrd
 #
-mkdir -p /lib/modules
+mkdir -p /state /lib/modules
 mount -t squashfs -o loop /modules.squashfs /lib/modules
 
 # start udev
@@ -22,28 +22,31 @@ udevadm trigger --action=add
 udevadm settle
 udevadm control --exit
 
-mkdir -p /state
-ASSET_DEVICE_LABEL=RANCHER_ASSET
-if [ -e /dev/disk/by-label/${ASSET_DEVICE_LABEL} ]; then
-    echo "********Found RANCHER_ASSET Partition********"
-    mkdir -p /var/initrd
-    mount LABEL=${ASSET_DEVICE_LABEL} /var/initrd
-    mount -t squashfs -o loop /var/initrd/rootfs.squashfs /state
-    mount -t squashfs -o loop /var/initrd/firmware.squashfs /state/usr/lib/firmware
-    mount -n -o move /var/initrd /state/var/initrd
+SYSTEMDATA_DIR=system-data
+INITRD_DIR=var/initrd
+if [ -e /dev/disk/by-label/RANCHER_STATE ]; then
+    echo "********Found RANCHER_STATE Partition********"
+    mkdir /writable
+    mount LABEL=RANCHER_STATE /writable
+    mkdir -p /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}
+    mv /*.squashfs /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}
+    mount -t squashfs -o loop /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}/rootfs.squashfs /state
+    mount -t squashfs -o loop /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}/firmware.squashfs /state/usr/lib/firmware
+    umount /lib/modules
+    mount -t squashfs -o loop /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}/modules.squashfs /state/usr/lib/modules
+    mount -n -o move /writable /state/writable
+    mount -o bind /state/writable/${SYSTEMDATA_DIR}/${INITRD_DIR} /state/${INITRD_DIR}
 else
-    echo "********Not Found RANCHER_ASSET Partition********"
+    echo "********Not Found RANCHER_STATE Partition********"
     mount -t squashfs -o loop /rootfs.squashfs /state
-    if [ -e /firmware.squashfs ]; then
-        mount -t squashfs -o loop /firmware.squashfs /state/usr/lib/firmware
-    fi
+    mount -t squashfs -o loop /firmware.squashfs /state/usr/lib/firmware
+    mount -n -o move /lib/modules /state/usr/lib/modules
 fi
 
 # mount move
 mount -n -o move /proc /state/proc
 mount -n -o move /sys /state/sys
 mount -n -o move /dev /state/dev
-mount -n -o move /lib/modules /state/usr/lib/modules
 
 # Boot the real thing.
 exec switch_root /state /sbin/init

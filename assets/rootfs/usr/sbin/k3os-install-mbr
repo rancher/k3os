@@ -22,15 +22,11 @@ fi
 # reference:
 #    1. https://wiki.archlinux.org/index.php/Parted
 #    2. https://www.gnu.org/software/parted/manual/html_node/set.html
-if [[ -z "$(blkid -L RANCHER_BIOS)" && -z "$(blkid -L RANCHER_STATE)" ]]; then
+if [ -z "$(blkid -L RANCHER_STATE)" ]; then
     parted -s ${DEVICE} mklabel msdos
-    parted -s ${DEVICE} mkpart primary ext4 0% 1024MiB
-    parted -s ${DEVICE} mkpart primary ext4 1024MiB 2048MiB
-    parted -s ${DEVICE} mkpart primary ext4 2048MiB 100%
+    parted -s ${DEVICE} mkpart primary ext4 0% 100%
     parted -s ${DEVICE} set 1 boot on
-    mkfs.ext4 -F -L RANCHER_BIOS ${DEVICE}1
-    mkfs.ext4 -F -L RANCHER_ASSET ${DEVICE}2
-    mkfs.ext4 -F -L RANCHER_STATE ${DEVICE}3
+    mkfs.ext4 -F -L RANCHER_STATE ${DEVICE}1
 else
     echo "#### You have installed to disk"
     exit 1
@@ -45,31 +41,16 @@ fi
 BOOT_TMP=/tmp/boot_tmp
 mkdir -p ${BOOT_TMP}
 mount -t iso9660 -o loop ${ISO_DEVICE} ${BOOT_TMP}
-INITRD=$(ls ${BOOT_TMP}/boot/initrd*)
-
-# make initrd smaller
-INITRD_TMP=/tmp/initrd_tmp
-mkdir -p ${INITRD_TMP}
-pushd ${INITRD_TMP}
-zcat ${INITRD} | cpio -idm
-popd
-
-# move squashfs to RANCHER_ASSET partition
-ASSET_TMP=/tmp/asset_tmp
-mkdir -p ${ASSET_TMP}
-mount ${DEVICE}2 ${ASSET_TMP}
-mv ${INITRD_TMP}/firmware*.squashfs ${ASSET_TMP}/
-mv ${INITRD_TMP}/rootfs*.squashfs ${ASSET_TMP}/
 
 # mount boot device and copy boot files
-mount ${DEVICE}1 /boot
-# create the smaller initrd
-pushd ${INITRD_TMP}
-find | cpio -H newc -o | gzip -9 > /boot/$(basename ${INITRD})
-popd
+HD_BOOT=/tmp/hd_boot
+mkdir -p ${HD_BOOT}
+mount LABEL=RANCHER_STATE ${HD_BOOT}
 
-pushd /boot
-# copy vmlinuz and syslinux
+mkdir -p ${HD_BOOT}/boot
+pushd ${HD_BOOT}/boot
+# copy initrd and vmlinuz and syslinux
+cp ${BOOT_TMP}/boot/initrd-* .
 cp ${BOOT_TMP}/boot/vmlinuz-* .
 cp ${BOOT_TMP}/boot/*.cfg .
 # install syslinux to boot partition
@@ -81,7 +62,6 @@ extlinux --install ./syslinux
 cp ${BOOT_TMP}/boot/isolinux/isolinux.cfg ./syslinux/syslinux.cfg
 popd
 
-umount /boot
+umount ${HD_BOOT}
 umount ${BOOT_TMP}
-umount ${ASSET_TMP}
-rm -rf ${BOOT_TMP} ${INITRD_TMP} ${ASSET_TMP}
+rm -rf ${BOOT_TMP}
