@@ -126,8 +126,11 @@ var schema = `{
         "gateway": {
           "type": "string"
         },
+        "ipv4ll": {
+          "type": "boolean"
+        },
         "metric": {
-         "type": "integer"
+          "type": "integer"
         }
       }
     },
