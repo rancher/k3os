@@ -1,4 +1,4 @@
-#!/bin/busybox sh
+#!/bin/sh
 #
 # TODO:
 # 1. Something went wrong. Dropping you to a shell. (rescue_shell)
@@ -10,6 +10,16 @@ mkdir -p /sys && mount -t sysfs sysfs /sys
 mkdir -p /dev && mount -t devtmpfs devtmpfs /dev
 mkdir -p /dev/pts /dev/shm
 
+export ROOT
+# Parse command line options
+for x in $(cat /proc/cmdline); do
+    case $x in
+        root=*)
+            ROOT=${x#root=}
+            ;;
+    esac
+done
+
 #
 # TODO: we should build a smaller modules for initrd
 #
@@ -20,10 +30,21 @@ mount -t squashfs -o loop /modules.squashfs /lib/modules
 udevd -d
 udevadm trigger --action=add
 udevadm settle
+
+if [[ ! -e /dev/disk/by-label/RANCHER_STATE && ! -z "${ROOT}" ]]; then
+    echo "********Please Wait For Formatting ${ROOT}********"
+    parted -s ${ROOT} mklabel gpt
+    parted -s ${ROOT} mkpart primary ext4 0% 100%
+    mkfs.ext4 -F -L RANCHER_STATE ${ROOT}1
+    echo "********Done ${ROOT}********"
+fi
+
+# stop udev
+udevadm control --stop-exec-queue
 udevadm control --exit
 
-SYSTEMDATA_DIR=system-data
-INITRD_DIR=var/initrd
+export SYSTEMDATA_DIR=system-data
+export INITRD_DIR=var/initrd
 if [ -e /dev/disk/by-label/RANCHER_STATE ]; then
     echo "********Found RANCHER_STATE Partition********"
     mkdir /writable
@@ -42,6 +63,11 @@ else
     mount -t squashfs -o loop /firmware.squashfs /state/usr/lib/firmware
     mount -n -o move /lib/modules /state/usr/lib/modules
 fi
+
+# don't leak too much of env
+unset ROOT
+unset SYSTEMDATA_DIR
+unset INITRD_DIR
 
 # mount move
 mount -n -o move /proc /state/proc
