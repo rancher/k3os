@@ -12,6 +12,6 @@ cp ${ARTIFACTS}/firmware${SUFFIX}.squashfs ${INITRD_DIR}/firmware.squashfs
 
 pushd ${INITRD_DIR}
 echo Creating ${ARTIFACTS}/${INITRD}
-find | cpio -H newc -o | gzip > ${ARTIFACTS}/${INITRD}
+find | cpio -H newc -o | gzip -9 > ${ARTIFACTS}/${INITRD}
 echo Done creating ${ARTIFACTS}/${INITRD}
 popd
