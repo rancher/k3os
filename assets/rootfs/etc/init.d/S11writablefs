@@ -3,7 +3,7 @@
 case "$1" in
   start)
         echo "Start writablefs"
-        /sbin/writablefs
+        /usr/lib/k3os/writablefs
         ;;
   stop)
         ;;

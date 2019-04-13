@@ -17,7 +17,8 @@ const (
 	MBRInstallType    = "mbr"
 	EFIInstallType    = "efi"
 
-	InstallConfigScript = "/usr/sbin/k3os-install-config"
+	InstallConfigScript = "/usr/lib/k3os/k3os-install-config"
+	InstallBootScript   = "/usr/lib/k3os/k3os-install-%s"
 	UserConfigTempFile  = "/tmp/user_config.yml"
 	EmptyConfigTempFile = "/tmp/empty_config.yml"
 )
@@ -84,8 +85,8 @@ func installAction(c *cli.Context) error {
 		return nil
 	}
 
-	installBootScript := fmt.Sprintf("/usr/sbin/k3os-install-%s", installType)
-	if err := util.RunScript(installBootScript, installDevice); err != nil {
+	installBootLoader := fmt.Sprintf(InstallBootScript, installType)
+	if err := util.RunScript(installBootLoader, installDevice); err != nil {
 		logrus.Fatalf("failed to install boot things to disk, %v", err)
 	}
 

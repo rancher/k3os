@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	OSUpgradeScript = "/usr/sbin/k3os-upgrade"
+	OSUpgradeScript = "/usr/lib/k3os/k3os-upgrade"
 )
 
 type Images struct {
