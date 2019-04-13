@@ -43,20 +43,23 @@ fi
 udevadm control --stop-exec-queue
 udevadm control --exit
 
-export SYSTEMDATA_DIR=system-data
 export INITRD_DIR=var/initrd
+export HASH_ID=$(cat /.id)
+export WRITABLE_INITRD_DIR=/writable/system-data/${INITRD_DIR}/${HASH_ID}
 if [ -e /dev/disk/by-label/RANCHER_STATE ]; then
     echo "********Found RANCHER_STATE Partition********"
     mkdir /writable
     mount LABEL=RANCHER_STATE /writable
-    mkdir -p /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}
-    mv /*.squashfs /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}
-    mount -t squashfs -o loop /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}/rootfs.squashfs /state
-    mount -t squashfs -o loop /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}/firmware.squashfs /state/usr/lib/firmware
+    if [ ! -d "${WRITABLE_INITRD_DIR}" ]; then
+        mkdir -p ${WRITABLE_INITRD_DIR}
+        mv /*.squashfs ${WRITABLE_INITRD_DIR}
+    fi
+    mount -t squashfs -o loop ${WRITABLE_INITRD_DIR}/rootfs.squashfs /state
+    mount -t squashfs -o loop ${WRITABLE_INITRD_DIR}/firmware.squashfs /state/usr/lib/firmware
     umount /lib/modules
-    mount -t squashfs -o loop /writable/${SYSTEMDATA_DIR}/${INITRD_DIR}/modules.squashfs /state/usr/lib/modules
+    mount -t squashfs -o loop ${WRITABLE_INITRD_DIR}/modules.squashfs /state/usr/lib/modules
     mount -n -o move /writable /state/writable
-    mount -o bind /state/writable/${SYSTEMDATA_DIR}/${INITRD_DIR} /state/${INITRD_DIR}
+    mount -o bind /state/${WRITABLE_INITRD_DIR} /state/${INITRD_DIR}
 else
     echo "********Not Found RANCHER_STATE Partition********"
     mount -t squashfs -o loop /rootfs.squashfs /state
@@ -66,8 +69,9 @@ fi
 
 # don't leak too much of env
 unset ROOT
-unset SYSTEMDATA_DIR
 unset INITRD_DIR
+unset HASH_ID
+unset WRITABLE_INITRD_DIR
 
 # mount move
 mount -n -o move /proc /state/proc
