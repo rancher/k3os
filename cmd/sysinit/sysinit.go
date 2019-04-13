@@ -29,6 +29,7 @@ func Main() {
 }
 
 func sysInit(c *cli.Context) error {
+	setupNecessaryFs()
 	cfg := config.LoadConfig("", false)
 	// setup hostname
 	if err := pkgHostname.SetHostname(cfg); err != nil {
@@ -61,4 +62,15 @@ func sysInit(c *cli.Context) error {
 		logrus.Fatalf("failed to run rc.local: %v", err)
 	}
 	return nil
+}
+
+func setupNecessaryFs() {
+	if _, err := os.Stat(config.CloudConfigDir); os.IsNotExist(err) {
+		err := os.MkdirAll(config.CloudConfigDir, 0755)
+		if err != nil {
+			logrus.Error(err)
+		}
+	} else if err != nil {
+		logrus.Error(err)
+	}
 }

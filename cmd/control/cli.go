@@ -32,13 +32,6 @@ func Main() {
 			Subcommands: configCommands(),
 		},
 		{
-			Name:            "entrypoint",
-			Hidden:          true,
-			HideHelp:        true,
-			SkipFlagParsing: true,
-			Action:          entryPoint,
-		},
-		{
 			Name:        "os",
 			Usage:       "operating system upgrade/downgrade",
 			HideHelp:    true,
