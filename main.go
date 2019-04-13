@@ -13,9 +13,9 @@ import (
 )
 
 var entryPoints = map[string]func(){
-	"k3os-sysinit": sysinit.Main,
-	"k3os-netinit": netinit.Main,
-	"k3os-ttyinit": ttyinit.Main,
+	"/usr/lib/k3os/k3os-sysinit": sysinit.Main,
+	"/usr/lib/k3os/k3os-netinit": netinit.Main,
+	"/usr/lib/k3os/k3os-ttyinit": ttyinit.Main,
 }
 
 func init() {

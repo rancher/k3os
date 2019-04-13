@@ -10,7 +10,7 @@ NAME="k3os-ttyinit"
 start()
 {
     printf "Starting ${NAME}: "
-    ${NAME} &
+    /usr/lib/k3os/${NAME} &
 }
 
 stop()

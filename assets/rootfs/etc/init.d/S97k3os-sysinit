@@ -5,7 +5,7 @@ case "$1" in
         echo "Start k3os entrypoint"
         k3os entrypoint
         echo "Start k3os sysinit"
-        k3os-sysinit
+        /usr/lib/k3os/k3os-sysinit
         ;;
   stop)
         ;;

@@ -3,7 +3,7 @@
 case "$1" in
   start)
         echo "Start k3os network"
-        k3os-netinit
+        /usr/lib/k3os/k3os-netinit
         source /etc/profile
         ;;
   stop)
