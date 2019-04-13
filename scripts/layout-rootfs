@@ -37,7 +37,6 @@ mkdir -p /home/ \
          /usr/lib/firmware \
          /writable \
          /boot \
-         /var/lib/k3os/conf \
          /var/lib/rancher \
          /etc/rancher \
          /etc/default \

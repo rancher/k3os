@@ -21,7 +21,7 @@ TMP_STATE="/tmp/state"
 mkdir -p ${TMP_STATE}
 mount ${STATE_DEVICE} ${TMP_STATE}
 
-CONF_DIR=${TMP_STATE}/system-data/var/lib/k3os/conf/cloud-config.d
+CONF_DIR=${TMP_STATE}/system-data/var/lib/rancher/k3os/conf/cloud-config.d
 mkdir -p ${CONF_DIR}
 cp $CONFIG_FILE ${CONF_DIR}
 

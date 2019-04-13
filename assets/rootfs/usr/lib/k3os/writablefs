@@ -25,7 +25,6 @@ MAGICS="/etc/ssh
         /etc/rsyslog.d
         /etc/hosts
         /home/rancher
-        /var/lib/k3os/conf
         /etc/rancher
         /var/lib/rancher
         /mnt
