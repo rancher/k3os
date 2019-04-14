@@ -16,17 +16,9 @@ trap "rm -rf ${TMP_DIR}" EXIT
 
 
 # The magic dirs and files
-MAGICS="/etc/ssh
-        /etc/profile.d
-        /etc/rc.local
-        /var/db/dhcpcd
-        /etc/default
-        /etc/logrotate.d
-        /etc/rsyslog.d
-        /etc/hosts
-        /home/rancher
-        /etc/rancher
+MAGICS="/var/db/dhcpcd
         /var/lib/rancher
+        /home/rancher
         /mnt
         /media"
 
@@ -35,32 +27,7 @@ if [ -z "${STATE_DEVICE}" ]; then
     echo "No LABEL=RANCHER_STATE device, so we use tmpfs"
 
     for i in ${MAGICS}; do
-        case $i in
-            "/etc/ssh")
-                mkdir -p ${TMP_DIR}/etc/ssh
-                cp -arf ${i}/* ${TMP_DIR}/etc/ssh
-                mount -t tmpfs tmpfs /etc/ssh
-                cp -arf ${TMP_DIR}/etc/ssh/* /etc/ssh
-                ;;
-            "/etc/profile.d")
-                mkdir -p ${TMP_DIR}/etc/profile.d
-                cp -arf ${i}/* ${TMP_DIR}/etc/profile.d
-                mount -t tmpfs tmpfs /etc/profile.d
-                cp -arf ${TMP_DIR}/etc/profile.d/* /etc/profile.d
-                ;;
-            "/etc/hosts")
-                cat /etc/hosts > /tmp/hosts
-                mount -o bind /tmp/hosts /etc/hosts
-                ;;
-            "/etc/rc.local")
-                cat /etc/rc.local > /tmp/rc.local
-                mount -o bind /tmp/rc.local /etc/rc.local
-                chmod +x /etc/rc.local
-                ;;
-            *)
-                mount -t tmpfs -o mode=755 tmpfs ${i}
-                ;;
-        esac
+        mount -t tmpfs -o mode=755 tmpfs ${i}
     done
 
     chown -R rancher:rancher /home/rancher
@@ -75,40 +42,8 @@ USERDATA_DIR=/writable/user-data
 mkdir -p ${SYSTEMDATA_DIR} ${USERDATA_DIR}
 
 for i in ${MAGICS}; do
-    case $i in
-        "/etc/ssh")
-            if [ ! -d ${SYSTEMDATA_DIR}/etc/ssh ]; then
-                mkdir -p ${SYSTEMDATA_DIR}/etc/ssh
-                cp -arf /etc/ssh/* ${SYSTEMDATA_DIR}/etc/ssh
-            fi
-            mount -o bind ${SYSTEMDATA_DIR}/etc/ssh /etc/ssh
-            ;;
-        "/etc/profile.d")
-            if [ ! -d ${SYSTEMDATA_DIR}/etc/profile.d ]; then
-                mkdir -p ${SYSTEMDATA_DIR}/etc/profile.d
-                cp -arf /etc/profile.d/* ${SYSTEMDATA_DIR}/etc/profile.d
-            fi
-            mount -o bind ${SYSTEMDATA_DIR}/etc/profile.d /etc/profile.d
-            ;;
-        "/etc/hosts")
-            if [ ! -f ${SYSTEMDATA_DIR}/etc/hosts ]; then
-                cat /etc/hosts > ${SYSTEMDATA_DIR}/etc/hosts
-            fi
-            mount -o bind ${SYSTEMDATA_DIR}/etc/hosts /etc/hosts
-            ;;
-        "/etc/rc.local")
-            if [ ! -f ${SYSTEMDATA_DIR}/etc/rc.local ]; then
-                mkdir -p ${SYSTEMDATA_DIR}/etc
-                cat /etc/rc.local > ${SYSTEMDATA_DIR}/etc/rc.local
-                chmod +x ${SYSTEMDATA_DIR}/etc/rc.local
-            fi
-            mount -o bind ${SYSTEMDATA_DIR}/etc/rc.local /etc/rc.local
-            ;;
-        *)
-            mkdir -p ${SYSTEMDATA_DIR}/${i}
-            mount -o bind ${SYSTEMDATA_DIR}/${i} ${i}
-            ;;
-    esac
+    mkdir -p ${SYSTEMDATA_DIR}/${i}
+    mount -o bind ${SYSTEMDATA_DIR}/${i} ${i}
 done
 
 # bind mount boot dir

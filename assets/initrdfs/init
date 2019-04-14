@@ -67,6 +67,12 @@ else
     mount -n -o move /lib/modules /state/usr/lib/modules
 fi
 
+# make etc of rootfs as a tmpfs
+mkdir -p /tmp/etc
+cp -rf /state/etc/* /tmp/etc
+mount -t tmpfs -o mode=755 tmpfs /state/etc
+mv /tmp/etc/* /state/etc/
+
 # don't leak too much of env
 unset ROOT
 unset INITRD_DIR
