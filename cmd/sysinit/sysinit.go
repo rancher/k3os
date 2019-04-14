@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/niusmallnan/k3os/config"
+	"github.com/niusmallnan/k3os/config/cmdline"
 	"github.com/niusmallnan/k3os/pkg/command"
 	pkgHostname "github.com/niusmallnan/k3os/pkg/hostname"
 	"github.com/niusmallnan/k3os/pkg/module"
@@ -14,6 +15,10 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+)
+
+const (
+	PasswordCmdlineKey = "k3os.password"
 )
 
 func Main() {
@@ -34,6 +39,9 @@ func sysInit(c *cli.Context) error {
 
 	//setup password for rancher user
 	password := cfg.Password
+	if password == "" {
+		password = cmdline.GetCmdline(PasswordCmdlineKey).(string)
+	}
 	if err := command.SetPassword(password); err != nil {
 		logrus.Fatalf("failed to set password for rancher user: %v", err)
 	}

@@ -278,3 +278,9 @@ func Yes(question string) bool {
 
 	return strings.ToLower(line[0:1]) == "y"
 }
+
+func UnescapeKernelParams(s string) string {
+	s = strings.Replace(s, `\"`, `"`, -1)
+	s = strings.Replace(s, `\'`, `'`, -1)
+	return s
+}
