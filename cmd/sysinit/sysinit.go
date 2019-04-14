@@ -38,7 +38,7 @@ func sysInit(c *cli.Context) error {
 	cfg := config.LoadConfig("", false)
 
 	//setup password for rancher user
-	password := cfg.Password
+	password := cfg.K3OS.Password
 	if password == "" {
 		password = cmdline.GetCmdline(PasswordCmdlineKey).(string)
 	}
