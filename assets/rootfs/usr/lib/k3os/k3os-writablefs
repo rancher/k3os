@@ -47,6 +47,8 @@ for i in ${MAGICS}; do
 done
 
 # bind mount boot dir
-mount -o bind /writable/boot /boot
+if [ -d /writable/boot ]; then
+    mount -o bind /writable/boot /boot
+fi
 
 chown -R rancher:rancher /home/rancher

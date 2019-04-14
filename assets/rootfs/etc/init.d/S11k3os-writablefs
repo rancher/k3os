@@ -2,8 +2,8 @@
 
 case "$1" in
   start)
-        echo "Start writablefs"
-        /usr/lib/k3os/writablefs
+        echo "Start k3os-writablefs"
+        /usr/lib/k3os/k3os-writablefs
         ;;
   stop)
         ;;

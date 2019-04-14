@@ -12,7 +12,7 @@ var (
 	OSVersion   string
 	OSBuildDate string
 	// user's home directory requires writable permissions
-	// corresponding to /usr/lib/k3os/writablefs:
+	// corresponding to /usr/lib/k3os/k3os-writablefs:
 	//   e.g. /home/rancher is writable
 	//   e.g. others not writable
 	SSHUsers = []string{
