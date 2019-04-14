@@ -7,6 +7,9 @@ var schema = `{
     "hostname": {
       "type": "string"
     },
+	"password": {
+	  "type": "string"
+	},
     "k3os": {
       "$ref": "#/definitions/k3os_config"
     }

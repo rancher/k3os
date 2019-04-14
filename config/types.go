@@ -27,6 +27,7 @@ type CloudConfig struct {
 	Hostname string     `yaml:"hostname,omitempty"`
 	K3OS     K3OSConfig `yaml:"k3os,omitempty"`
 	Runcmd   []Command  `yaml:"runcmd,omitempty"`
+	Password string     `yaml:"password,omitempty"`
 }
 
 type Command struct {

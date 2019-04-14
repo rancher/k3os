@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/niusmallnan/k3os/config"
 )
@@ -25,4 +26,18 @@ func ExecuteCommand(commands []config.Command) error {
 		}
 	}
 	return nil
+}
+
+func SetPassword(password string) error {
+	if password == "" {
+		return nil
+	}
+	cmd := exec.Command("chpasswd")
+	cmd.Stdin = strings.NewReader(fmt.Sprint("rancher:", password))
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	cmd = exec.Command("bash", "-c", `sed -E -i 's/(rancher:.*:).*(:.*:.*:.*:.*:.*:.*)$/\1\2/' /etc/shadow`)
+	return cmd.Run()
 }

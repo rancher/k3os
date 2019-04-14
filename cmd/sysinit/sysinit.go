@@ -31,9 +31,16 @@ func Main() {
 func sysInit(c *cli.Context) error {
 	setupNecessaryFs()
 	cfg := config.LoadConfig("", false)
+
+	//setup password for rancher user
+	password := cfg.Password
+	if err := command.SetPassword(password); err != nil {
+		logrus.Fatalf("failed to set password for rancher user: %v", err)
+	}
+
 	// setup hostname
 	if err := pkgHostname.SetHostname(cfg); err != nil {
-		logrus.Fatalf("failed to setting hostname: %v", err)
+		logrus.Fatalf("failed to set hostname: %v", err)
 	}
 	// setup /etc/hosts
 	if err := pkgHostname.SyncHostname(); err != nil {
@@ -51,7 +58,7 @@ func sysInit(c *cli.Context) error {
 	}
 	// setup sysctl
 	if err := sysctl.ConfigureSysctl(cfg); err != nil {
-		logrus.Fatalf("failed to setting sysctl: %v", err)
+		logrus.Fatalf("failed to set sysctl: %v", err)
 	}
 	// run command
 	if err := command.ExecuteCommand(cfg.Runcmd); err != nil {
