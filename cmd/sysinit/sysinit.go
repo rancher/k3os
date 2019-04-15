@@ -17,10 +17,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-const (
-	PasswordCmdlineKey = "k3os.password"
-)
-
 func Main() {
 	app := cli.NewApp()
 	app.Author = "Rancher Labs, Inc."
@@ -36,16 +32,14 @@ func Main() {
 func sysInit(c *cli.Context) error {
 	setupNecessaryFs()
 	cfg := config.LoadConfig("", false)
-
 	//setup password for rancher user
 	password := cfg.K3OS.Password
 	if password == "" {
-		password = cmdline.GetCmdline(PasswordCmdlineKey).(string)
+		password = cmdline.GetCmdLine(config.K3OSPasswordKey).(string)
 	}
 	if err := command.SetPassword(password); err != nil {
 		logrus.Fatalf("failed to set password for rancher user: %v", err)
 	}
-
 	// setup hostname
 	if err := pkgHostname.SetHostname(cfg); err != nil {
 		logrus.Fatalf("failed to set hostname: %v", err)
