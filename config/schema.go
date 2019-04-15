@@ -12,6 +12,11 @@ var schema = `{
     },
     "runcmd": {
       "type": "array"
+    },
+    "write_files": {
+      "items": {
+        "$ref": "#/definitions/file_config"
+      }
     }
   },
   "definitions": {
@@ -50,6 +55,28 @@ var schema = `{
       "properties": {
         "modules": {
           "$ref": "#/definitions/list_of_strings"
+        }
+      }
+    },
+    "file_config": {
+      "id": "#/definitions/file_config",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "encoding": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "string"
         }
       }
     },

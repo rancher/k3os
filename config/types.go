@@ -1,6 +1,10 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
 
 const (
 	OsConfigFile    = "/etc/k3os-config.yml"
@@ -21,9 +25,10 @@ var (
 )
 
 type CloudConfig struct {
-	Hostname string     `yaml:"hostname,omitempty"`
-	K3OS     K3OSConfig `yaml:"k3os,omitempty"`
-	Runcmd   []Command  `yaml:"runcmd,omitempty"`
+	Hostname   string     `yaml:"hostname,omitempty"`
+	K3OS       K3OSConfig `yaml:"k3os,omitempty"`
+	Runcmd     []Command  `yaml:"runcmd,omitempty"`
+	WriteFiles []File     `yaml:"write_files,omitempty"`
 }
 
 type Command struct {
@@ -38,6 +43,14 @@ type Defaults struct {
 type DNSConfig struct {
 	Nameservers []string `yaml:"nameservers,flow,omitempty"`
 	Searches    []string `yaml:"searches,flow,omitempty"`
+}
+
+type File struct {
+	Encoding           string `yaml:"encoding" valid:"^(base64|b64|gz|gzip|gz\\+base64|gzip\\+base64|gz\\+b64|gzip\\+b64)$"`
+	Content            string `yaml:"content"`
+	Owner              string `yaml:"owner"`
+	Path               string `yaml:"path"`
+	RawFilePermissions string `yaml:"permissions" valid:"^0?[0-7]{3,4}$"`
 }
 
 type InterfaceConfig struct {
@@ -115,4 +128,16 @@ func (c *Command) toStrings(s []interface{}) ([]string, error) {
 		}
 	}
 	return r, nil
+}
+
+func (f *File) Permissions() (os.FileMode, error) {
+	if f.RawFilePermissions == "" {
+		return os.FileMode(0644), nil
+	}
+	// parse string representation of file mode as integer
+	perm, err := strconv.ParseInt(f.RawFilePermissions, 8, 32)
+	if err != nil {
+		return 0, fmt.Errorf("unable to parse file permissions %q as integer", f.RawFilePermissions)
+	}
+	return os.FileMode(perm), nil
 }

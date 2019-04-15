@@ -2,6 +2,7 @@ package sysinit
 
 import (
 	"fmt"
+	"github.com/niusmallnan/k3os/pkg/writefile"
 	"os"
 
 	"github.com/niusmallnan/k3os/config"
@@ -32,7 +33,9 @@ func Main() {
 func sysInit(c *cli.Context) error {
 	setupNecessaryFs()
 	cfg := config.LoadConfig("", false)
-	//setup password for rancher user
+	// execute write_files directive
+	writefile.WriteFiles(cfg)
+	// setup password for rancher user
 	password := cfg.K3OS.Password
 	if password == "" {
 		password = cmdline.GetCmdLine(config.K3OSPasswordKey).(string)
