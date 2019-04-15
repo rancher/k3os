@@ -26,6 +26,7 @@ var (
 
 type CloudConfig struct {
 	Hostname   string     `yaml:"hostname,omitempty"`
+	K3S        K3SConfig  `yaml:"k3s,omitempty"`
 	K3OS       K3OSConfig `yaml:"k3os,omitempty"`
 	Runcmd     []Command  `yaml:"runcmd,omitempty"`
 	WriteFiles []File     `yaml:"write_files,omitempty"`
@@ -58,6 +59,11 @@ type InterfaceConfig struct {
 	Gateway   string   `yaml:"gateway,omitempty"`
 	IPV4LL    bool     `yaml:"ipv4ll,omitempty"`
 	Metric    int      `yaml:"metric,omitempty"`
+}
+
+type K3SConfig struct {
+	Role      string   `yaml:"role,omitempty"`
+	ExtraArgs []string `yaml:"extra_args,omitempty"`
 }
 
 type K3OSConfig struct {

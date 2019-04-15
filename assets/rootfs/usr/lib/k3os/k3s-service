@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# Environment variables which begin with K3S_ will be preserved for this serivce:
+# k3s binary can use these envs:
+#   K3S_URL, K3S_TOKEN, K3S_CLUSTER_SECRET
+
+source /etc/profile
+
+USERDATA_BIN_DIR=/writable/user-data/bin
+K3S_BIN=/usr/bin/k3s
+
+info()
+{
+    echo "[INFO] " "$@"
+}
+
+fatal()
+{
+    echo "[ERROR] " "$@"
+    exit 1
+}
+
+
+STATE_DEVICE=$(blkid -L RANCHER_STATE)
+if [ -z "${STATE_DEVICE}" ]; then
+    info "K3S cannot run without a state partition."
+    exit 0
+fi
+
+start()
+{
+    # run k3s server default
+    K3S_ROLE=$(k3os config get k3s.role)
+    if [ -z "${K3S_ROLE}" ]; then
+        K3S_ROLE=server
+        k3os config set k3s.role server
+    fi
+
+    K3S_ARGS=""
+    for a in $(k3os config get k3s.extra_args); do
+        if [ "$a"xx != "-"xx ]; then
+            K3S_ARGS="$K3S_ARGS $a"
+        fi
+    done
+    k3s ${K3S_ROLE} ${K3S_ARGS} &
+
+    mkdir -p ${USERDATA_BIN_DIR}
+    rm -f ${USERDATA_BIN_DIR}/kubectl ${USERDATA_BIN_DIR}/crictl
+    ln -s ${K3S_BIN} ${USERDATA_BIN_DIR}/kubectl
+    ln -s ${K3S_BIN} ${USERDATA_BIN_DIR}/crictl
+}
+
+
+stop()
+{
+    killall k3s
+    rm -f ${K3S_BIN} ${USERDATA_BIN_DIR}/kubectl
+    rm -f ${K3S_BIN} ${USERDATA_BIN_DIR}/crictl
+}
+
+$@
