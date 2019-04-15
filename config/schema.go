@@ -37,7 +37,7 @@ var schema = `{
         },
         "password": {
           "type": "string"
-        },
+        }
       }
     },
     "defaults_config": {

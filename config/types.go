@@ -6,6 +6,7 @@ const (
 	OsConfigFile    = "/etc/k3os-config.yml"
 	CloudConfigDir  = "/var/lib/rancher/k3os/conf/cloud-config.d"
 	CloudConfigFile = "/var/lib/rancher/k3os/conf/cloud-config.yml"
+	K3OSPasswordKey = "k3os.password"
 )
 
 var (
