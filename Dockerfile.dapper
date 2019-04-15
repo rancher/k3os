@@ -84,7 +84,7 @@ ENV GOROOT=/usr/local/go \
     PATH=/go/bin:/usr/local/go/bin:$PATH
 
 RUN wget -O - https://storage.googleapis.com/golang/go${GO_VERSION}.linux-${GOARCH}.tar.gz | tar -xzf - -C /usr/local && \
-    go get github.com/rancher/trash
+    go get github.com/rancher/trash && go get golang.org/x/lint/golint
 
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]
