@@ -10,8 +10,8 @@ import (
 )
 
 func SettingProxy(cfg *config.CloudConfig) error {
-	httpProxy := cfg.K3OS.Network.Proxy.HttpProxy
-	httpsProxy := cfg.K3OS.Network.Proxy.HttpsProxy
+	httpProxy := cfg.K3OS.Network.Proxy.HTTPProxy
+	httpsProxy := cfg.K3OS.Network.Proxy.HTTPSProxy
 	noProxy := cfg.K3OS.Network.Proxy.NoProxy
 	proxyLines := make([]string, 0)
 	if len(httpProxy) > 0 {
