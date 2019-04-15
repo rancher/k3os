@@ -46,8 +46,8 @@ type DNSConfig struct {
 }
 
 type File struct {
-	Encoding           string `yaml:"encoding" valid:"^(base64|b64|gz|gzip|gz\\+base64|gzip\\+base64|gz\\+b64|gzip\\+b64)$"`
 	Content            string `yaml:"content"`
+	Encoding           string `yaml:"encoding" valid:"^(base64|b64|gz|gzip|gz\\+base64|gzip\\+base64|gz\\+b64|gzip\\+b64)$"`
 	Owner              string `yaml:"owner"`
 	Path               string `yaml:"path"`
 	RawFilePermissions string `yaml:"permissions" valid:"^0?[0-7]{3,4}$"`
@@ -61,13 +61,14 @@ type InterfaceConfig struct {
 }
 
 type K3OSConfig struct {
-	Defaults Defaults          `yaml:"defaults,omitempty"`
-	Modules  []string          `yaml:"modules,omitempty"`
-	Network  NetworkConfig     `yaml:"network,omitempty"`
-	SSH      SSHConfig         `yaml:"ssh,omitempty"`
-	Sysctl   map[string]string `yaml:"sysctl,omitempty"`
-	Upgrade  UpgradeConfig     `yaml:"upgrade,omitempty"`
-	Password string            `yaml:"password,omitempty"`
+	Defaults    Defaults          `yaml:"defaults,omitempty"`
+	Environment map[string]string `yaml:"environment,omitempty"`
+	Modules     []string          `yaml:"modules,omitempty"`
+	Network     NetworkConfig     `yaml:"network,omitempty"`
+	SSH         SSHConfig         `yaml:"ssh,omitempty"`
+	Sysctl      map[string]string `yaml:"sysctl,omitempty"`
+	Upgrade     UpgradeConfig     `yaml:"upgrade,omitempty"`
+	Password    string            `yaml:"password,omitempty"`
 }
 
 type ProxyConfig struct {

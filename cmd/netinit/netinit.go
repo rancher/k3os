@@ -33,8 +33,10 @@ func netInit(c *cli.Context) error {
 	if err := network.SettingDNS(cfg); err != nil {
 		logrus.Fatalf("failed to setting dns: %v", err)
 	}
+	// setup proxy environments
+	network.SettingProxyEnvironments(cfg)
 	// setup proxy
-	if err := network.SettingProxy(cfg); err != nil {
+	if err := network.SettingProxy(); err != nil {
 		logrus.Fatalf("failed to setting proxy: %v", err)
 	}
 	return nil

@@ -2,17 +2,18 @@ package sysinit
 
 import (
 	"fmt"
-	"github.com/niusmallnan/k3os/pkg/writefile"
 	"os"
 
 	"github.com/niusmallnan/k3os/config"
 	"github.com/niusmallnan/k3os/config/cmdline"
 	"github.com/niusmallnan/k3os/pkg/command"
+	"github.com/niusmallnan/k3os/pkg/environment"
 	pkgHostname "github.com/niusmallnan/k3os/pkg/hostname"
 	"github.com/niusmallnan/k3os/pkg/module"
 	"github.com/niusmallnan/k3os/pkg/ssh"
 	"github.com/niusmallnan/k3os/pkg/sysctl"
 	"github.com/niusmallnan/k3os/pkg/util"
+	"github.com/niusmallnan/k3os/pkg/writefile"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -56,6 +57,10 @@ func sysInit(c *cli.Context) error {
 		if err := ssh.SetAuthorizedKeys(username, cfg); err != nil {
 			logrus.Error(err)
 		}
+	}
+	// setup environments
+	if err := environment.SettingEnvironments(); err != nil {
+		logrus.Fatalf("failed to set environments: %v", err)
 	}
 	// setup kernel modules
 	if err := module.LoadModules(cfg); err != nil {

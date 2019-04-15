@@ -28,6 +28,9 @@ var schema = `{
         "defaults": {
           "$ref": "#/definitions/defaults_config"
         },
+        "environment": {
+          "type": "object"
+        },
         "modules": {
           "$ref": "#/definitions/list_of_strings"
         },
