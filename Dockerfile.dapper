@@ -59,6 +59,10 @@ ARG ROOTFS_VERSION=2019.02.1-rancher4
 ARG ROOTFS_URL_amd64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_amd64.tar.xz
 ARG ROOTFS_URL_arm64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_arm64.tar.xz
 
+ARG K3S_VERSION=v0.4.0-rc2
+ARG K3S_URL_amd64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s
+ARG K3S_URL_arm64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s-arm64
+
 ARG K3OS_RELEASES_YML=https://releases.rancher.com/k3os
 
 ARG DEFAULT_HOSTNAME=rancher
@@ -73,6 +77,9 @@ ENV KERNEL_VERSION=${KERNEL_VERSION} \
     INITRDFS_URL=INITRDFS_URL_${ARCH} \
     INITRDFS_URL_amd64=${INITRDFS_URL_amd64} \
     INITRDFS_URL_arm64=${INITRDFS_URL_arm64} \
+    K3S_URL=K3S_URL_${ARCH} \
+    K3S_URL_amd64=${K3S_URL_amd64} \
+    K3S_URL_arm64=${K3S_URL_arm64} \
     DOWNLOADS=/usr/src/downloads \
     K3OS_RELEASES_YML=${K3OS_RELEASES_YML} \
     DEFAULT_HOSTNAME=${DEFAULT_HOSTNAME}

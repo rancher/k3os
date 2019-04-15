@@ -21,6 +21,10 @@ cat assets/rootfs/etc/os-release | envsubst > ${ROOTFS_DIR}/etc/os-release
 # add k3os binary
 cp bin/k3os ${ROOTFS_DIR}/usr/bin/
 
+# add k3s binary
+curl -fL ${!K3S_URL} -o ${ROOTFS_DIR}/usr/bin/k3s
+chmod +x ${ROOTFS_DIR}/usr/bin/k3s
+
 # add syslinux binary
 if [ "${ARCH}" == "amd64" ]; then
     cp ${BOOTLOADER_DIR}/bin/* ${ROOTFS_DIR}/usr/bin/
@@ -38,8 +42,8 @@ mkdir -p /home/ \
          /writable \
          /boot \
          /var/lib/rancher \
-         /etc/rancher \
          /etc/default \
+         /var/lib/cni \
          /var/initrd
 echo "#!/bin/sh" > /etc/rc.local && chmod +x /etc/rc.local
 passwd -l root
@@ -84,4 +88,3 @@ rm -f ${ROOTFS_DIR}/config.sh
 rm -f ${ROOTFS_DIR}/etc/group-
 rm -f ${ROOTFS_DIR}/etc/shadow-
 rm -f ${ROOTFS_DIR}/etc/passwd-
-rm -f ${ROOTFS_DIR}/etc/k3os-
