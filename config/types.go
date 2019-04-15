@@ -12,11 +12,7 @@ const (
 var (
 	OSVersion   string
 	OSBuildDate string
-	// user's home directory requires writable permissions
-	// corresponding to /usr/lib/k3os/k3os-writablefs:
-	//   e.g. /home/rancher is writable
-	//   e.g. others not writable
-	SSHUsers = []string{
+	SSHUsers    = []string{
 		"rancher",
 	}
 	Additional = []string{
@@ -62,8 +58,8 @@ type K3OSConfig struct {
 }
 
 type ProxyConfig struct {
-	HttpProxy  string `yaml:"http_proxy,omitempty"`
-	HttpsProxy string `yaml:"https_proxy,omitempty"`
+	HTTPProxy  string `yaml:"http_proxy,omitempty"`
+	HTTPSProxy string `yaml:"https_proxy,omitempty"`
 	NoProxy    string `yaml:"no_proxy,omitempty"`
 }
 
