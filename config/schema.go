@@ -9,6 +9,9 @@ var schema = `{
     },
     "k3os": {
       "$ref": "#/definitions/k3os_config"
+    },
+    "runcmd": {
+      "type": "array"
     }
   },
   "definitions": {
