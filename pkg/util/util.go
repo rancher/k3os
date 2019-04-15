@@ -318,3 +318,18 @@ func UnescapeKernelParams(s string) string {
 	s = strings.Replace(s, `\'`, `'`, -1)
 	return s
 }
+
+func EnsureDirectoryExists(dir string) error {
+	info, err := os.Stat(dir)
+	if err == nil {
+		if !info.IsDir() {
+			return fmt.Errorf("%s is not a directory", dir)
+		}
+	} else {
+		err = os.MkdirAll(dir, 0755)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
