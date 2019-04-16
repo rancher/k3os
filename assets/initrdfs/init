@@ -35,7 +35,11 @@ if [[ ! -e /dev/disk/by-label/RANCHER_STATE && ! -z "${ROOT}" ]]; then
     echo "********Please Wait For Formatting ${ROOT}********"
     parted -s ${ROOT} mklabel gpt
     parted -s ${ROOT} mkpart primary ext4 0% 100%
-    mkfs.ext4 -F -L RANCHER_STATE ${ROOT}1
+    PARTITION=${ROOT}1
+    if [[ "${ROOT}" == *"nvme"* ]]; then
+        PARTITION=${ROOT}p1
+    fi
+    mkfs.ext4 -F -L RANCHER_STATE ${PARTITION}
     echo "********Done ${ROOT}********"
 fi
 

@@ -26,7 +26,11 @@ if [ -z "$(blkid -L RANCHER_STATE)" ]; then
     parted -s ${DEVICE} mklabel msdos
     parted -s ${DEVICE} mkpart primary ext4 0% 100%
     parted -s ${DEVICE} set 1 boot on
-    mkfs.ext4 -F -L RANCHER_STATE ${DEVICE}1
+    PARTITION=${DEVICE}1
+    if [[ "${DEVICE}" == *"nvme"* ]]; then
+        PARTITION=${DEVICE}p1
+    fi
+    mkfs.ext4 -F -L RANCHER_STATE ${PARTITION}
 else
     echo "#### You have installed to disk"
     exit 1
