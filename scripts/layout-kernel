@@ -22,7 +22,7 @@ fi
 
 if [ -e ${KERNEL_DIR}/boot/vmlinuz-* ]; then
     echo "Copy ${KERNEL_DIR}/boot/vmlinuz-* to ${ARTIFACTS}/vmlinuz${SUFFIX}-${KERNEL_VERSION}"
-    cp ${KERNEL_DIR}/boot/vmlinuz-* ${ARTIFACTS}/vmlinuz${SUFFIX}-${KERNEL_VERSION}
+    cp ${KERNEL_DIR}/boot/vmlinuz-* ${ARTIFACTS}/vmlinuz${SUFFIX}
     cp ${KERNEL_DIR}/boot/vmlinuz-* ${KERNEL_DIR}/vmlinuz${SUFFIX}
 fi
 

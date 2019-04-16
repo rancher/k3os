@@ -6,7 +6,7 @@ cd $(dirname $0)/..
 
 ./scripts/default
 
-CHECKSUM_FILE=dist/artifacts/checksums.txt
+CHECKSUM_FILE=dist/artifacts/checksums${SUFFIX}.txt
 
 touch dist/publish.sh dist/publish_gss_${VERSION}.sh dist/publish_gss_latest.sh
 chmod 755 dist/publish.sh dist/publish_gss_${VERSION}.sh dist/publish_gss_latest.sh
@@ -14,7 +14,7 @@ chmod 755 dist/publish.sh dist/publish_gss_${VERSION}.sh dist/publish_gss_latest
 pushd dist/artifacts
 for file in $(ls ./); do
     case $file in
-        "initrd-"* | "vmlinuz-"* | "k3os.iso")
+        "initrd"* | "vmlinuz"* | "k3os.iso")
             echo "hub release edit -m ${VERSION} -a dist/artifacts/${file} ${VERSION}" >> ../publish.sh
             echo "gsutil cp dist/artifacts/${file} gs://releases.rancher.com/k3os/latest/" >> ../publish_gss_latest.sh
             echo "gsutil cp dist/artifacts/${file} gs://releases.rancher.com/k3os/${VERSION}/" >> ../publish_gss_${VERSION}.sh

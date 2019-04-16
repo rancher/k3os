@@ -21,7 +21,7 @@ if [ -n "${ARCH}" ] && [ "${ARCH}" != "amd64" ]; then
     SUFFIX="_${ARCH}"
 fi
 
-INITRD=initrd${SUFFIX}-${VERSION}
+INITRD=initrd${SUFFIX}
 export VERSION COMMIT INITRD GIT_TAG DIRTY SUFFIX
 
 echo " Building ${VERSION} from ${COMMIT} on ${ARCH}"

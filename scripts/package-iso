@@ -27,8 +27,8 @@ cat scripts/syslinux/global.cfg | envsubst > ${bootiso}/boot/global.cfg
 #cp scripts/syslinux/rancher.png ${bootiso}/boot/
 
 
-cp ${ARTIFACTS}/${INITRD}                      ${bootiso}/boot/
-cp ${ARTIFACTS}/vmlinuz-${KERNEL_VERSION}      ${bootiso}/boot/
+cp ${ARTIFACTS}/${INITRD}                      ${bootiso}/boot/${INITRD}-${VERSION}
+cp ${ARTIFACTS}/vmlinuz                        ${bootiso}/boot/vmlinuz-${KERNEL_VERSION}
 
 cp /usr/lib/ISOLINUX/isolinux.bin              ${bootiso}/boot/isolinux/
 cp ${BOOTLOADER_DIR}/bios/*                    ${bootiso}/boot/isolinux/
