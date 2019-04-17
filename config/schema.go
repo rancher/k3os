@@ -91,6 +91,9 @@ var schema = `{
         "address": {
           "type": "string"
         },
+        "authorized_keys": {
+          "$ref": "#/definitions/list_of_strings"
+        },
         "daemon": {
           "type": "boolean"
         },
