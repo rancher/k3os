@@ -48,16 +48,16 @@ ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
 
 ARG KERNEL_VERSION=5.0.0-8.9-rancher3
-ARG KERNEL_URL_amd64=https://github.com/niusmallnan/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_amd64.tar.xz
-ARG KERNEL_URL_arm64=https://github.com/niusmallnan/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_arm64.tar.xz
+ARG KERNEL_URL_amd64=https://github.com/rancher/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_amd64.tar.xz
+ARG KERNEL_URL_arm64=https://github.com/rancher/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_arm64.tar.xz
 
 ARG INITRDFS_VERSION=2018.02.11-rancher5
-ARG INITRDFS_URL_amd64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_amd64.tar.xz
-ARG INITRDFS_URL_arm64=https://github.com/niusmallnan/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_arm64.tar.xz
+ARG INITRDFS_URL_amd64=https://github.com/rancher/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_amd64.tar.xz
+ARG INITRDFS_URL_arm64=https://github.com/rancher/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_arm64.tar.xz
 
 ARG ROOTFS_VERSION=2019.02.1-rancher4
-ARG ROOTFS_URL_amd64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_amd64.tar.xz
-ARG ROOTFS_URL_arm64=https://github.com/niusmallnan/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_arm64.tar.xz
+ARG ROOTFS_URL_amd64=https://github.com/rancher/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_amd64.tar.xz
+ARG ROOTFS_URL_arm64=https://github.com/rancher/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_arm64.tar.xz
 
 ARG K3S_VERSION=v0.4.0-rc2
 ARG K3S_URL_amd64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s
