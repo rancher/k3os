@@ -7,8 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/niusmallnan/k3os/config"
-	"github.com/niusmallnan/k3os/pkg/util"
+	"github.com/rancher/k3os/config"
+	"github.com/rancher/k3os/pkg/util"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"

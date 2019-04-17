@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/niusmallnan/k3os/pkg/util"
+	"github.com/rancher/k3os/pkg/util"
 )
 
 func GetCmdLine(key string) interface{} {

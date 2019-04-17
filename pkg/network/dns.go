@@ -1,7 +1,7 @@
 package network
 
 import (
-	"github.com/niusmallnan/k3os/config"
+	"github.com/rancher/k3os/config"
 
 	"github.com/docker/libnetwork/resolvconf"
 )

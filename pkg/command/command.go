@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/niusmallnan/k3os/config"
+	"github.com/rancher/k3os/config"
 )
 
 func ExecuteCommand(commands []config.Command) error {

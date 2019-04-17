@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/niusmallnan/k3os/pkg/util"
+	"github.com/rancher/k3os/pkg/util"
 
 	"github.com/imdario/mergo"
 	"github.com/sirupsen/logrus"

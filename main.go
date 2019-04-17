@@ -3,10 +3,10 @@ package main
 import (
 	"os"
 
-	"github.com/niusmallnan/k3os/cmd/control"
-	"github.com/niusmallnan/k3os/cmd/netinit"
-	"github.com/niusmallnan/k3os/cmd/sysinit"
-	"github.com/niusmallnan/k3os/cmd/ttyinit"
+	"github.com/rancher/k3os/cmd/control"
+	"github.com/rancher/k3os/cmd/netinit"
+	"github.com/rancher/k3os/cmd/sysinit"
+	"github.com/rancher/k3os/cmd/ttyinit"
 
 	"github.com/docker/docker/pkg/reexec"
 	"github.com/sirupsen/logrus"
