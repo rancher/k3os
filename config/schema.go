@@ -7,6 +7,9 @@ var schema = `{
     "hostname": {
       "type": "string"
     },
+    "k3s": {
+      "$ref": "#/definitions/k3s_config"
+    },
     "k3os": {
       "$ref": "#/definitions/k3os_config"
     },
@@ -20,6 +23,19 @@ var schema = `{
     }
   },
   "definitions": {
+    "k3s_config": {
+      "id": "#/definitions/k3s_config",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "extra_args": {
+          "$ref": "#/definitions/list_of_strings"
+        }
+      }
+    },
     "k3os_config": {
       "id": "#/definitions/k3os_config",
       "type": "object",
