@@ -36,6 +36,11 @@ start()
         k3os config set k3s.role server
     fi
 
+    if [ "${K3S_ROLE}" = "none" ]; then
+        info "K3S is disabled as k3s.role=none"
+        exit 0
+    fi
+
     K3S_ARGS=""
     for a in $(k3os config get k3s.extra_args); do
         if [ "$a"xx != "-"xx ]; then
