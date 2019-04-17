@@ -11,6 +11,9 @@ cp ${ARTIFACTS}/modules${SUFFIX}.squashfs ${INITRD_DIR}/modules.squashfs
 cp ${ARTIFACTS}/firmware${SUFFIX}.squashfs ${INITRD_DIR}/firmware.squashfs
 
 pushd ${INITRD_DIR}
+checksum=$(md5sum $(find -type f | sort -u ) | md5sum - | awk '{print $1}')
+echo $checksum > .id
+
 echo Creating ${ARTIFACTS}/${INITRD}
 find | cpio -H newc -o | gzip -9 > ${ARTIFACTS}/${INITRD}
 echo Done creating ${ARTIFACTS}/${INITRD}
