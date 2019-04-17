@@ -5,5 +5,5 @@ OUTPUT=${OUTPUT:-bin/k3os}
 echo Building $OUTPUT
 BUILDDATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
-CONST="-X github.com/niusmallnan/k3os/config.OSVersion=${VERSION} -X github.com/niusmallnan/k3os/config.OSBuildDate='${BUILDDATE}'"
+CONST="-X github.com/rancher/k3os/config.OSVersion=${VERSION} -X github.com/rancher/k3os/config.OSBuildDate='${BUILDDATE}'"
 go build -ldflags "$CONST -extldflags -static -s -w" -o ${OUTPUT}

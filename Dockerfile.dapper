@@ -36,7 +36,7 @@ RUN apt-get update \
 
 ENV DAPPER_ENV VERSION DEBUG
 ENV DAPPER_DOCKER_SOCKET true
-ENV DAPPER_SOURCE /go/src/github.com/niusmallnan/k3os
+ENV DAPPER_SOURCE /go/src/github.com/rancher/k3os
 ENV DAPPER_OUTPUT ./bin ./dist ./build
 ENV DAPPER_RUN_ARGS --privileged
 ENV TRASH_CACHE ${DAPPER_SOURCE}/.trash-cache
