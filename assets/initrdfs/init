@@ -24,7 +24,9 @@ done
 # TODO: we should build a smaller modules for initrd
 #
 mkdir -p /state /lib/modules
-mount -t squashfs -o loop /modules.squashfs /lib/modules
+if [ -e /modules.squashfs ]; then
+    mount -t squashfs -o loop /modules.squashfs /lib/modules
+fi
 
 # start udev
 udevd -d
@@ -60,8 +62,12 @@ if [ -e /dev/disk/by-label/RANCHER_STATE ]; then
     fi
     mount -t squashfs -o loop ${WRITABLE_INITRD_DIR}/rootfs.squashfs /state
     mount -t squashfs -o loop ${WRITABLE_INITRD_DIR}/firmware.squashfs /state/usr/lib/firmware
-    umount /lib/modules
+
+    if [ -e /modules.squashfs ]; then
+        umount /lib/modules
+    fi
     mount -t squashfs -o loop ${WRITABLE_INITRD_DIR}/modules.squashfs /state/usr/lib/modules
+
     mount -n -o move /writable /state/writable
     mount -o bind /state/${WRITABLE_INITRD_DIR} /state/${INITRD_DIR}
 else
