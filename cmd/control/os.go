@@ -67,7 +67,7 @@ func osUpgrade(c *cli.Context) error {
 	forceFlag := c.Bool("force")
 	//TODO: debug for output
 
-	if !forceFlag && !util.Yes("continue with os upgrade") {
+	if !forceFlag && !util.PromptYes("continue with os upgrade") {
 		return nil
 	}
 	cfg := config.LoadConfig("", false)
@@ -98,7 +98,7 @@ func osUpgrade(c *cli.Context) error {
 		logrus.Fatalf("failed to run upgrade script: %v", err)
 	}
 
-	if (rebootFlag && util.Yes("continue with reboot")) || forceFlag {
+	if (rebootFlag && util.PromptYes("continue with reboot")) || forceFlag {
 		syscall.Sync()
 		syscall.Reboot(int(syscall.LINUX_REBOOT_CMD_RESTART))
 	}

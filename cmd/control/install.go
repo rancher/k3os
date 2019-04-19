@@ -6,6 +6,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/rancher/k3os/config"
 	"github.com/rancher/k3os/pkg/util"
 
 	"github.com/sirupsen/logrus"
@@ -70,18 +71,33 @@ func installAction(c *cli.Context) error {
 	}
 
 	if cloudConfig == "" {
-		logrus.Warn("cloud-config not provided: you might need to provide cloud-config on boot with k3os.ssh.authorized_keys")
+		logrus.Warn("cloud-config not provided")
+		p, ok := util.PromptPassword()
+		if !ok {
+			logrus.Fatal("password and confirmation password do not match")
+		}
 		// create an empty file
 		// TODO: direct the user to create a config file
 		emptyFile, err := os.Create(EmptyConfigTempFile)
 		if err != nil {
 			logrus.Fatalf("failed to create empty config file, %v", err)
 		}
+		// set password to cloud-config
+		data := make(map[interface{}]interface{}, 0)
+		_, modified := util.SetValue("k3os.password", data, string(p))
+		cfg := &config.CloudConfig{}
+		if err := util.Convert(modified, cfg); err != nil {
+			return err
+		}
+		if err := util.WriteToFile(modified, EmptyConfigTempFile); err != nil {
+			logrus.Fatal("failed set password to cloud-config")
+		}
+
 		cloudConfig = EmptyConfigTempFile
 		emptyFile.Close()
 	}
 
-	if !forceFlag && !util.Yes("Continue with install") {
+	if !forceFlag && !util.PromptYes("Continue with install") {
 		return nil
 	}
 
@@ -103,7 +119,7 @@ func installAction(c *cli.Context) error {
 		logrus.Fatalf("failed to install config to disk, %v", err)
 	}
 
-	if (rebootFlag && util.Yes("continue with reboot")) || forceFlag {
+	if (rebootFlag && util.PromptYes("continue with reboot")) || forceFlag {
 		syscall.Sync()
 		syscall.Reboot(int(syscall.LINUX_REBOOT_CMD_RESTART))
 	}
