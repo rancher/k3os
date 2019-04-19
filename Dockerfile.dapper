@@ -47,7 +47,7 @@ WORKDIR ${DAPPER_SOURCE}
 ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
 
-ARG KERNEL_VERSION=5.0.0-8.9-rancher3
+ARG KERNEL_VERSION=5.0.0-13.14-rancher1
 ARG KERNEL_URL_amd64=https://github.com/rancher/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_amd64.tar.xz
 ARG KERNEL_URL_arm64=https://github.com/rancher/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_arm64.tar.xz
 
