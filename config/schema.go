@@ -113,6 +113,9 @@ var schema = `{
         "daemon": {
           "type": "boolean"
         },
+        "host_keys": {
+          "type": "object"
+        },
         "port": {
           "type": "integer"
         }
