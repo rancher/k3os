@@ -1,11 +1,9 @@
 package util
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -300,16 +298,6 @@ func FileCopy(src, dest string) error {
 		return err
 	}
 	return WriteFileAtomic(dest, data, 0644)
-}
-
-func PromptYes(question string) bool {
-	fmt.Printf("%s [y/N]: ", question)
-	in := bufio.NewReader(os.Stdin)
-	line, err := in.ReadString('\n')
-	if err != nil {
-		log.Fatal(err)
-	}
-	return strings.ToLower(line[0:1]) == "y"
 }
 
 func UnescapeKernelParams(s string) string {
