@@ -1,10 +1,12 @@
 package util
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh/terminal"
@@ -15,6 +17,16 @@ var (
 	mask     = []byte("*")
 	maxBytes = 512
 )
+
+func PromptYes(question string) bool {
+	fmt.Printf("%s [y/N]: ", question)
+	in := bufio.NewReader(os.Stdin)
+	line, err := in.ReadString('\n')
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	return strings.ToLower(line[0:1]) == "y"
+}
 
 func PromptPassword() ([]byte, bool) {
 	fmt.Print("please set password for [rancher]: ")
