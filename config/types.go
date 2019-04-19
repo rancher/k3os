@@ -84,10 +84,11 @@ type ProxyConfig struct {
 }
 
 type SSHConfig struct {
-	Address        string   `yaml:"address,omitempty"`
-	AuthorizedKeys []string `yaml:"authorized_keys,omitempty"`
-	Daemon         bool     `yaml:"daemon,omitempty"`
-	Port           int      `yaml:"port,omitempty"`
+	Address        string            `yaml:"address,omitempty"`
+	AuthorizedKeys []string          `yaml:"authorized_keys,omitempty"`
+	Daemon         bool              `yaml:"daemon,omitempty"`
+	HostKeys       map[string]string `yaml:"host_keys,omitempty"`
+	Port           int               `yaml:"port,omitempty"`
 }
 
 type UpgradeConfig struct {

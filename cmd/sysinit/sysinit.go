@@ -52,6 +52,10 @@ func sysInit(c *cli.Context) error {
 	if err := pkgHostname.SyncHostname(); err != nil {
 		logrus.Fatalf("failed to sync hostname: %v", err)
 	}
+	// setup ssh host_keys
+	if err := ssh.SetHostKeys(cfg); err != nil {
+		logrus.Fatalf("failed to set ssh host_keys: %v", err)
+	}
 	// setup ssh authorized_keys
 	for _, username := range config.SSHUsers {
 		if err := ssh.SetAuthorizedKeys(username, cfg); err != nil {

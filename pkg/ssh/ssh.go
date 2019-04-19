@@ -1,6 +1,7 @@
 package ssh
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -42,6 +43,45 @@ func SetAuthorizedKeys(username string, cfg *config.CloudConfig) error {
 	for _, key := range cfg.K3OS.SSH.AuthorizedKeys {
 		if err = authorizeSSHKey(key, userAuthorizedFile, uid, gid); err != nil {
 			logrus.Errorf("failed to authorize SSH key %s: %v", key, err)
+		}
+	}
+	return nil
+}
+
+func SetHostKeys(cfg *config.CloudConfig) error {
+	for _, t := range []string{"rsa", "dsa", "ecdsa", "ed25519"} {
+		f := fmt.Sprintf("/etc/ssh/ssh_host_%s_key", t)
+		p := fmt.Sprintf("/etc/ssh/ssh_host_%s_key.pub", t)
+		key, keyExist := cfg.K3OS.SSH.HostKeys[t]
+		pub, pubExist := cfg.K3OS.SSH.HostKeys[t+"-pub"]
+		if keyExist && pubExist {
+			if err := util.WriteFileAtomic(f, []byte(key), 0600); err != nil {
+				return err
+			}
+			if err := util.WriteFileAtomic(p, []byte(pub), 0600); err != nil {
+				return err
+			}
+			continue
+		}
+		if _, err := os.Stat(f); err != nil || os.IsNotExist(err) {
+			continue
+		}
+		if _, err := os.Stat(p); err != nil || os.IsNotExist(err) {
+			continue
+		}
+		fb, err := ioutil.ReadFile(f)
+		if err != nil {
+			return err
+		}
+		pb, err := ioutil.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		if err := config.Set(fmt.Sprintf("k3os.ssh.host_keys.%s", t), string(fb)); err != nil {
+			return err
+		}
+		if err := config.Set(fmt.Sprintf("k3os.ssh.host_keys.%s-pub", t), string(pb)); err != nil {
+			return err
 		}
 	}
 	return nil
