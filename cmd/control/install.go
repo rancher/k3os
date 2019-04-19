@@ -103,7 +103,7 @@ func installAction(c *cli.Context) error {
 		logrus.Fatalf("failed to install config to disk, %v", err)
 	}
 
-	if rebootFlag || forceFlag {
+	if (rebootFlag && util.Yes("continue with reboot")) || forceFlag {
 		syscall.Sync()
 		syscall.Reboot(int(syscall.LINUX_REBOOT_CMD_RESTART))
 	}
