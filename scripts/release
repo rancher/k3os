@@ -28,5 +28,5 @@ done
 popd
 
 echo "hub release edit -m ${VERSION} -a ${CHECKSUM_FILE} ${VERSION}" >> dist/publish.sh
-echo "gsutil cp ${CHECKSUM_FILE} gs://releases.rancher.com/os/latest/" >> ./dist/publish_gss_latest.sh
-echo "gsutil cp ${CHECKSUM_FILE} gs://releases.rancher.com/os/${VERSION}/" >> ./dist/publish_gss_${VERSION}.sh
+echo "gsutil cp ${CHECKSUM_FILE} gs://releases.rancher.com/k3os/latest/" >> ./dist/publish_gss_latest.sh
+echo "gsutil cp ${CHECKSUM_FILE} gs://releases.rancher.com/k3os/${VERSION}/" >> ./dist/publish_gss_${VERSION}.sh
