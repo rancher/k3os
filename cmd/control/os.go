@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/urfave/cli"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -98,7 +98,7 @@ func osUpgrade(c *cli.Context) error {
 		logrus.Fatalf("failed to run upgrade script: %v", err)
 	}
 
-	if rebootFlag || forceFlag {
+	if (rebootFlag && util.Yes("continue with reboot")) || forceFlag {
 		syscall.Sync()
 		syscall.Reboot(int(syscall.LINUX_REBOOT_CMD_RESTART))
 	}
