@@ -14,7 +14,7 @@ chmod 755 dist/publish.sh dist/publish_gss_${VERSION}.sh dist/publish_gss_latest
 pushd dist/artifacts
 for file in $(ls ./); do
     case $file in
-        "initrd"* | "vmlinuz"* | "k3os.iso")
+        "initrd"* | "vmlinuz"* | "k3os.iso" | "rootfs${SUFFIX}"*)
             echo "hub release edit -m ${VERSION} -a dist/artifacts/${file} ${VERSION}" >> ../publish.sh
             echo "gsutil cp dist/artifacts/${file} gs://releases.rancher.com/k3os/latest/" >> ../publish_gss_latest.sh
             echo "gsutil cp dist/artifacts/${file} gs://releases.rancher.com/k3os/${VERSION}/" >> ../publish_gss_${VERSION}.sh
@@ -25,6 +25,16 @@ for file in $(ls ./); do
             ;;
     esac
 done
+
+# vmlinux is needed for arm64, just upload to gs
+# e.g. : PXE boot on Packet need this.
+if [ "${ARCH}" = "arm64" ]; then
+    cp vmlinuz_arm64 vmlinux_arm64.gz
+    gunzip vmlinux_arm64.gz
+    echo "gsutil cp dist/artifacts/vmlinux_arm64 gs://releases.rancher.com/k3os/latest/" >> ../publish_gss_latest.sh
+    echo "gsutil cp dist/artifacts/vmlinux_arm64 gs://releases.rancher.com/k3os/${VERSION}/" >> ../publish_gss_${VERSION}.sh
+fi
+
 popd
 
 echo "hub release edit -m ${VERSION} -a ${CHECKSUM_FILE} ${VERSION}" >> dist/publish.sh
