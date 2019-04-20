@@ -47,9 +47,14 @@ for i in ${MAGICS}; do
     mount -o bind ${SYSTEMDATA_DIR}/${i} ${i}
 done
 
-# bind mount boot dir
-if [ -d /writable/boot ]; then
-    mount -o bind /writable/boot /boot
+if [ ! -z "$(blkid -L SYSTEM_BOOT)" ]; then
+    # RPi needs this partition
+    mount LABEL=SYSTEM_BOOT /boot
+else
+    # bind mount boot dir
+    if [ -d /writable/boot ]; then
+        mount -o bind /writable/boot /boot
+    fi
 fi
 
 chown -R rancher:rancher /home/rancher
