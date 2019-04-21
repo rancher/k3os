@@ -20,6 +20,7 @@ var (
 		"rancher",
 	}
 	Additional = []string{
+		"k3os.ssh.host_keys",
 		"EXTRA_CMDLINE",
 	}
 )
