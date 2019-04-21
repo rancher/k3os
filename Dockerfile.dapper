@@ -86,7 +86,7 @@ ENV KERNEL_VERSION=${KERNEL_VERSION} \
 
 ENV GOROOT=/usr/local/go \
     GOPATH=/go \
-    GO_VERSION=1.12.1 \
+    GO_VERSION=1.12.4 \
     GOARCH=$ARCH \
     PATH=/go/bin:/usr/local/go/bin:$PATH
 
