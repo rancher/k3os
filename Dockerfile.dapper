@@ -59,7 +59,7 @@ ARG ROOTFS_VERSION=2019.02.1-rancher4
 ARG ROOTFS_URL_amd64=https://github.com/rancher/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_amd64.tar.xz
 ARG ROOTFS_URL_arm64=https://github.com/rancher/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_arm64.tar.xz
 
-ARG K3S_VERSION=v0.4.0-rc2
+ARG K3S_VERSION=v0.4.0
 ARG K3S_URL_amd64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s
 ARG K3S_URL_arm64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s-arm64
 
