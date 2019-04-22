@@ -3,6 +3,7 @@ package control
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"syscall"
 
@@ -59,6 +60,12 @@ var installCommand = cli.Command{
 }
 
 func installAction(c *cli.Context) error {
+	//TODO: support generic arm64 and RPi
+	if runtime.GOARCH != "amd64" {
+		logrus.Infof("OS install support for %s is coming soon", runtime.GOARCH)
+		return nil
+	}
+
 	installType := c.String("install-type")
 	cloudConfig := c.String("cloud-config")
 	installDevice := c.String("device")

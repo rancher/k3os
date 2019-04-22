@@ -2,6 +2,7 @@ package control
 
 import (
 	"fmt"
+	"runtime"
 	"syscall"
 
 	"github.com/rancher/k3os/config"
@@ -62,6 +63,12 @@ func osSubcommands() []cli.Command {
 }
 
 func osUpgrade(c *cli.Context) error {
+	//TODO: support generic arm64 and RPi
+	if runtime.GOARCH != "amd64" {
+		logrus.Infof("OS upgrade support for %s is coming soon", runtime.GOARCH)
+		return nil
+	}
+
 	imageVersion := c.String("image")
 	rebootFlag := !c.Bool("no-reboot")
 	forceFlag := c.Bool("force")
@@ -107,6 +114,12 @@ func osUpgrade(c *cli.Context) error {
 }
 
 func osList(c *cli.Context) error {
+	//TODO: support generic arm64 and RPi
+	if runtime.GOARCH != "amd64" {
+		logrus.Infof("OS list support for %s is coming soon", runtime.GOARCH)
+		return nil
+	}
+
 	cfg := config.LoadConfig("", false)
 	upgradeURL := cfg.K3OS.Upgrade.URL
 
