@@ -15,6 +15,13 @@ tar xf ${DOWNLOADS}/rootfs.tar.xz -C ${ROOTFS_DIR}
 
 cp -rf assets/rootfs/* ${ROOTFS_DIR}/
 
+# add open-iscsi
+# TODO: we should support arm64
+if [ "${ARCH}" == "amd64" ]; then
+    curl -fL ${!OPEN_ISCSI_URL} -o ${DOWNLOADS}/open-iscsi.tar.xz
+    tar xf ${DOWNLOADS}/open-iscsi.tar.xz -C ${ROOTFS_DIR}
+fi
+
 # override the os-release file
 cat assets/rootfs/etc/os-release | envsubst > ${ROOTFS_DIR}/etc/os-release
 

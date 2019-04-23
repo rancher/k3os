@@ -63,6 +63,9 @@ ARG K3S_VERSION=v0.4.0
 ARG K3S_URL_amd64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s
 ARG K3S_URL_arm64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s-arm64
 
+ARG OPEN_ISCSI_VERSION=2.0.874-rancher1
+ARG OPEN_ISCSI_URL_amd64=https://github.com/niusmallnan/k3os-open-iscsi/releases/download/${OPEN_ISCSI_VERSION}/open-iscsi_amd64.tar.xz
+
 ARG K3OS_RELEASES_YML=https://releases.rancher.com/k3os
 
 ARG DEFAULT_HOSTNAME=rancher
@@ -80,6 +83,8 @@ ENV KERNEL_VERSION=${KERNEL_VERSION} \
     K3S_URL=K3S_URL_${ARCH} \
     K3S_URL_amd64=${K3S_URL_amd64} \
     K3S_URL_arm64=${K3S_URL_arm64} \
+    OPEN_ISCSI_URL=OPEN_ISCSI_URL_${ARCH} \
+    OPEN_ISCSI_URL_amd64=${OPEN_ISCSI_URL_amd64} \
     DOWNLOADS=/usr/src/downloads \
     K3OS_RELEASES_YML=${K3OS_RELEASES_YML} \
     DEFAULT_HOSTNAME=${DEFAULT_HOSTNAME}
