@@ -15,7 +15,6 @@ stop()
     /usr/lib/k3os/${NAME} stop
 }
 
-
 case "$1" in
   start)
       start
