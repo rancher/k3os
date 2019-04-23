@@ -31,6 +31,9 @@ var schema = `{
         "role": {
           "type": "string"
         },
+        "airgap_images": {
+          "$ref": "#/definitions/list_of_strings"
+        },
         "extra_args": {
           "$ref": "#/definitions/list_of_strings"
         }

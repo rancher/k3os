@@ -45,6 +45,20 @@ start()
     done
     if [[ $ready != "true" ]]; then echo "no default routes found in \"/proc/net/route\" or \"/proc/net/ipv6_route\"." > /dev/stderr; exit 1; fi
 
+    # download the airgap images
+    AIRGAP_IMAGES=$(k3os config get k3s.airgap_images)
+    LOCAL_STORE_PATH=/var/lib/rancher/k3s/agent/images
+    mkdir -p ${LOCAL_STORE_PATH}
+    for img in ${AIRGAP_IMAGES}; do
+        if [ "$img"xx != "-"xx ]; then
+            info "Loading K3S airgap image: $img"
+            LOCAL_FILE=${LOCAL_STORE_PATH}/$(basename $img)
+            if [ ! -e ${LOCAL_FILE} ]; then
+                wget --no-check-certificate -O ${LOCAL_FILE} ${img}
+            fi
+        fi
+    done
+
     # run k3s server default
     K3S_ROLE=$(k3os config get k3s.role)
     if [ -z "${K3S_ROLE}" ]; then

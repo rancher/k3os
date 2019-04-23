@@ -63,8 +63,9 @@ type InterfaceConfig struct {
 }
 
 type K3SConfig struct {
-	Role      string   `yaml:"role,omitempty"`
-	ExtraArgs []string `yaml:"extra_args,omitempty"`
+	Role         string   `yaml:"role,omitempty"`
+	AirgapImages []string `yaml:"airgap_images,omitempty"`
+	ExtraArgs    []string `yaml:"extra_args,omitempty"`
 }
 
 type K3OSConfig struct {
