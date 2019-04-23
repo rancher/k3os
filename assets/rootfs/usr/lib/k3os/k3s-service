@@ -29,6 +29,22 @@ fi
 
 start()
 {
+    # check default routes
+    for i in {1..10}; do
+        # IPV4 UG: 0003
+        # IPV6 UG: 00450003
+        gateway=`cat /proc/net/route | grep 0003 | wc -l`
+        gateway_v6=`cat /proc/net/ipv6_route | grep 00450003 | wc -l`
+        if [[ $gateway -ge 1 || $gateway_v6 -ge 1 ]]; then
+            ready="true"
+            break
+        else
+            info "waiting for the default routes"
+            sleep 1
+        fi
+    done
+    if [[ $ready != "true" ]]; then echo "no default routes found in \"/proc/net/route\" or \"/proc/net/ipv6_route\"." > /dev/stderr; exit 1; fi
+
     # run k3s server default
     K3S_ROLE=$(k3os config get k3s.role)
     if [ -z "${K3S_ROLE}" ]; then
