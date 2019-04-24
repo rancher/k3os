@@ -11,7 +11,7 @@ Quick Start
 ===========
 
 Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
-in VMware, VirtualBox, or KVM.  The server will automatically boot into a live installation. Log in with the user `rancher` and run `kubectl`. 
+in VMware, VirtualBox, or KVM.  The server will automatically start a single node kubernetes cluster. Log in with the user `rancher` and run `kubectl`. This is a "live install" running from the ISO media and changes will not persist after reboot. 
 
 To copy k3os to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO from the virtual machine and reboot. 
 
