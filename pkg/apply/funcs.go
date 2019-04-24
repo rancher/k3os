@@ -1,10 +1,17 @@
 package apply
 
 import (
+	"bytes"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+
 	"github.com/rancher/k3os/pkg/command"
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/rancher/k3os/pkg/hostname"
 	"github.com/rancher/k3os/pkg/module"
+	"github.com/rancher/k3os/pkg/ssh"
 	"github.com/rancher/k3os/pkg/sysctl"
 	"github.com/rancher/k3os/pkg/writefile"
 )
@@ -42,8 +49,32 @@ func ApplyWriteFiles(cfg *config.CloudConfig) error {
 	return nil
 }
 
-func ApplyK3S(cfg *config.CloudConfig) error {
-	buf :=
-	contents =
+func ApplySSHKeys(cfg *config.CloudConfig) error {
+	return ssh.SetAuthorizedKeys(cfg, false)
+}
 
+func ApplySSHKeysWithNet(cfg *config.CloudConfig) error {
+	return ssh.SetAuthorizedKeys(cfg, true)
+}
+
+func ApplyK3S(cfg *config.CloudConfig) error {
+	buf := &bytes.Buffer{}
+	if cfg.K3OS.ServerURL != "" {
+		buf.WriteString(fmt.Sprintf("export K3S_URL=\"%s\"\n", cfg.K3OS.ServerURL))
+	}
+
+	if strings.HasPrefix(cfg.K3OS.Token, "K10") {
+		buf.WriteString(fmt.Sprintf("export K3S_TOKEN=\"%s\"\n", cfg.K3OS.Token))
+	} else if cfg.K3OS.Token != "" {
+		buf.WriteString(fmt.Sprintf("export K3S_CLUSTER_SECRET=\"%s\"\n", cfg.K3OS.Token))
+	}
+
+	if buf.Len() > 0 {
+		if err := os.MkdirAll("/etc/rancher/k3s", 755); err != nil {
+			return err
+		}
+		return ioutil.WriteFile("/etc/rancher/k3s/k3s.env", buf.Bytes(), 644)
+	}
+
+	return nil
 }

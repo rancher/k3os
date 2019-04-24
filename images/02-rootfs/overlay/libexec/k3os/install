@@ -85,6 +85,10 @@ mkdir -p ${TARGET}/boot/EFI
 cp -rf ${DISTRO}/boot/isolinux ${TARGET}/boot/syslinux
 cp -rf ${DISTRO}/boot/isolinux/efi64 ${TARGET}/boot/EFI/syslinux
 cp -rf ${DISTRO}/boot/isolinux/efilinux.cfg ${TARGET}/boot/EFI/syslinux/syslinux.cfg
+TTY=$(tty | sed 's!/dev/!!')
+if [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
+    sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/syslinux/syslinux.cfg ${TARGET}/boot/EFI/syslinux/syslinux.cfg
+fi
 
 if [ "$EFI" = "true" ]; then
     modprobe efivars 2>/dev/null || true
@@ -104,3 +108,9 @@ fi
 umount ${TARGET}/boot
 rmdir ${TARGET}/boot
 umount ${TARGET}
+
+if grep -q k3os.install.poweroff /proc/cmdline; then
+    poweroff -f
+else
+    reboot -f
+fi

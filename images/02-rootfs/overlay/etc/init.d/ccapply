@@ -1,0 +1,9 @@
+#!/sbin/openrc-run
+
+depend() {
+    after net-online
+    need net
+}
+
+name="ccapply"
+command="/usr/sbin/ccapply"

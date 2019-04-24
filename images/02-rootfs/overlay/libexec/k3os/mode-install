@@ -3,8 +3,3 @@
 source $SCRIPTS/live
 
 /usr/sbin/os-config
-if grep -q k3os.install.poweroff /proc/cmdline; then
-    poweroff -f
-else
-    reboot -f
-fi

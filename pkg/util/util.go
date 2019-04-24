@@ -7,82 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"path/filepath"
-	"strings"
-
-	"gopkg.in/yaml.v3"
 )
-
-func Convert(from, to interface{}) error {
-	bytes, err := yaml.Marshal(from)
-	if err != nil {
-		return err
-	}
-	return yaml.Unmarshal(bytes, to)
-}
-
-func Env2Map(env []string) map[string]string {
-	m := make(map[string]string, len(env))
-	for _, s := range env {
-		d := strings.Split(s, "=")
-		m[d[0]] = d[1]
-	}
-	return m
-}
-
-func MapCopy(data map[string]interface{}) map[string]interface{} {
-	result := map[string]interface{}{}
-	for k, v := range data {
-		result[k] = Copy(v)
-	}
-	return result
-}
-
-func Copy(d interface{}) interface{} {
-	switch d := d.(type) {
-	case map[string]interface{}:
-		return MapCopy(d)
-	case []interface{}:
-		return SliceCopy(d)
-	default:
-		return d
-	}
-}
-
-func SliceCopy(data []interface{}) []interface{} {
-	result := make([]interface{}, len(data), len(data))
-	for k, v := range data {
-		result[k] = Copy(v)
-	}
-	return result
-}
-
-func FilterKeys(data map[string]interface{}, key []string) (filtered, rest map[string]interface{}) {
-	if len(key) == 0 {
-		return data, map[string]interface{}{}
-	}
-	filtered = map[string]interface{}{}
-	rest = MapCopy(data)
-	k := key[0]
-	if d, ok := data[k]; ok {
-		switch d := d.(type) {
-		case map[string]interface{}:
-			f, r := FilterKeys(d, key[1:])
-			if len(f) != 0 {
-				filtered[k] = f
-			}
-			if len(r) != 0 {
-				rest[k] = r
-			} else {
-				delete(rest, k)
-			}
-		default:
-			filtered[k] = d
-			delete(rest, k)
-		}
-	}
-	return
-}
 
 func WriteFileAtomic(filename string, data []byte, perm os.FileMode) error {
 	dir, file := path.Split(filename)
@@ -101,17 +26,6 @@ func WriteFileAtomic(filename string, data []byte, perm os.FileMode) error {
 		return err
 	}
 	return os.Rename(tempFile.Name(), filename)
-}
-
-func WriteToFile(data interface{}, filename string) error {
-	content, err := yaml.Marshal(data)
-	if err != nil {
-		return err
-	}
-	if err := os.MkdirAll(filepath.Dir(filename), os.ModeDir|0700); err != nil {
-		return err
-	}
-	return WriteFileAtomic(filename, content, 400)
 }
 
 func HTTPDownloadToFile(url, dest string) error {
@@ -181,20 +95,6 @@ func RunScript(path string, arg ...string) error {
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
-}
-
-func FileCopy(src, dest string) error {
-	data, err := ioutil.ReadFile(src)
-	if err != nil {
-		return err
-	}
-	return WriteFileAtomic(dest, data, 0644)
-}
-
-func UnescapeKernelParams(s string) string {
-	s = strings.Replace(s, `\"`, `"`, -1)
-	s = strings.Replace(s, `\'`, `'`, -1)
-	return s
 }
 
 func EnsureDirectoryExists(dir string) error {

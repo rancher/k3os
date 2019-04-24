@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/ghodss/yaml"
 	"github.com/rancher/mapper"
 	"github.com/rancher/mapper/convert"
 	merge2 "github.com/rancher/mapper/convert/merge"
 	"github.com/rancher/mapper/values"
-	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -121,16 +121,15 @@ func readLocalConfigs() []reader {
 }
 
 func readFile(path string) (map[string]interface{}, error) {
-	f, err := os.Open(path)
+	f, err := ioutil.ReadFile(path)
 	if os.IsNotExist(err) {
 		return nil, nil
 	} else if err != nil {
 		return nil, err
 	}
-	defer f.Close()
 
 	data := map[string]interface{}{}
-	if err := yaml.NewDecoder(f).Decode(&data); err != nil {
+	if err := yaml.Unmarshal(f, &data); err != nil {
 		return nil, err
 	}
 
@@ -147,6 +146,10 @@ func readCmdline() (map[string]interface{}, error) {
 
 	data := map[string]interface{}{}
 	for _, item := range strings.Fields(string(bytes)) {
+		if !strings.HasPrefix(item, "k3os") {
+			continue
+		}
+
 		parts := strings.SplitN(item, "=", 2)
 		value := "true"
 		if len(parts) > 1 {

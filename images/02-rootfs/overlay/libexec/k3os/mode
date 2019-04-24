@@ -4,6 +4,9 @@ source $SCRIPTS/functions
 
 for x in $(cat /proc/cmdline); do
     case $x in
+        rescue)
+            MODE=shell
+            ;;
         k3os.mode=*)
             MODE=${x#k3os.mode=}
             ;;

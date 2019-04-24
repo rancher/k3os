@@ -64,11 +64,6 @@ pinfo()
     echo " * " "$@"
 }
 
-ccapply()
-{
-    pinfo "Running cloud-config apply" "$@"
-}
-
 cleanup()
 {
     rm -rf /run/k3os

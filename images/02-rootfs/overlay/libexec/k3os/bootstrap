@@ -24,8 +24,10 @@ setup_users()
     sed -i 's!/bin/ash!/bin/bash!' /etc/passwd
     mkdir -p /home
     addgroup -S sudo
+    sed -i 's/^(sudo:.*)/\1rancher/g' /etc/group
     addgroup -g 1000 rancher
-    adduser -s /bin/bash -u 1000 -D -G rancher -G sudo rancher
+    adduser -s /bin/bash -u 1000 -D -G rancher rancher
+    echo 'rancher:*' | chpasswd -e
 }
 
 setup_dirs()

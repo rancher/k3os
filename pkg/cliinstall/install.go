@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/ghodss/yaml"
+
 	"github.com/rancher/k3os/pkg/ask"
 	"github.com/rancher/k3os/pkg/config"
 )
@@ -41,11 +43,15 @@ func Run() error {
 	}
 
 	f.Close()
-	return runCCApply()
+	if err := runCCApply(); err != nil {
+		return err
+	}
+
+	return exec.Command("service", "k3s", "restart").Run()
 }
 
 func runCCApply() error {
-	cmd := exec.Command("/usr/libexec/k3os/ccapply", "--config")
+	cmd := exec.Command("/usr/sbin/ccapply", "--config")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -76,7 +82,11 @@ func runInstall(cfg config.CloudConfig) error {
 	if tempFile != nil {
 		cfg.K3OS.Mode = ""
 		cfg.K3OS.Install = config.Install{}
-		if err := json.NewEncoder(tempFile).Encode(&cfg); err != nil {
+		bytes, err := yaml.Marshal(&cfg)
+		if err != nil {
+			return err
+		}
+		if _, err := tempFile.Write(bytes); err != nil {
 			return err
 		}
 		if err := tempFile.Close(); err != nil {

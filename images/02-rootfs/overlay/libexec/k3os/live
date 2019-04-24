@@ -1,7 +1,21 @@
 #!/bin/bash
 
+setup_os_config()
+{
+    echo >> /etc/motd
+    echo 'You can configure this system or install to disk using "sudo os-config"' >> /etc/motd
+    mkdir -p /usr/local/bin
+    cat > /usr/local/bin/os-config << "EOF"
+#!/bin/bash
+exec /usr/libexec/k3os/k3os-config
+EOF
+    chmod +x /usr/local/bin/os-config
+}
+
 mount -o ro $(blkid -L K3OS) /.base
 setup_kernel
 
 # no passwords in live mode
 passwd -d rancher >/dev/null 2>&1
+
+setup_os_config

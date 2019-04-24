@@ -11,5 +11,3 @@ setup_ssh()
 }
 
 setup_ssh
-passwd -d rancher
-ccapply --boot

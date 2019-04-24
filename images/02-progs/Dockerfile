@@ -22,7 +22,8 @@ COPY /main.go $GOPATH/src/github.com/rancher/k3os/
 COPY /vendor/ $GOPATH/src/github.com/rancher/k3os/vendor/
 WORKDIR $GOPATH/src/github.com/rancher/k3os
 RUN gobuild -o /output/k3os && \
-    gobuild -o /output/k3os-config ./cmd/config
+    gobuild -o /output/k3os-config ./cmd/config && \
+    gobuild -o /output/ccapply ./cmd/ccapply
 
 FROM gobuild
 COPY --from=linuxkit /output/ /output/

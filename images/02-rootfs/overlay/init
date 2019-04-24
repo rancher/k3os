@@ -22,6 +22,8 @@ if ! ${SCRIPTS}/bootstrap; then
     rescue
 fi
 
+exec >/dev/console </dev/console 2>&1
+
 reinit_debug
 
 if ! ${SCRIPTS}/mode; then

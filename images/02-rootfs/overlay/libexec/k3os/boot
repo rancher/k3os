@@ -25,15 +25,20 @@ EOF
         fi
     done
 
-    if [ -e /dev/ttyS0 ]; then
-        echo 'ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100' >> /etc/inittab
-        echo ttyS0 >> /etc/securetty
-    fi
-
-    if [ -e /dev/ttyAMA0 ]; then
-        echo 'ttyAMA0::respawn:/sbin/getty -L ttyAMA0 115200 vt100' >> /etc/inittab
-        echo ttyAMA0 >> /etc/securetty
-    fi
+    for x in $(cat /proc/cmdline); do
+    case $x in
+        rescue)
+            MODE=shell
+            ;;
+        console=*)
+            TTY=${x#console=}
+            if [ -e /dev/${TTY} ] && ! grep -q "^${TTY}::" /etc/inittab; then
+                echo "${TTY}::respawn:/sbin/getty -L ttyS0 115200 vt100" >> /etc/inittab
+                echo ${TTY} >> /etc/securetty
+            fi
+            ;;
+        esac
+    done
 }
 
 setup_sudoers()
@@ -52,7 +57,7 @@ setup_services()
         ln -s /etc/init.d/$i /etc/runlevels/boot
     done
 
-    for i in sshd k3s "local"; do
+    for i in sshd k3s "local" ccapply; do
         ln -s /etc/init.d/$i /etc/runlevels/default
     done
 
@@ -140,4 +145,5 @@ setup_root
 setup_inittab
 setup_sudoers
 setup_services
+ccapply --boot
 cleanup
