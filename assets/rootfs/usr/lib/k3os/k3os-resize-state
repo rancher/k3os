@@ -1,0 +1,17 @@
+#!/bin/sh
+
+RESIZED_STAMP=/var/lib/rancher/k3os/.resize_done
+if [ -e ${RESIZED_STAMP} ]; then
+    exit 0
+fi
+
+echo "********Resize the state partition********"
+RESIZED_PARTITION=$(blkid -L RANCHER_STATE)
+RESIZED_DEVICE=/dev/$(lsblk -no pkname ${RESIZED_PARTITION})
+RESIZED_PARTITION_NUMBER=$(grep $(basename ${RESIZED_PARTITION}) /proc/partitions | awk '{print $2}')
+
+growpart ${RESIZED_DEVICE} ${RESIZED_PARTITION_NUMBER}
+partprobe ${RESIZED_DEVICE}
+resize2fs ${RESIZED_PARTITION}
+
+touch ${RESIZED_STAMP}
