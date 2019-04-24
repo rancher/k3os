@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+setup_etc()
+{
+    mkdir -p /etc /proc
+    mount -t tmpfs none /etc
+    mount -t proc none /proc
+    cp -rfp /usr/etc/* /etc
+}
+
+setup_modules()
+{
+    if [ -e .base/lib/modules/$(uname -r) ]; then
+        mount --bind .base/lib/modules /lib/modules
+    fi
+    if [ -e .base/lib/firmware ]; then
+        mount --bind .base/lib/firmware /lib/firmware
+    fi
+}
+
+setup_users()
+{
+    sed -i 's!/bin/ash!/bin/bash!' /etc/passwd
+    mkdir -p /home
+    addgroup -S sudo
+    addgroup -g 1000 rancher
+    adduser -s /bin/bash -u 1000 -D -G rancher -G sudo rancher
+}
+
+setup_dirs()
+{
+    mkdir -p /run/k3os
+}
+
+setup_etc
+
+. $SCRIPTS/functions
+
+setup_modules
+setup_users
+rc.init
+setup_dirs
+setup_kernel
+ccapply --initrd
+
+pinfo Bootstrapped

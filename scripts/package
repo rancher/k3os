@@ -2,18 +2,33 @@
 set -e
 
 source $(dirname $0)/version
+
+export DOCKER_BUILDKIT=1
 cd $(dirname $0)/..
 
-ARTIFACTS=$(pwd)/dist/artifacts
-BUILD=build
-INITRD_DIR=${BUILD}/initrd
-ROOTFS_DIR=${BUILD}/rootfs
-KERNEL_DIR=${BUILD}/kernel
-BOOTLOADER_DIR=${BUILD}/bootloader
-export ARTIFACTS BUILD INITRD_DIR ROOTFS_DIR KERNEL_DIR BOOTLOADER_DIR VERSION
+cd images
 
-./scripts/package-bootloader
-./scripts/package-kernel
-./scripts/package-rootfs
-./scripts/package-initrd
-./scripts/package-iso
+if [ "$#" = 0 ]; then
+    set -- [0-9][0-9]*
+fi
+
+for i; do
+    i=$(basename $i)
+    IMAGE=${i##[0-9][0-9]-}
+    FULL_IMAGE=$REPO/k3os-$IMAGE:$TAG
+
+    cd $i
+    if [ -e archs ] && ! grep -q $ARCH archs; then
+        echo skipping $FULL_IMAGE for $ARCH
+        cd ..
+        continue
+    fi
+
+    echo building $FULL_IMAGE
+    ROOT=.
+    if [ -e root ]; then
+        ROOT=$(readlink -f root)
+    fi
+    docker build --build-arg TAG=$TAG --build-arg REPO=${REPO} --build-arg ARCH=${ARCH} -f $(pwd)/Dockerfile -t $FULL_IMAGE $ROOT
+    cd ..
+done

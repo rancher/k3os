@@ -5,23 +5,24 @@ if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
 fi
 
 COMMIT=$(git rev-parse --short HEAD)
-GIT_TAG=$(git tag -l --contains HEAD | head -n 1)
+GIT_TAG=${DRONE_TAG:-$(git tag -l --contains HEAD | head -n 1)}
 
-if [ -z "$VERSION" ]; then
-    if [[ -z "$DIRTY" && -n "$GIT_TAG" ]]; then
-        VERSION=$GIT_TAG
-    else
-        VERSION="${COMMIT}${DIRTY}"
-    fi
+if [[ -z "$DIRTY" && -n "$GIT_TAG" ]]; then
+    VERSION=$GIT_TAG
+else
+    VERSION="${COMMIT}${DIRTY}"
 fi
 
-# Suffix
-SUFFIX=""
-if [ -n "${ARCH}" ] && [ "${ARCH}" != "amd64" ]; then
-    SUFFIX="_${ARCH}"
+if [ -z "$ARCH" ]; then
+    ARCH=$(go env GOHOSTARCH)
 fi
 
-INITRD=initrd${SUFFIX}
-export VERSION COMMIT INITRD GIT_TAG DIRTY SUFFIX
+ARCH=${ARCH:-"amd64"}
+SUFFIX="-${ARCH}"
+TAG=${TAG:-${VERSION}${SUFFIX}}
+REPO=${REPO:-rancher}
 
-echo " Building ${VERSION} from ${COMMIT} on ${ARCH}"
+if echo $TAG | grep -q dirty; then
+    TAG=dev
+fi
+

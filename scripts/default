@@ -1,9 +1,0 @@
-#!/bin/bash
-set -e
-
-cd $(dirname $0)/..
-
-./scripts/validate
-./scripts/build
-./scripts/layout
-./scripts/package

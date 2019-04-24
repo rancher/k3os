@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mount -o ro $(blkid -L K3OS) /.base
+setup_kernel
+
+# no passwords in live mode
+passwd -d rancher >/dev/null 2>&1

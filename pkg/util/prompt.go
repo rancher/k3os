@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -28,18 +30,18 @@ func PromptYes(question string) bool {
 	return strings.ToLower(line[0:1]) == "y"
 }
 
-func PromptPassword() ([]byte, bool) {
-	fmt.Print("please set password for [rancher]: ")
+func PromptPassword() (string, bool, error) {
+	fmt.Print("Please enter password for [rancher]: ")
 	p, err := MaskPassword(os.Stdin, os.Stdout)
 	if err != nil {
-		logrus.Fatalf("failed to set password: %v", err)
+		return "", false, errors.Wrapf(err, "failed to set password")
 	}
-	fmt.Print("confirm password for [rancher]: ")
+	fmt.Print("Confirm password for [rancher]: ")
 	c, err := MaskPassword(os.Stdin, os.Stdout)
 	if err != nil {
-		logrus.Fatalf("failed to set confirm password: %v", err)
+		return "", false, errors.Wrapf(err, "failed to confirm password")
 	}
-	return c, bytes.Compare(p, c) == 0
+	return string(c), bytes.Compare(p, c) == 0, nil
 }
 
 func MaskPassword(r *os.File, w io.Writer) ([]byte, error) {

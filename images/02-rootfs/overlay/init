@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+rescue() {
+    echo ERROR "Something went wrong, run with cmdline k3os.debug for more logging"
+    echo Dropping to shell
+    exec bash
+}
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+. /usr/libexec/k3os/functions
+. /usr/lib/os-release
+
+pinfo Welcome to $PRETTY_NAME
+
+if [ "$K3S_DEBUG" = "true" ]; then
+    set -x
+fi
+
+if ! ${SCRIPTS}/bootstrap; then
+    rescue
+fi
+
+reinit_debug
+
+if ! ${SCRIPTS}/mode; then
+    rescue
+fi
+
+trap rescue EXIT
+
+pinfo Running mode: $(</run/k3os/mode)
+source $SCRIPTS/mode-$(</run/k3os/mode)
+
+pinfo Booting system
+source $SCRIPTS/boot
+
+exec /sbin/init

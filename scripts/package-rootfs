@@ -1,6 +1,0 @@
-#!/bin/bash
-set -e
-
-tar cJf ${ARTIFACTS}/rootfs${SUFFIX}.tar.xz --exclude lib/modules/* --exclude lib/modprobe.d/* --exclude lib/firmware/* -C ${ROOTFS_DIR} .
-
-mksquashfs ${ROOTFS_DIR} ${ARTIFACTS}/rootfs${SUFFIX}.squashfs

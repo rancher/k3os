@@ -1,0 +1,9 @@
+NAME="k3OS"
+VERSION="k3OS %TAG%"
+ID=k3os
+ID_LIKE=alpine
+PRETTY_NAME="k3OS %TAG%"
+VERSION_ID="%TAG%"
+HOME_URL="https://k3os.io/"
+SUPPORT_URL="https://k3os.io/"
+BUG_REPORT_URL="https://github.com/rancher/k3os/issues"

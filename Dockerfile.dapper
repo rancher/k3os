@@ -1,102 +1,30 @@
-FROM ubuntu:bionic
-# FROM arm64=arm64v8/ubuntu:bionic
+FROM golang:1.11-alpine
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        build-essential \
-        ca-certificates \
-        cpio \
-        curl \
-        gettext \
-        git \
-        isolinux \
-        less \
-        libblkid-dev \
-        libmount-dev \
-        libselinux1-dev \
-        locales \
-        module-init-tools \
-        mtools \
-        openssh-client \
-        pkg-config \
-        qemu \
-        qemu-kvm \
-        rsync \
-        sudo \
-        syslinux-common \
-        vim \
-        wget \
-        xorriso \
-        xz-utils \
-        squashfs-tools \
-        runc \
-    && rm /bin/sh && ln -s /bin/bash /bin/sh
-
-########## Dapper Configuration #####################
-
-ENV DAPPER_ENV VERSION DEBUG
-ENV DAPPER_DOCKER_SOCKET true
-ENV DAPPER_SOURCE /go/src/github.com/rancher/k3os
-ENV DAPPER_OUTPUT ./bin ./dist ./build
-ENV DAPPER_RUN_ARGS --privileged
-ENV TRASH_CACHE ${DAPPER_SOURCE}/.trash-cache
-ENV SHELL /bin/bash
-WORKDIR ${DAPPER_SOURCE}
-
-########## General Configuration #####################
 ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
 
-ARG KERNEL_VERSION=5.0.0-13.14-rancher1
-ARG KERNEL_URL_amd64=https://github.com/rancher/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_amd64.tar.xz
-ARG KERNEL_URL_arm64=https://github.com/rancher/k3os-kernel/releases/download/${KERNEL_VERSION}/kernel-generic_arm64.tar.xz
+RUN apk -U add bash git gcc musl-dev docker vim less file curl wget ca-certificates
+RUN go get -d golang.org/x/lint/golint && \
+    git -C /go/src/golang.org/x/lint/golint checkout -b current 06c8688daad7faa9da5a0c2f163a3d14aac986ca && \
+    go install golang.org/x/lint/golint && \
+    rm -rf /go/src /go/pkg
+RUN go get -d github.com/alecthomas/gometalinter && \
+    git -C /go/src/github.com/alecthomas/gometalinter checkout -b current v3.0.0 && \
+    go install github.com/alecthomas/gometalinter && \
+    gometalinter --install && \
+    rm -rf /go/src /go/pkg
+RUN go get -d github.com/rancher/trash && \
+    git -C /go/src/github.com/rancher/trash checkout -b current v0.2.6 && \
+    go install github.com/rancher/trash && \
+    rm -rf /go/src /go/pkg
 
-ARG INITRDFS_VERSION=2018.02.11-rancher5
-ARG INITRDFS_URL_amd64=https://github.com/rancher/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_amd64.tar.xz
-ARG INITRDFS_URL_arm64=https://github.com/rancher/k3os-initrdfs/releases/download/${INITRDFS_VERSION}/initrdfs_arm64.tar.xz
-
-ARG ROOTFS_VERSION=2019.02.1-rancher4
-ARG ROOTFS_URL_amd64=https://github.com/rancher/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_amd64.tar.xz
-ARG ROOTFS_URL_arm64=https://github.com/rancher/k3os-rootfs/releases/download/${ROOTFS_VERSION}/rootfs_arm64.tar.xz
-
-ARG K3S_VERSION=v0.4.0
-ARG K3S_URL_amd64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s
-ARG K3S_URL_arm64=https://github.com/rancher/k3s/releases/download/${K3S_VERSION}/k3s-arm64
-
-ARG OPEN_ISCSI_VERSION=2.0.874-rancher1
-ARG OPEN_ISCSI_URL_amd64=https://github.com/niusmallnan/k3os-open-iscsi/releases/download/${OPEN_ISCSI_VERSION}/open-iscsi_amd64.tar.xz
-
-ARG K3OS_RELEASES_YML=https://releases.rancher.com/k3os
-
-ARG DEFAULT_HOSTNAME=rancher
-
-ENV KERNEL_VERSION=${KERNEL_VERSION} \
-    KERNEL_URL=KERNEL_URL_${ARCH} \
-    KERNEL_URL_amd64=${KERNEL_URL_amd64} \
-    KERNEL_URL_arm64=${KERNEL_URL_arm64} \
-    ROOTFS_URL=ROOTFS_URL_${ARCH} \
-    ROOTFS_URL_amd64=${ROOTFS_URL_amd64} \
-    ROOTFS_URL_arm64=${ROOTFS_URL_arm64} \
-    INITRDFS_URL=INITRDFS_URL_${ARCH} \
-    INITRDFS_URL_amd64=${INITRDFS_URL_amd64} \
-    INITRDFS_URL_arm64=${INITRDFS_URL_arm64} \
-    K3S_URL=K3S_URL_${ARCH} \
-    K3S_URL_amd64=${K3S_URL_amd64} \
-    K3S_URL_arm64=${K3S_URL_arm64} \
-    OPEN_ISCSI_URL=OPEN_ISCSI_URL_${ARCH} \
-    OPEN_ISCSI_URL_amd64=${OPEN_ISCSI_URL_amd64} \
-    DOWNLOADS=/usr/src/downloads \
-    K3OS_RELEASES_YML=${K3OS_RELEASES_YML} \
-    DEFAULT_HOSTNAME=${DEFAULT_HOSTNAME}
-
-ENV GOROOT=/usr/local/go \
-    GOPATH=/go \
-    GO_VERSION=1.12.4 \
-    GOARCH=$ARCH \
-    PATH=/go/bin:/usr/local/go/bin:$PATH
-
-RUN wget -O - https://storage.googleapis.com/golang/go${GO_VERSION}.linux-${GOARCH}.tar.gz | tar -xzf - -C /usr/local && \
-    go get github.com/rancher/trash && go get golang.org/x/lint/golint
+ENV DAPPER_ENV REPO TAG DRONE_TAG
+ENV DAPPER_SOURCE /go/src/github.com/rancher/k3os/
+ENV DAPPER_OUTPUT ./bin ./dist
+ENV DAPPER_DOCKER_SOCKET true
+ENV TRASH_CACHE ${DAPPER_SOURCE}/.trash-cache
+ENV HOME ${DAPPER_SOURCE}
+WORKDIR ${DAPPER_SOURCE}
 
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]

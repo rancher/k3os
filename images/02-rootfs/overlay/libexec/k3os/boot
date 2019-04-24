@@ -1,0 +1,143 @@
+#!/bin/bash
+
+setup_inittab()
+{
+    cat > /etc/inittab << "EOF"
+# /etc/inittab
+
+::sysinit:/sbin/openrc sysinit
+::sysinit:/sbin/openrc boot
+::wait:/sbin/openrc default
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+::shutdown:/sbin/openrc shutdown
+EOF
+
+    echo console > /etc/securetty
+
+    for i in 1 2 3 4 5 6; do
+        if [ -e /dev/tty${i} ]; then
+            echo 'tty'$i'::respawn:/sbin/getty 38400 tty'$i >> /etc/inittab
+            echo tty$i >> /etc/securetty
+        fi
+    done
+
+    if [ -e /dev/ttyS0 ]; then
+        echo 'ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100' >> /etc/inittab
+        echo ttyS0 >> /etc/securetty
+    fi
+
+    if [ -e /dev/ttyAMA0 ]; then
+        echo 'ttyAMA0::respawn:/sbin/getty -L ttyAMA0 115200 vt100' >> /etc/inittab
+        echo ttyAMA0 >> /etc/securetty
+    fi
+}
+
+setup_sudoers()
+{
+    echo '%sudo   ALL = (ALL) ALL' > /etc/sudoers.d/sudo
+    echo 'rancher ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers.d/sudo
+}
+
+setup_services()
+{
+    for i in hwdrivers mdev dmesg devfs; do
+        ln -s /etc/init.d/$i /etc/runlevels/sysinit
+    done
+
+    for i in acpid hwclock syslog bootmisc hostname sysctl modules connman dbus haveged open-vm-tools; do
+        ln -s /etc/init.d/$i /etc/runlevels/boot
+    done
+
+    for i in sshd k3s "local"; do
+        ln -s /etc/init.d/$i /etc/runlevels/default
+    done
+
+    for i in savecache killproces mount-ro; do
+        ln -s /etc/init.d/$i /etc/runlevels/shutdown
+    done
+}
+
+setup_root()
+{
+    if [ ! -e /root ]; then
+        mkdir -p /root
+        chmod 0700 /root
+    fi
+}
+
+setup_shell()
+{
+    mv /etc/profile.d/color_prompt{,.sh}
+    echo 'alias vi=vim' > /etc/profile.d/vim
+}
+
+setup_hosts()
+{
+    if [ -e /etc/hosts ]; then
+        return 0
+    fi
+
+    HOSTNAME=$(</etc/hostname)
+    cat > /etc/hosts << EOF
+127.0.0.1	localhost localhost.localdomain
+127.0.1.1	${HOSTNAME} ${HOSTNAME}.localdomain
+
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+EOF
+}
+
+setup_hostname()
+{
+    if [ -e /etc/hostname ]; then
+        return 0
+    fi
+
+    if [ -e /var/lib/rancher/k3os/hostname ]; then
+        cp /var/lib/rancher/k3os/hostname /etc/hostname
+        return 0
+    fi
+
+    mkdir -p /var/lib/rancher/k3os
+    HOSTNAME=k3os-${RANDOM}
+    echo $HOSTNAME > /var/lib/rancher/k3os/hostname
+    cp /var/lib/rancher/k3os/hostname /etc/hostname
+
+}
+
+setup_mounts()
+{
+    ROOT_FS_TYPE=$(stat -f --format '%T' / || true)
+    BOOT=$(blkid -L K3OS_BOOT || true)
+    if [ -n "$BOOT" ] && [ "$ROOT_FS_TYPE" != "tmpfs" ]; then
+        mkdir -p /boot
+        mount ${BOOT} /boot
+    fi
+
+    if [ -e /.base/k3os/system ]; then
+        mkdir -p /k3os/system
+        mount --bind /.base/k3os/system /k3os/system
+    fi
+
+    # Twice on purpose.  A live system double mounts this
+    while mountpoint -q /.base; do
+        umount -l /.base
+    done
+}
+
+setup_mounts
+setup_hostname
+setup_hosts
+setup_shell
+setup_root
+setup_inittab
+setup_sudoers
+setup_services
+cleanup

@@ -10,7 +10,6 @@ import (
 
 	"github.com/rancher/k3os/config"
 	"github.com/rancher/k3os/pkg/util"
-
 	"github.com/sirupsen/logrus"
 )
 

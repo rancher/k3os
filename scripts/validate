@@ -1,15 +1,22 @@
 #!/bin/bash
 set -e
 
-PACKAGES=". $(find -name '*.go' | xargs -I{} dirname {} |  cut -f2 -d/ | sort -u | grep -Ev '(^\.$|.git|.trash-cache|vendor|bin)' | sed -e 's!^!./!' -e 's!$!/...!')"
-echo Running validation: go vet
+cd $(dirname $0)/..
+
+echo Running validation
+
+PACKAGES="$(go list ./...)"
+
+echo Running: go vet
 go vet ${PACKAGES}
-echo Running validation: golint
+echo Running: gometalinter
 for i in ${PACKAGES}; do
-    if [ -n "$(golint $i | grep -v 'should have comment.* or be unexported' | tee /dev/stderr)" ]; then
+    if [ -n "$(gometalinter $i | grep -v 'should have comment.*or be unexported' | tee /dev/stderr)" ]; then
         failed=true
     fi
 done
 test -z "$failed"
-echo Running validation: go fmt
+echo Running: go fmt
 test -z "$(go fmt ${PACKAGES} | tee /dev/stderr)"
+
+GO111MODULE=on go mod verify

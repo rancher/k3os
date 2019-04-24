@@ -1,0 +1,15 @@
+#!/bin/bash
+
+setup_ssh()
+{
+    if [ ! -e /var/lib/rancher/k3os/ssh ]; then
+        mkdir -p /var/lib/rancher/k3os
+        cp -rf /etc/ssh /var/lib/rancher/k3os/ssh
+    fi
+    rm -rf /etc/ssh
+    ln -s /var/lib/rancher/k3os/ssh /etc/ssh
+}
+
+setup_ssh
+passwd -d rancher
+ccapply --boot

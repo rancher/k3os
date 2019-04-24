@@ -1,0 +1,95 @@
+#!/bin/bash
+
+TARGET=/run/k3os/target
+
+source /usr/lib/os-release
+
+grow()
+{
+    parted $1 resizepart $2 100%
+    partprobe $1
+    e2fsck -f ${1}${2}
+    resize2fs ${1}${2}
+}
+
+setup_mounts()
+{
+    mkdir -p $TARGET
+    mount -L K3OS_STATE /run/k3os/target
+
+    if [ -e $TARGET/k3os/system/growpart ]; then
+        read DEV NUM < $TARGET/k3os/system/growpart
+        umount /run/k3os/target
+        grow $DEV $NUM || true
+        mount -L K3OS_STATE /run/k3os/target
+        rm -f $TARGET/k3os/system/growpart
+    fi
+}
+
+setup_k3os()
+{
+    if [ -e $TARGET/k3os/system/k3os/current/k3os ]; then
+        return 0
+    fi
+    
+    K3OS_SRC=/.base/init
+    K3OS_FILE=$TARGET/k3os/system/k3os/${VERSION_ID}/k3os
+
+    if [ ! -e ${K3OS_SRC} ]; then
+        return 0
+    fi
+
+    if [ ! -e ${K3OS_FILE} ]; then
+        mkdir -p $(dirname ${K3OS_FILE}.tmp)
+        cp -f ${K3OS_SRC} ${K3OS_FILE}.tmp
+        mv -f ${K3OS_FILE}.tmp ${K3OS_FILE}
+    fi
+
+    ln -sf ${VERSION_ID} $TARGET/k3os/system/k3os/current
+}
+
+setup_init()
+{
+    if [ -e $TARGET/sbin/init ]; then
+        return 0
+    fi
+
+    mkdir -p $TARGET/sbin
+    ln -sf ../k3os/system/k3os/current/k3os $TARGET/sbin/init
+}
+
+setup_k3s()
+{
+    if [ -e $TARGET/k3os/system/k3s/current/k3s ]; then
+        return 0
+    fi
+
+    for i in $(ls -drt $TARGET/k3os/system/k3s/*); do
+        if [ ! -L "$i" ]; then
+            LATEST=$i
+            break
+        fi
+    done
+
+    if [ -e "${LATEST}" ]; then
+        ln -sf $(basename "${LATEST}") $TARGET/k3os/system/k3s/current
+        return 0
+    fi
+}
+
+setup_mounts
+setup_k3os
+setup_init
+setup_k3s
+
+cd $TARGET
+
+if [ -e k3os/system/factory-reset ] || [ -e k3os/system/ephemeral ]; then
+    rm -rf k3os/data k3os/system/factory-reset
+fi
+
+losetup -d /dev/loop0 || true
+mount --make-rprivate /
+mkdir -p .root
+pivot_root . .root
+K3OS_MODE=local exec /sbin/init

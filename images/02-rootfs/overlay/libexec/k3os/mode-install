@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source $SCRIPTS/live
+
+echo PATH=$PATH
+/usr/libexec/k3os/k3os-config --install /usr/libexec/k3os/install
+sync
+if grep -q k3os.install.poweroff /proc/cmdline; then
+    poweroff -f
+else
+    reboot -f
+fi

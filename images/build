@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+cd $(dirname $0)
+rm -rf main.squashfs initrd
+if [ -e k3os ]; then
+    sudo rm -rf k3os
+fi
+
+pushd ..
+mkdir -p build
+echo Running agent docker build
+docker build -t bb -f image/Dockerfile .
+popd
+
+docker run --rm bb cat main.squashfs > main.squashfs
+
+go build -ldflags "-w -s -extldflags -static" -o cli ../main.go
+echo -n "_sqmagic_" >> cli
+cat main.squashfs >> cli
+mkdir -p initrd
+mv cli initrd/init
+cd initrd
+echo init | cpio -H newc -o > initrd

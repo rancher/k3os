@@ -1,0 +1,80 @@
+#!/bin/bash
+set -e
+
+export SCRIPTS=/usr/libexec/k3os
+export K3OS_SYSTEM=/.base/k3os/system
+
+reinit_debug()
+{
+    if [ "$K3OS_DEBUG" = "true" ]; then
+        set -x
+        return 0
+    fi
+
+    if [ -e /run/k3os/debug ]; then
+        set -x
+        return 0
+    fi
+
+    if [ -e /proc/cmdline ]; then
+        for x in $(cat /proc/cmdline); do
+            case $x in
+                k3os.debug*)
+                    export K3OS_DEBUG=true
+                    mkdir -p /run/k3os
+                    echo debug > /run/k3os/debug 2>/dev/null || true
+                    ;;
+            esac
+        done
+    fi
+
+    if [ "$K3OS_DEBUG" = "true" ]; then
+        set -x
+    fi
+}
+
+setup_kernel()
+{
+    KERNEL=${K3OS_SYSTEM}/kernel/$(uname -r)/kernel.squashfs
+    if [ ! -e ${KERNEL} ]; then
+        return 0
+    fi
+
+    mkdir -p /run/k3os/kernel
+    mount -t squashfs $KERNEL /run/k3os/kernel
+
+    mount --bind /run/k3os/kernel/lib/modules /lib/modules
+    mount --bind /run/k3os/kernel/lib/firmware /lib/firmware
+    umount /run/k3os/kernel
+}
+
+perr()
+{
+    echo "[ERROR]" "$@" 1>&2
+}
+
+pfatal()
+{
+    echo "[FATAL]" "$@" 1>&2
+    exit 1
+}
+
+pinfo()
+{
+    echo " * " "$@"
+}
+
+ccapply()
+{
+    pinfo "Running cloud-config apply" "$@"
+}
+
+cleanup()
+{
+    rm -rf /run/k3os
+    unset SCRIPTS
+    unset K3OS_SYSTEM
+    unset K3OS_MODE
+}
+
+reinit_debug

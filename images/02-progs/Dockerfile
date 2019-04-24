@@ -1,0 +1,29 @@
+ARG REPO
+ARG TAG
+FROM ${REPO}/k3os-gobuild:${TAG} as gobuild
+
+ENV LINUXKIT 63afed7b131eef89d3a36b077d090a8e2b790b7a
+
+FROM gobuild as linuxkit
+RUN mkdir -p /output && \
+    mkdir -p $GOPATH/src/github.com/linuxkit && \
+    cd $GOPATH/src/github.com/linuxkit && \
+    git clone https://github.com/ibuildthecloud/linuxkit.git && \
+    cd linuxkit && \
+    git checkout $LINUXKIT
+WORKDIR $GOPATH/src/github.com/linuxkit/linuxkit
+RUN cd pkg/init/cmd/rc.init && \
+    gobuild -o /output/rc.init
+
+FROM gobuild as k3os
+COPY /cmd/ $GOPATH/src/github.com/rancher/k3os/cmd/
+COPY /pkg/ $GOPATH/src/github.com/rancher/k3os/pkg/
+COPY /main.go $GOPATH/src/github.com/rancher/k3os/
+COPY /vendor/ $GOPATH/src/github.com/rancher/k3os/vendor/
+WORKDIR $GOPATH/src/github.com/rancher/k3os
+RUN gobuild -o /output/k3os && \
+    gobuild -o /output/k3os-config ./cmd/config
+
+FROM gobuild
+COPY --from=linuxkit /output/ /output/
+COPY --from=k3os /output/ /output/

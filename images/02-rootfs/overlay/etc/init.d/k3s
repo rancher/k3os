@@ -1,0 +1,21 @@
+#!/sbin/openrc-run
+
+depend() {
+    after net-online
+    need net
+}
+
+supervisor=supervise-daemon
+respawn_delay=5
+name="k3s"
+command="/usr/sbin/k3s"
+command_args="server >>/var/log/k3s.log 2>&1"
+rm -rf /tmp/k3s*
+pidfile="/var/run/k3s.pid"
+
+set -o allexport
+if [ -f /etc/environment ]; then source /etc/environment; fi
+if [ -f /etc/rancher/k3s/k3s.env ]; then source /etc/rancher/k3s/k3s.env; fi
+set +o allexport
+
+rm -rf /tmp/k3s*

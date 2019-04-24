@@ -1,0 +1,27 @@
+#!/bin/bash
+
+source $SCRIPTS/functions
+
+for x in $(cat /proc/cmdline); do
+    case $x in
+        k3os.mode=*)
+            MODE=${x#k3os.mode=}
+            ;;
+    esac
+done
+
+if [ -z "$MODE" ] && [ -n "$(blkid -L K3OS_STATE)" ]; then
+    MODE=disk
+fi
+
+if [ -n "$K3OS_MODE" ]; then
+    MODE=$K3OS_MODE
+fi
+
+if [ -z "$MODE" ]; then
+    pfatal Failed to determine boot mode
+elif [ ! -e $SCRIPTS/mode-${MODE} ]; then
+    pfatal "Mode script does not exist for ${MODE}"
+else
+    echo "$MODE" > /run/k3os/mode
+fi
