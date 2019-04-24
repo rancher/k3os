@@ -43,6 +43,7 @@ RUN rm -rf /usr/src/image/local && \
 
 # cleanup files hostname/hosts
 RUN rm -rf \
+    /usr/src/image/etc/hosts \
     /usr/src/image/etc/hostname \
     /usr/src/image/etc/alpine-release \
     /usr/src/image/etc/apk \

@@ -1,11 +1,8 @@
-package config
+package apply
 
-import (
-	"fmt"
-	"os"
-	"strconv"
-)
+import "github.com/rancher/k3os/pkg/config"
 
+/*
 type K3OS struct {
 	Mode           string            `json:"mode,omitempty"`
 	DataSources    []string          `json:"dataSources,omitempty"`
@@ -38,25 +35,52 @@ type CloudConfig struct {
 	K3OS              K3OS       `json:"k3os,omitempty"`
 	Runcmd            []string   `json:"runCmd,omitempty"`
 	Bootcmd           []string   `json:"bootCmd,omitempty"`
-	Initcmd           []string   `json:"initCmd,omitempty"`
+	Initcmd           []string   `json:"bootCmd,omitempty"`
+}
+*/
+
+type applier func(cfg *config.CloudConfig) error
+
+func runApplies(cfg *config.CloudConfig, appliers ...applier) error {
+
 }
 
-type File struct {
-	Encoding           string `json:"encoding"`
-	Content            string `json:"content"`
-	Owner              string `json:"owner"`
-	Path               string `json:"path"`
-	RawFilePermissions string `json:"permissions"`
+func RunApply(cfg *config.CloudConfig) error {
+	return runApplies(cfg,
+		ApplySSHKeysWithNet,
+		ApplyWriteFiles,
+		ApplyRuncmd,
+	)
 }
 
-func (f *File) Permissions() (os.FileMode, error) {
-	if f.RawFilePermissions == "" {
-		return os.FileMode(0644), nil
-	}
-	// parse string representation of file mode as integer
-	perm, err := strconv.ParseInt(f.RawFilePermissions, 8, 32)
-	if err != nil {
-		return 0, fmt.Errorf("unable to parse file permissions %q as integer", f.RawFilePermissions)
-	}
-	return os.FileMode(perm), nil
+func ConfigApply(cfg *config.CloudConfig) error {
+	return runApplies(cfg,
+		ApplyK3S,
+	)
+}
+
+func BootApply(cfg *config.CloudConfig) error {
+	return runApplies(cfg,
+		ApplyModules,
+		ApplySysctls,
+		ApplyHostname,
+		//ApplyDNS,
+		ApplyPassword,
+		//ApplyMounts,
+		ApplySSHKeys,
+		ApplyK3S,
+		ApplyWriteFiles,
+		ApplyBootcmd,
+	)
+}
+
+func InitApply(cfg *config.CloudConfig) error {
+	return runApplies(cfg,
+		ApplyModules,
+		ApplySysctls,
+		ApplyHostname,
+		//ApplyDNS,
+		ApplyWriteFiles,
+		ApplyInitcmd,
+	)
 }

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/rancher/k3os/config"
+	"github.com/rancher/k3os/pkg/config"
 )
 
 func SetHostname(c *config.CloudConfig) error {
@@ -15,10 +15,13 @@ func SetHostname(c *config.CloudConfig) error {
 	if hostname == "" {
 		return nil
 	}
-	return syscall.Sethostname([]byte(hostname))
+	if err := syscall.Sethostname([]byte(hostname)); err != nil {
+		return err
+	}
+	return syncHostname()
 }
 
-func SyncHostname() error {
+func syncHostname() error {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return err
@@ -26,6 +29,11 @@ func SyncHostname() error {
 	if hostname == "" {
 		return nil
 	}
+
+	if err := ioutil.WriteFile("/etc/hostname", []byte(hostname+"\n"), 0644); err != nil {
+		return err
+	}
+
 	hosts, err := os.Open("/etc/hosts")
 	defer hosts.Close()
 	if err != nil {

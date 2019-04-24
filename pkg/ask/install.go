@@ -13,6 +13,35 @@ import (
 	"github.com/rancher/k3os/pkg/util"
 )
 
+func Ask(cfg *config.CloudConfig) (bool, error) {
+	if ok, err := isInstall(cfg); err != nil {
+		return false, err
+	} else if ok {
+		return true, AskInstall(cfg)
+	}
+
+	return false, AskServerAgent(cfg)
+}
+
+func isInstall(cfg *config.CloudConfig) (bool, error) {
+	if cfg.K3OS.Mode == "install" {
+		return true, nil
+	} else if cfg.K3OS.Mode == "live-server" {
+		return false, nil
+	} else if cfg.K3OS.Mode == "live-agent" {
+		return false, nil
+	}
+
+	i, err := questions.PromptFormattedOptions("Choose operation", -1,
+		"Install to disk",
+		"Configure server or agent")
+	if err != nil {
+		return false, err
+	}
+
+	return i == 0, nil
+}
+
 func AskInstall(cfg *config.CloudConfig) error {
 	if cfg.K3OS.Install.Silent {
 		return nil
@@ -45,7 +74,7 @@ func AskInstall(cfg *config.CloudConfig) error {
 			return err
 		}
 
-		if err := AskAgent(cfg); err != nil {
+		if err := AskServerAgent(cfg); err != nil {
 			return err
 		}
 	}
@@ -121,18 +150,33 @@ func AskToken(cfg *config.CloudConfig, server bool) error {
 	return err
 }
 
-func AskAgent(cfg *config.CloudConfig) error {
-	if cfg.K3OS.ServerURL != "" {
-		return nil
+func isServer(cfg *config.CloudConfig) (bool, error) {
+	if cfg.K3OS.Mode == "live-server" {
+		return true, nil
+	} else if cfg.K3OS.Mode == "live-agent" {
+		return false, nil
 	}
 
 	opts := []string{"server", "agent"}
 	i, err := questions.PromptFormattedOptions("Run as server or agent?", 0, opts...)
 	if err != nil {
+		return false, err
+	}
+
+	return i == 0, nil
+}
+
+func AskServerAgent(cfg *config.CloudConfig) error {
+	if cfg.K3OS.ServerURL != "" {
+		return nil
+	}
+
+	server, err := isServer(cfg)
+	if err != nil {
 		return err
 	}
 
-	if i != 1 {
+	if server {
 		return AskToken(cfg, true)
 	}
 

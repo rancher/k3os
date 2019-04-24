@@ -10,17 +10,53 @@ import (
 	"github.com/rancher/k3os/pkg/config"
 )
 
-func Run(args []string) error {
+func Run() error {
 	cfg, err := config.ReadConfig()
 	if err != nil {
 		return err
 	}
 
-	if err := ask.AskInstall(&cfg); err != nil {
+	isInstall, err := ask.Ask(&cfg)
+	if err != nil {
 		return err
 	}
 
-	var tempFile *os.File
+	if isInstall {
+		return runInstall(cfg)
+	}
+
+	cfg.K3OS.Mode = ""
+	cfg.K3OS.Install = config.Install{}
+	f, err := os.Create(config.SystemConfig)
+	if err != nil {
+		f, err = os.Create(config.LocalConfig)
+		if err != nil {
+			return err
+		}
+	}
+	defer f.Close()
+
+	if err := json.NewEncoder(f).Encode(&cfg); err != nil {
+		return err
+	}
+
+	f.Close()
+	return runCCApply()
+}
+
+func runCCApply() error {
+	cmd := exec.Command("/usr/libexec/k3os/ccapply", "--config")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	return cmd.Run()
+}
+
+func runInstall(cfg config.CloudConfig) error {
+	var (
+		err      error
+		tempFile *os.File
+	)
 
 	if cfg.K3OS.Install.ConfigURL == "" {
 		tempFile, err = ioutil.TempFile("/tmp", "k3os.XXXXXXXX")
@@ -38,6 +74,7 @@ func Run(args []string) error {
 	}
 
 	if tempFile != nil {
+		cfg.K3OS.Mode = ""
 		cfg.K3OS.Install = config.Install{}
 		if err := json.NewEncoder(tempFile).Encode(&cfg); err != nil {
 			return err
@@ -48,14 +85,10 @@ func Run(args []string) error {
 		defer os.Remove(tempFile.Name())
 	}
 
-	if len(args) > 0 {
-		cmd := exec.Command(args[0])
-		cmd.Env = append(os.Environ(), ev...)
-		cmd.Stderr = os.Stderr
-		cmd.Stdout = os.Stdout
-		cmd.Stdin = os.Stdin
-		return cmd.Run()
-	}
-
-	return nil
+	cmd := exec.Command("/usr/libexec/k3os/install")
+	cmd.Env = append(os.Environ(), ev...)
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	return cmd.Run()
 }

@@ -2,9 +2,7 @@
 
 source $SCRIPTS/live
 
-echo PATH=$PATH
-/usr/libexec/k3os/k3os-config --install /usr/libexec/k3os/install
-sync
+/usr/sbin/os-config
 if grep -q k3os.install.poweroff /proc/cmdline; then
     poweroff -f
 else

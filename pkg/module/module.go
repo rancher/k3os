@@ -7,8 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/rancher/k3os/config"
-
+	"github.com/rancher/k3os/pkg/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -27,9 +26,7 @@ func LoadModules(cfg *config.CloudConfig) error {
 	for sc.Scan() {
 		loaded[strings.SplitN(sc.Text(), " ", 2)[0]] = true
 	}
-	modules := cfg.K3OS.Defaults.Modules
-	additional := cfg.K3OS.Modules
-	modules = append(modules, additional...)
+	modules := cfg.K3OS.Modules
 	for _, m := range modules {
 		if loaded[m] {
 			continue

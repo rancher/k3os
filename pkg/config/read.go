@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	systemConfig = "/k3os/system/config.yaml"
-	localConfig  = "/var/lib/rancher/k3os/config.yaml"
+	SystemConfig = "/k3os/system/config.yaml"
+	LocalConfig  = "/var/lib/rancher/k3os/config.yaml"
 	localConfigs = "/var/lib/rancher/k3os/config.d"
 )
 
@@ -89,11 +89,11 @@ func merge(readers ...reader) (map[string]interface{}, error) {
 }
 
 func readSystemConfig() (map[string]interface{}, error) {
-	return readFile(systemConfig)
+	return readFile(SystemConfig)
 }
 
 func readLocalConfig() (map[string]interface{}, error) {
-	return readFile(localConfig)
+	return readFile(LocalConfig)
 }
 
 func readLocalConfigs() []reader {
