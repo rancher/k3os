@@ -1,6 +1,48 @@
-K3OS
+k3OS
 =====================================
-K3OS is a lightweight Linux distro built for the sole purpose of running Kubernetes.
+k3OS is a linux distribution designed to remove as much as possible
+OS maintaince in a Kubernetes cluster.  It is specifically designed to only
+have what is need to run [k3s](https://github.com/rancher/k3s). Additionally
+the OS is designed to be managed by kubectl once a cluster is bootstrapped.
+Nodes only need to join a cluster and then all aspects of the OS can be managed
+from Kubernetes. Both k3OS and k3s upgrades are handled by k3OS.
+
+Quick Start
+===========
+
+Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
+in VMware, VirtualBox, or KVM.  The server will automatically start a single node cluster.
+Log in with the user `rancher` to run kubectl.
+
+Configuration
+=============
+
+All configuration is done through a single cloud-init style config file that is either
+packaged in the image, downloaded though cloud-init, or managed by Kubernetes.
+
+More docs to come
+
+Images
+======
+
+For right now k3OS will not be shipping official images for clouds or other platforms.  Instead
+we will release documentation on how to automate the installation to master images.
+
+
+ARM64 and ARMv7
+===============
+
+k3OS will officially ship an ARM64 kernel for server class ARM64 machine.  For smaller ARM64
+SBCs and ARMv7, k3OS will support a "Bring Your Own Kernel" approach.  Basically you should
+be able to use an existing kernel with k3OS and k3OS wil manage everything except the kernel.
+
+Management From Kubernetes
+==========================
+
+Still in development but all configuration of the cluster and nodes will be accessible from
+kubectl as Custom Resources. Upgrades of the OS and k3s will be orchestrated by Kubernetes
+based on the upgrade policy and desire version.
+
 
 ## License
 Copyright (c) 2014-2019 [Rancher Labs, Inc.](http://rancher.com)
