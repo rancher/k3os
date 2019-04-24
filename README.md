@@ -11,7 +11,9 @@ Quick Start
 ===========
 
 Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
-in VMware, VirtualBox, or KVM.  The server will automatically boot into a live installation from which you can install to local disk. Log in with the user `rancher` and run `sudo config-os`, then reobot. Once you've logged in, you can run kubectl to manage the system. 
+in VMware, VirtualBox, or KVM.  The server will automatically boot into a live installation. Log in with the user `rancher` and run `kubectl`. 
+
+To copy k3os to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO from the virtual machine and reboot. 
 
 Configuration
 =============
