@@ -15,6 +15,8 @@ in VMware, VirtualBox, or KVM.  The server will automatically start a single nod
 
 To copy k3os to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO from the virtual machine and reboot. 
 
+Live install (boot from ISO) requires at least 1GB of RAM. Local install requires 512MB RAM. 
+
 Configuration
 =============
 
