@@ -1,13 +1,11 @@
 package cliinstall
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 	"os/exec"
 
 	"github.com/ghodss/yaml"
-
 	"github.com/rancher/k3os/pkg/ask"
 	"github.com/rancher/k3os/pkg/config"
 )
@@ -38,16 +36,16 @@ func Run() error {
 	}
 	defer f.Close()
 
-	if err := json.NewEncoder(f).Encode(&cfg); err != nil {
+	bytes, err := yaml.Marshal(&cfg)
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write(bytes); err != nil {
 		return err
 	}
 
 	f.Close()
-	if err := runCCApply(); err != nil {
-		return err
-	}
-
-	return exec.Command("service", "k3s", "restart").Run()
+	return runCCApply()
 }
 
 func runCCApply() error {

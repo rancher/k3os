@@ -34,7 +34,7 @@ func RunApply(cfg *config.CloudConfig) error {
 
 func ConfigApply(cfg *config.CloudConfig) error {
 	return runApplies(cfg,
-		ApplyK3S,
+		ApplyK3SWithRestart,
 	)
 }
 
@@ -47,7 +47,7 @@ func BootApply(cfg *config.CloudConfig) error {
 		ApplyPassword,
 		//ApplyMounts,
 		ApplySSHKeys,
-		ApplyK3S,
+		ApplyK3SNoRestart,
 		ApplyWriteFiles,
 		ApplyBootcmd,
 	)

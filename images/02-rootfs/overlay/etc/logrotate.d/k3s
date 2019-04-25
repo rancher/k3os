@@ -1,5 +1,0 @@
-/var/log/k3s.log {
-	missingok
-	notifempty
-	copytruncate
-}

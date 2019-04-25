@@ -6,6 +6,10 @@ ARG REPO
 ARG TAG
 FROM ${REPO}/k3os-progs:${TAG} as progs
 
+ARG REPO
+ARG TAG
+FROM ${REPO}/k3os-k3s:${TAG} as k3s
+
 FROM base as rio-build
 ARG TAG
 COPY --from=base /bin /usr/src/image/bin/
@@ -54,14 +58,12 @@ RUN rm -rf \
     mkdir -p /usr/src/image/etc/ssl/certs/ && \
     cp -rf /etc/ssl/certs/ca-certificates.crt /usr/src/image/etc/ssl/certs
 
-# Add version file
-COPY os-release /usr/src/image/lib/os-release
-RUN sed -i "s/%TAG%/${TAG}/g" /usr/src/image/lib/os-release
-
+COPY --from=k3s /output/install.sh /usr/src/image/libexec/k3os/k3s-install.sh
 COPY --from=progs /output/rc.init /usr/src/image/bin/rc.init
 COPY --from=progs /output/k3os-config /usr/src/image/libexec/k3os/k3os-config
 COPY --from=progs /output/ccapply /usr/src/image/sbin/ccapply
 
 COPY overlay/ /usr/src/image/
+RUN sed -i "s/%TAG%/${TAG}/g" /usr/src/image/lib/os-release
 RUN mkdir -p /output && \
     mksquashfs /usr/src/image /output/rootfs.squashfs
