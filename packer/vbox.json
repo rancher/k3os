@@ -1,0 +1,21 @@
+{
+  "variables": {
+  },
+  "builders": [{
+    "type": "virtualbox-iso",
+    "boot_wait": "12s",
+    "boot_command": ["rancher","<enter>","sudo os-config","<enter>","1","<enter>","1","<enter>","N","<enter>","N","<enter>","rancher","<enter>","rancher","<enter>","1","<enter>","<enter>"],
+    "guest_os_type": "Linux_64",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.2.0-rc2/k3os.iso",
+    "iso_checksum": "f7c0e9a90b1a3272f997f78a87a890f8",
+    "iso_checksum_type": "md5",
+    "ssh_username": "rancher",
+    "ssh_password": "rancher",
+    "disk_size": "8000",
+    "shutdown_command": "echo 'packer' | sudo poweroff",
+    "post_shutdown_delay": "10s"
+  }]
+}
+
+
+
