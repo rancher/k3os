@@ -1,4 +1,4 @@
-package apply
+package cc
 
 import (
 	"github.com/rancher/k3os/pkg/config"

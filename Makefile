@@ -18,6 +18,6 @@ trash-keep: .dapper
 
 deps: trash
 
-.DEFAULT_GOAL := ci
+.DEFAULT_GOAL := default
 
 .PHONY: $(TARGETS)

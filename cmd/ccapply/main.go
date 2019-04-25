@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rancher/k3os/pkg/apply"
+	"github.com/rancher/k3os/pkg/cc"
 	"github.com/rancher/k3os/pkg/config"
 
 	"github.com/sirupsen/logrus"
@@ -72,12 +72,12 @@ func doRun() error {
 	}
 
 	if initrd {
-		return apply.InitApply(&cfg)
+		return cc.InitApply(&cfg)
 	} else if bootPhase {
-		return apply.BootApply(&cfg)
+		return cc.BootApply(&cfg)
 	} else if configPhase {
-		return apply.ConfigApply(&cfg)
+		return cc.ConfigApply(&cfg)
 	}
 
-	return apply.RunApply(&cfg)
+	return cc.RunApply(&cfg)
 }

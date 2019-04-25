@@ -3,20 +3,28 @@ set -e
 
 cd $(dirname $0)/..
 
+if ! command -v golangci-lint; then
+    echo Skipping validation: no golangci-lint available
+    exit
+fi
 echo Running validation
 
-PACKAGES="$(go list ./...)"
+if [ ! -e build/data ];then
+    mkdir -p build/data
+fi
 
-echo Running: go vet
-go vet ${PACKAGES}
-echo Running: gometalinter
-for i in ${PACKAGES}; do
-    if [ -n "$(gometalinter $i | grep -v 'should have comment.*or be unexported' | tee /dev/stderr)" ]; then
-        failed=true
-    fi
-done
-test -z "$failed"
-echo Running: go fmt
-test -z "$(go fmt ${PACKAGES} | tee /dev/stderr)"
+echo Running: go generate
+go generate
+
+echo Running: golangci-lint
+golangci-lint run
+
+. ./scripts/version
+
+if [ -n "$DIRTY" ]; then
+    echo Source dir is dirty
+    git status --porcelain --untracked-files=no
+    exit 1
+fi
 
 GO111MODULE=on go mod verify

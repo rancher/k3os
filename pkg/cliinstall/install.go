@@ -6,7 +6,6 @@ import (
 	"os/exec"
 
 	"github.com/ghodss/yaml"
-	"github.com/rancher/k3os/pkg/ask"
 	"github.com/rancher/k3os/pkg/config"
 )
 
@@ -16,7 +15,7 @@ func Run() error {
 		return err
 	}
 
-	isInstall, err := ask.Ask(&cfg)
+	isInstall, err := Ask(&cfg)
 	if err != nil {
 		return err
 	}
