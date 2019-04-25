@@ -1,3 +1,22 @@
+# k3OS
+k3OS is a linux distribution designed to remove as much as possible
+OS maintaince in a Kubernetes cluster.  It is specifically designed to only
+have what is need to run [k3s](https://github.com/rancher/k3s). Additionally
+the OS is designed to be managed by kubectl once a cluster is bootstrapped.
+Nodes only need to join a cluster and then all aspects of the OS can be managed
+from Kubernetes. Both k3OS and k3s upgrades are handled by k3OS.
+
+## Quick Start
+Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
+in VMware, VirtualBox, or KVM.  The server will automatically start a single node kubernetes cluster. 
+Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media 
+and changes will not persist after reboot. 
+
+To copy k3os to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO 
+from the virtual machine and reboot. 
+
+Live install (boot from ISO) requires at least 1GB of RAM. Local install requires 512MB RAM.
+
 
 # k3OS
 k3OS is a Linux distribution designed to remove as much OS maintenance as
