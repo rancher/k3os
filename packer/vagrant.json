@@ -14,7 +14,7 @@
     "ssh_password": "{{user `password`}}",
     "ssh_wait_timeout":"1000s",
     "disk_size": "8000",
-    "shutdown_command": "sudo sh -c 'echo  Defaults:rancher        !requiretty > /etc/sudoers' | sudo poweroff",
+    "shutdown_command": "sudo poweroff",
     "post_shutdown_delay": "10s",
     "format":"ova"
 
