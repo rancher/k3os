@@ -1,0 +1,39 @@
+{
+  "variables": {
+    "password": "rancher"
+  },
+  "builders": [{
+    "type": "virtualbox-iso",
+    "boot_wait": "12s",
+    "boot_command": ["rancher","<enter>","sudo os-config","<enter>","1","<enter>","1","<enter>","N","<enter>","N","<enter>","{{user `password`}}","<enter>","{{user `password`}}","<enter>","1","<enter>","<enter>"],
+    "guest_os_type": "Linux_64",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.2.0-rc2/k3os.iso",
+    "iso_checksum": "f7c0e9a90b1a3272f997f78a87a890f8",
+    "iso_checksum_type": "md5",
+    "ssh_username": "rancher",
+    "ssh_password": "{{user `password`}}",
+    "ssh_wait_timeout":"1000s",
+    "disk_size": "8000",
+    "shutdown_command": "sudo sh -c 'echo  Defaults:rancher        !requiretty > /etc/sudoers' | sudo poweroff",
+    "post_shutdown_delay": "10s",
+    "format":"ova"
+
+  }],
+  "provisioners":[
+    {
+      "type": "shell",
+      "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": ["adduser --disabled-password --gecos '' vagrant",
+        "echo \"vagrant:vagrant\" | chpasswd",
+        "mkdir -p /home/vagrant/.ssh",
+        "chmod 0700 /home/vagrant/.ssh",
+        "wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub -O /home/vagrant/.ssh/authorized_keys",
+        "chmod 0600 /home/vagrant/.ssh/authorized_keys",
+        "chown -R vagrant /home/vagrant/.ssh"
+      ]
+    }
+  ],
+  "post-processors": [ 
+    "vagrant"]
+}
+
