@@ -12,7 +12,11 @@ EOF
     chmod +x /usr/local/bin/os-config
 }
 
-mount -o ro $(blkid -L K3OS) /.base
+K3OS_ISO=$(blkid -L K3OS || true)
+if [ -n "$K3OS_ISO" ]; then
+    mount -o ro $(blkid -L K3OS) /.base
+fi
+
 setup_kernel
 
 # no passwords in live mode

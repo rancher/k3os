@@ -29,6 +29,10 @@ type typeConverter struct {
 	mappers   mapper.Mappers
 }
 
+func (t *typeConverter) ToInternal(data map[string]interface{}) error {
+	return t.mappers.ToInternal(data)
+}
+
 func (t *typeConverter) ModifySchema(schema *mapper.Schema, schemas *mapper.Schemas) error {
 	for name, field := range schema.ResourceFields {
 		if field.Type == t.fieldType {
@@ -58,7 +62,7 @@ func NewToSlice() mapper.Mapper {
 }
 
 func NewToBool() mapper.Mapper {
-	return NewTypeConverter("bool", func(val interface{}) interface{} {
+	return NewTypeConverter("boolean", func(val interface{}) interface{} {
 		if str, ok := val.(string); ok {
 			return str == "true"
 		}

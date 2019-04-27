@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/rancher/k3os/pkg/mode"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/rancher/k3os/pkg/command"
@@ -60,20 +62,60 @@ func ApplySSHKeysWithNet(cfg *config.CloudConfig) error {
 }
 
 func ApplyK3SWithRestart(cfg *config.CloudConfig) error {
-	return ApplyK3S(cfg, true)
+	return ApplyK3S(cfg, true, false)
+}
+
+func ApplyK3SInstall(cfg *config.CloudConfig) error {
+	return ApplyK3S(cfg, true, true)
 }
 
 func ApplyK3SNoRestart(cfg *config.CloudConfig) error {
-	return ApplyK3S(cfg, false)
+	return ApplyK3S(cfg, false, false)
 }
 
-func ApplyK3S(cfg *config.CloudConfig, restart bool) error {
+func ApplyK3S(cfg *config.CloudConfig, restart, install bool) error {
+	mode, err := mode.Get()
+	if err != nil {
+		return err
+	}
+	if mode == "install" {
+		return nil
+	}
+
+	k3sExists := false
+	k3sLocalExists := false
+	if _, err := os.Stat("/sbin/k3s"); err == nil {
+		k3sExists = true
+	}
+	if _, err := os.Stat("/usr/local/bin/k3s"); err == nil {
+		k3sLocalExists = true
+	}
+
 	var args []string
 	vars := []string{
 		"INSTALL_K3S_NAME=service",
-		"INSTALL_K3S_SKIP_DOWNLOAD=true",
-		"INSTALL_K3S_BIN_DIR=/sbin",
-		"INSTALL_K3S_BIN_DIR_READ_ONLY=true",
+	}
+
+	if !k3sExists && !restart {
+		return nil
+	}
+
+	if k3sExists {
+		vars = append(vars, "INSTALL_K3S_SKIP_DOWNLOAD=true")
+		vars = append(vars, "INSTALL_K3S_BIN_DIR=/sbin")
+		vars = append(vars, "INSTALL_K3S_BIN_DIR_READ_ONLY=true")
+	} else if k3sLocalExists {
+		vars = append(vars, "INSTALL_K3S_SKIP_DOWNLOAD=true")
+	} else if !install {
+		return nil
+	}
+
+	if !k3sExists {
+		if restart {
+
+		} else {
+			return nil
+		}
 	}
 
 	if !restart {
@@ -111,5 +153,21 @@ func ApplyK3S(cfg *config.CloudConfig, restart bool) error {
 	cmd.Stdin = os.Stdin
 	logrus.Debugf("Running %s %v %v", cmd.Path, cmd.Args, vars)
 
+	return cmd.Run()
+}
+
+func ApplyInstall(cfg *config.CloudConfig) error {
+	mode, err := mode.Get()
+	if err != nil {
+		return err
+	}
+	if mode != "install" {
+		return nil
+	}
+
+	cmd := exec.Command("os-config")
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
 	return cmd.Run()
 }

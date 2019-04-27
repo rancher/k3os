@@ -32,8 +32,9 @@ fi
 
 trap rescue EXIT
 
-pinfo Running mode: $(</run/k3os/mode)
-source $SCRIPTS/mode-$(</run/k3os/mode)
+export K3OS_MODE=$(</run/k3os/mode)
+pinfo Running mode: ${K3OS_MODE}
+source $SCRIPTS/mode-${K3OS_MODE}
 
 pinfo Booting system
 source $SCRIPTS/boot

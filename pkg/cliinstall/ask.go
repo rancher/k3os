@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/rancher/k3os/pkg/mode"
+
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/rancher/k3os/pkg/questions"
 	"github.com/rancher/k3os/pkg/util"
@@ -24,11 +26,16 @@ func Ask(cfg *config.CloudConfig) (bool, error) {
 }
 
 func isInstall(cfg *config.CloudConfig) (bool, error) {
-	if cfg.K3OS.Mode == "install" {
+	mode, err := mode.Get()
+	if err != nil {
+		return false, err
+	}
+
+	if mode == "install" {
 		return true, nil
-	} else if cfg.K3OS.Mode == "live-server" {
+	} else if mode == "live-server" {
 		return false, nil
-	} else if cfg.K3OS.Mode == "live-agent" {
+	} else if mode == "live-agent" {
 		return false, nil
 	}
 
@@ -151,9 +158,13 @@ func AskToken(cfg *config.CloudConfig, server bool) error {
 }
 
 func isServer(cfg *config.CloudConfig) (bool, error) {
-	if cfg.K3OS.Mode == "live-server" {
+	mode, err := mode.Get()
+	if err != nil {
+		return false, err
+	}
+	if mode == "live-server" {
 		return true, nil
-	} else if cfg.K3OS.Mode == "live-agent" {
+	} else if mode == "live-agent" || (cfg.K3OS.ServerURL != "" && cfg.K3OS.Token != "") {
 		return false, nil
 	}
 

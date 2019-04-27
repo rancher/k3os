@@ -2,33 +2,14 @@
 set -e
 
 source $(dirname $0)/version
+source $(dirname $0)/images
 
-export DOCKER_BUILDKIT=1
 cd $(dirname $0)/..
 
-cd images
+DIST=$(pwd)/dist
 
-if [ "$#" = 0 ]; then
-    set -- [0-9][0-9]*
-fi
+cd images/output
 
-for i; do
-    i=$(basename $i)
-    IMAGE=${i##[0-9][0-9]-}
-    FULL_IMAGE=$REPO/k3os-$IMAGE:$TAG
-
-    cd $i
-    if [ -e archs ] && ! grep -q $ARCH archs; then
-        echo skipping $FULL_IMAGE for $ARCH
-        cd ..
-        continue
-    fi
-
-    echo building $FULL_IMAGE
-    ROOT=.
-    if [ -e root ]; then
-        ROOT=$(readlink -f root)
-    fi
-    docker build --build-arg TAG=$TAG --build-arg REPO=${REPO} --build-arg ARCH=${ARCH} -f $(pwd)/Dockerfile -t $FULL_IMAGE $ROOT
-    cd ..
-done
+build_all "$@"
+mkdir -p ${DIST}
+copy_all ${DIST} "$@"

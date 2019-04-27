@@ -1,6 +1,7 @@
 package cliinstall
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -10,6 +11,8 @@ import (
 )
 
 func Run() error {
+	fmt.Println("\nRunning k3OS configuration")
+
 	cfg, err := config.ReadConfig()
 	if err != nil {
 		return err
@@ -24,7 +27,6 @@ func Run() error {
 		return runInstall(cfg)
 	}
 
-	cfg.K3OS.Mode = ""
 	cfg.K3OS.Install = config.Install{}
 	f, err := os.Create(config.SystemConfig)
 	if err != nil {
@@ -77,7 +79,6 @@ func runInstall(cfg config.CloudConfig) error {
 	}
 
 	if tempFile != nil {
-		cfg.K3OS.Mode = ""
 		cfg.K3OS.Install = config.Install{}
 		bytes, err := yaml.Marshal(&cfg)
 		if err != nil {

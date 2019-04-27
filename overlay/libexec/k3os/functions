@@ -22,7 +22,7 @@ reinit_debug()
                 k3os.debug*)
                     export K3OS_DEBUG=true
                     mkdir -p /run/k3os
-                    echo debug > /run/k3os/debug 2>/dev/null || true
+                    echo debug > /run/k3os/debug || true
                     ;;
             esac
         done
@@ -69,6 +69,10 @@ cleanup()
     rm -rf /run/k3os
     unset SCRIPTS
     unset K3OS_SYSTEM
+    if [ -n "$K3OS_MODE" ]; then
+        mkdir -p /run/k3os
+        echo "$K3OS_MODE" > /run/k3os/mode
+    fi
     unset K3OS_MODE
 }
 

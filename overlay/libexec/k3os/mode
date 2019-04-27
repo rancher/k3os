@@ -10,6 +10,9 @@ for x in $(cat /proc/cmdline); do
         k3os.mode=*)
             MODE=${x#k3os.mode=}
             ;;
+        k3os.fallback_mode=*)
+            FALLBACK_MODE=${x#k3os.fallback_mode=}
+            ;;
     esac
 done
 
@@ -19,6 +22,10 @@ fi
 
 if [ -n "$K3OS_MODE" ]; then
     MODE=$K3OS_MODE
+fi
+
+if [ -z "$MODE" ]; then
+    MODE="${FALLBACK_MODE}"
 fi
 
 if [ -z "$MODE" ]; then

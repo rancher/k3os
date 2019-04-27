@@ -11,7 +11,7 @@ ARG TAG
 FROM ${REPO}/k3os-k3s:${TAG} as k3s
 
 FROM base as rio-build
-ARG TAG
+ARG VERSION
 COPY --from=base /bin /usr/src/image/bin/
 COPY --from=base /lib /usr/src/image/lib/
 COPY --from=base /sbin /usr/src/image/sbin/
@@ -64,6 +64,6 @@ COPY --from=progs /output/k3os-config /usr/src/image/libexec/k3os/k3os-config
 COPY --from=progs /output/ccapply /usr/src/image/sbin/ccapply
 
 COPY overlay/ /usr/src/image/
-RUN sed -i "s/%TAG%/${TAG}/g" /usr/src/image/lib/os-release
+RUN sed -i "s/%VERSION%/${VERSION}/g" /usr/src/image/lib/os-release
 RUN mkdir -p /output && \
     mksquashfs /usr/src/image /output/rootfs.squashfs

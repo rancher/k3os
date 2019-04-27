@@ -2,9 +2,10 @@
 set -e
 
 source $(dirname $0)/version
+source $(dirname $0)/images
 
 cd $(dirname $0)/..
 
-mkdir -p bin
-[ "$(uname)" != "Darwin" ] && LINKFLAGS="-extldflags -static -s"
-CGO_ENABLED=0 go build -ldflags "-X main.VERSION=$VERSION $LINKFLAGS" -o bin/k3os
+cd images
+
+build_all "$@"

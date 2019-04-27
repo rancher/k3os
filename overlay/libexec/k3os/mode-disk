@@ -32,7 +32,7 @@ setup_k3os()
         return 0
     fi
     
-    K3OS_SRC=/.base/init
+    K3OS_SRC=/.base/k3os/system/k3os/current/k3os
     K3OS_FILE=$TARGET/k3os/system/k3os/${VERSION_ID}/k3os
 
     if [ ! -e ${K3OS_SRC} ]; then

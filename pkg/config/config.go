@@ -7,7 +7,6 @@ import (
 )
 
 type K3OS struct {
-	Mode           string            `json:"mode,omitempty"`
 	DataSources    []string          `json:"dataSources,omitempty"`
 	Modules        []string          `json:"modules,omitempty"`
 	Sysctls        map[string]string `json:"sysctls,omitempty"`

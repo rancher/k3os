@@ -5,6 +5,8 @@ if [ "$K3OS_DEBUG" = true ]; then
     set -x
 fi
 
+source /usr/libexec/k3os/functions
+
 DEVICE=$K3OS_INSTALL_DEVICE
 PARTTABLE=gpt
 
@@ -109,8 +111,10 @@ umount ${TARGET}/boot
 rmdir ${TARGET}/boot
 umount ${TARGET}
 
-if grep -q k3os.install.poweroff /proc/cmdline; then
+if grep -q k3os.install.poweroff /proc/cmdline || grep -q 'k3os.mode=install' /proc/cmdline; then
     poweroff -f
 else
+    pinfo "Rebooting system in 5 seconds"
+    sleep 5
     reboot -f
 fi

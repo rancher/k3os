@@ -29,6 +29,8 @@ func RunApply(cfg *config.CloudConfig) error {
 		ApplySSHKeysWithNet,
 		ApplyWriteFiles,
 		ApplyRuncmd,
+		ApplyInstall,
+		ApplyK3SInstall,
 	)
 }
 

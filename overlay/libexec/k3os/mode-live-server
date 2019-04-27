@@ -1,5 +1,0 @@
-#!/bin/bash
-
-source ${SCRIPTS}/live
-
-/usr/sbin/os-config

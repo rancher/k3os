@@ -146,10 +146,6 @@ func readCmdline() (map[string]interface{}, error) {
 
 	data := map[string]interface{}{}
 	for _, item := range strings.Fields(string(bytes)) {
-		if !strings.HasPrefix(item, "k3os") {
-			continue
-		}
-
 		parts := strings.SplitN(item, "=", 2)
 		value := "true"
 		if len(parts) > 1 {
