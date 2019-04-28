@@ -26,6 +26,16 @@ setup_mounts()
     fi
 }
 
+setup_kernel_squashfs()
+{
+    KER_SRC="/.base/k3os/system/kernel/$(uname -r)/kernel.squashfs"
+    KER_DEST="$TARGET/k3os/system/kernel/$(uname -r)/kernel.squashfs"
+    if [ -e $KER_SRC ] && [ ! -e $KER_DEST ]; then
+        mkdir -p $(dirname ${KER_DEST})
+        cp -r $KER_SRC $KER_DEST
+    fi
+}
+
 setup_k3os()
 {
     if [ -e $TARGET/k3os/system/k3os/current/k3os ]; then
@@ -79,6 +89,7 @@ setup_k3s()
 
 setup_mounts
 setup_k3os
+setup_kernel_squashfs
 setup_init
 setup_k3s
 

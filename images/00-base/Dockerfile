@@ -1,5 +1,6 @@
 ### BASE ###
 FROM alpine:3.9 as base
+ARG ARCH
 RUN apk -U add \
     bash \
     bash-completion \
@@ -23,7 +24,6 @@ RUN apk -U add \
     logrotate \
     nfs-utils \
     open-iscsi \
-    open-vm-tools \
     openrc \
     openssh-client \
     openssh-server \
@@ -33,12 +33,14 @@ RUN apk -U add \
     strace \
     squashfs-tools \
     sudo \
-    syslinux \
     tar \
     util-linux \
     vim \
     wget \
     xz
+RUN if [ "$ARCH" == "amd64" ]; then \
+        apk add open-vm-tools syslinux \
+    ;fi
 RUN cp /etc/apk/repositories /etc/apk/repositories.orig && \
     echo 'http://dl-3.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
     apk -U add efibootmgr && \

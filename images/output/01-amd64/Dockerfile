@@ -19,13 +19,19 @@ ARG TAG
 FROM ${REPO}/k3os-base:${TAG}
 
 COPY --from=kernel /output/vmlinuz /output/k3os-vmlinuz-amd64
-COPY --from=kernel /output/initrd /output/k3os-initrd-amd64
 COPY --from=kernel /output/kernel.squashfs /output/k3os-kernel-amd64.squashfs
 COPY --from=kernel /output/version /output/k3os-kernel-version-amd64
 COPY --from=iso /output/k3os.iso /output/k3os-amd64.iso
 
 COPY --from=tar /output/ /usr/src/tar
 COPY --from=bootloader /output/ /usr/src/tar
+COPY --from=kernel /output/initrd /usr/src/initrd/initrd
+
+RUN cd /usr/src/initrd && \
+    gzip -dc initrd | cpio -idmv && \
+    rm initrd && \
+    tar xvf /usr/src/tar/bootloader.tar --strip-components=1 && \
+    find . | cpio -H newc -o | gzip -c -1 > /output/k3os-initrd-amd64
 RUN mv /usr/src/tar/userspace.tar /output/k3os-rootfs-amd64.tar && \
     tar --concatenate -f /output/k3os-rootfs-amd64.tar /usr/src/tar/bootloader.tar && \
     gzip /output/k3os-rootfs-amd64.tar

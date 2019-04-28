@@ -15,7 +15,7 @@ build_all()
         FULL_IMAGE=$REPO/k3os-$IMAGE:$TAG
 
         cd $i
-        if [ -e archs ] && ! grep -q $ARCH archs; then
+        if [ -e archs ] && ! grep -w -q $ARCH archs; then
             echo skipping $FULL_IMAGE for $ARCH
             cd ..
             continue
@@ -46,7 +46,7 @@ copy_all()
         FULL_IMAGE=$REPO/k3os-$IMAGE:$TAG
 
         cd $i
-        if [ -e archs ] && ! grep -q $ARCH archs; then
+        if [ -e archs ] && ! grep -w -q $ARCH archs; then
             echo skipping $FULL_IMAGE for $ARCH
             cd ..
             continue

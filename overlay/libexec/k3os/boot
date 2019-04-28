@@ -137,7 +137,29 @@ setup_mounts()
     done
 }
 
+do_grow_live()
+{
+    parted $1 resizepart $2 yes 100%
+    partprobe $1
+    resize2fs ${1}${2}
+}
+
+grow_live()
+{
+    if [ "$K3OS_MODE" != "local" ]; then
+        return 0
+    fi
+
+    if [ -e /k3os/system/growpart ]; then
+        read DEV NUM < /k3os/system/growpart
+        pinfo Growing ${DEV}${NUM}
+        do_grow_live $DEV $NUM || true
+        rm -f /k3os/system/growpart
+    fi
+}
+
 setup_mounts
+grow_live
 setup_hostname
 setup_hosts
 setup_shell
