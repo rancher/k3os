@@ -222,7 +222,7 @@ func Relocate() {
 	if err := unix.Statfs(".", &sfs); err != nil {
 		logrus.Fatalf("Cannot statfs cwd: %v", err)
 	}
-	const ramfsMagic = 0x858458f6
+	const ramfsMagic = -2054924042
 	const tmpfsMagic = 0x01021994
 	if sfs.Type == ramfsMagic || sfs.Type == tmpfsMagic {
 		const newRoot = "/mnt"

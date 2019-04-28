@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-export DOCKER_BUILDKIT=1
+if [ "$ARCH" != "arm" ]; then
+    export DOCKER_BUILDKIT=1
+fi
 
 build_all()
 {
