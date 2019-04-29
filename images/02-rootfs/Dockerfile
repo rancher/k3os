@@ -10,7 +10,7 @@ ARG REPO
 ARG TAG
 FROM ${REPO}/k3os-k3s:${TAG} as k3s
 
-FROM base as rio-build
+FROM base as k3os-build
 ARG VERSION
 ARG ARCH
 COPY --from=base /bin /usr/src/image/bin/
