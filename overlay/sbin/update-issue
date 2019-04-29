@@ -4,7 +4,7 @@
 cat > /etc/issue << "COW"
                ,        ,
   ,------------|'------'|  _     ____
- / .           '-'    |-  | |   |___ \\
+ / .           '-'    |-' | |   |___ \\
  \\/|             |    |   | | __  __) |  ___   ___
    |   .________.'----'   | |/ / |__ <  / _ \\ / __|
    |   |        |   |     |   <  ___) || (_) |\\__ \\
@@ -14,6 +14,7 @@ COW
 
 cat >> /etc/issue << EOF
 $PRETTY_NAME
+Kernel \r on an \m (\l)
 
 ================================================================================
 NIC              State          Address
@@ -23,5 +24,4 @@ EOF
 cat >> /etc/issue << "EOF"
 
 Welcome to k3OS (login with user: rancher)
-Kernel \r on an \m (\l)
 EOF
