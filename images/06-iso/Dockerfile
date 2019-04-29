@@ -29,11 +29,9 @@ RUN mkdir -p /output && \
     -V "K3OS" \
     -o /output/k3os.iso \
     -isohybrid-mbr boot/isolinux/isohdpfx.bin \
-    -c boot/isolinux/boot.cat \
-    -b boot/isolinux/isolinux.bin \
-    -no-emul-boot -boot-load-size 4 -boot-info-table \
     -eltorito-alt-boot \
+    -eltorito-platform 0xEF \
     -e boot/isolinux/efiboot.img \
     -no-emul-boot \
     -isohybrid-gpt-basdat \
-    .
+    -o /output/k3os.iso .
