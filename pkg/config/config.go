@@ -10,16 +10,22 @@ type K3OS struct {
 	DataSources    []string          `json:"dataSources,omitempty"`
 	Modules        []string          `json:"modules,omitempty"`
 	Sysctls        map[string]string `json:"sysctls,omitempty"`
-	DNSNameservers []string          `json:"dnsNameServers,omitempty"`
-	DNSSearch      []string          `json:"dnsSearch,omitempty"`
-	DNSOptions     []string          `json:"dnsOptions,omitempty"`
+	NTPServers     []string          `json:"ntpServers,omitempty"`
+	DNSNameservers []string          `json:"dnsNameservers,omitempty"`
+	Wifi           []Wifi            `json:"wifi,omitempty"`
 	Password       string            `json:"password,omitempty"`
 	ServerURL      string            `json:"serverUrl,omitempty"`
 	Token          string            `json:"token,omitempty"`
 	Labels         map[string]string `json:"labels,omitempty"`
-	K3sArgs        []string          `json:"k3sArgs,omitempt"`
+	K3sArgs        []string          `json:"k3sArgs,omitempty"`
+	Environment    map[string]string `json:"environment,omitempty"`
 	Taints         []string          `json:"taints,omitempty"`
 	Install        Install           `json:"install,omitempty"`
+}
+
+type Wifi struct {
+	SSID       string `json:"ssid,omitempty"`
+	Passphrase string `json:"passphrase,omitempty"`
 }
 
 type Install struct {
@@ -28,17 +34,18 @@ type Install struct {
 	Device    string `json:"device,omitempty"`
 	ConfigURL string `json:"configUrl,omitempty"`
 	Silent    bool   `json:"silent,omitempty"`
+	ISOURL    string `json:"isoUrl,omitempty"`
+	PowerOff  bool   `json:"powerOff,omitempty"`
 }
 
 type CloudConfig struct {
-	SSHAuthorizedKeys []string   `json:"sshAuthorizedKeys,omitempty"`
-	WriteFiles        []File     `json:"writeFiles,omitempty"`
-	Hostname          string     `json:"hostname,omitempty"`
-	Mounts            [][]string `json:"mounts,omitempty"`
-	K3OS              K3OS       `json:"k3os,omitempty"`
-	Runcmd            []string   `json:"runCmd,omitempty"`
-	Bootcmd           []string   `json:"bootCmd,omitempty"`
-	Initcmd           []string   `json:"initCmd,omitempty"`
+	SSHAuthorizedKeys []string `json:"sshAuthorizedKeys,omitempty"`
+	WriteFiles        []File   `json:"writeFiles,omitempty"`
+	Hostname          string   `json:"hostname,omitempty"`
+	K3OS              K3OS     `json:"k3os,omitempty"`
+	Runcmd            []string `json:"runCmd,omitempty"`
+	Bootcmd           []string `json:"bootCmd,omitempty"`
+	Initcmd           []string `json:"initCmd,omitempty"`
 }
 
 type File struct {

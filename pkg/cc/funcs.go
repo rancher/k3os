@@ -91,7 +91,7 @@ func ApplyK3S(cfg *config.CloudConfig, restart, install bool) error {
 		k3sLocalExists = true
 	}
 
-	var args []string
+	args := cfg.K3OS.K3sArgs
 	vars := []string{
 		"INSTALL_K3S_NAME=service",
 	}
@@ -110,20 +110,19 @@ func ApplyK3S(cfg *config.CloudConfig, restart, install bool) error {
 		return nil
 	}
 
-	if !k3sExists {
-		if restart {
-
-		} else {
-			return nil
-		}
-	}
-
 	if !restart {
 		vars = append(vars, "INSTALL_K3S_SKIP_START=true")
 	}
 
-	if cfg.K3OS.ServerURL != "" {
+	if cfg.K3OS.ServerURL == "" {
+		if len(args) == 0 {
+			args = append(args, "server")
+		}
+	} else {
 		vars = append(vars, fmt.Sprintf("K3S_URL=\"%s\"\n", cfg.K3OS.ServerURL))
+		if len(args) == 0 {
+			args = append(args, "agent")
+		}
 	}
 
 	if strings.HasPrefix(cfg.K3OS.Token, "K10") {
