@@ -108,7 +108,26 @@ Below is a reference of all cmdline args used to automate installation
 | k3os.install.device     |         | /dev/vda                                          | Device to partition and format (/dev/sda, /dev/vda) |
 | k3os.install.config_url |         | https://gist.github.com/something                 | The URL of the config to be installed at `/k3os/system/config.yaml` |
 | k3os.install.iso_url    |         | https://github.com/rancher/k3os/../k3os-amd64.iso | ISO to download and install from if booting from kernel/vmlinuz and not ISO. |
+| k3os.install.no_format  |         | true                                              | Do not partition and format, assume layout exists already |
 | k3os.install.power_off  | false   | true                                              | Shutdown the machine after install instead of rebooting |
+
+#### Custom partition layout
+
+By default k3OS expects two partitions to exist labeled K3OS_BOOT and K3OS_STATE.  K3OS_BOOT should be a vfat formatted partition of at least 500mb of space.  K3OS_STATE is
+expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create these partitions and file system automatically, or you can create
+them manually if you have a need for an advanced file system layout.
+
+### Bootstrapped Installation
+
+You can install k3OS to a block device from any modern Linux distribution.  Just download and run [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh).
+This script will run the same installation as the ISO but it a bit more raw and will not prompt for configuration.
+
+```
+$ ./install.sh --help
+Usage: ./install.sh [--efi] [--msdos] [--config https://.../config.yaml] DEVICE ISO_URL
+
+Example: ./install.sh --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0-rc3/k3os.iso
+```
 
 ## Configuration
 
