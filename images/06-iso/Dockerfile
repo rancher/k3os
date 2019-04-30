@@ -24,9 +24,16 @@ RUN mkdir -p /usr/src/iso && \
 
 RUN mkdir -p /output && \
     cd /usr/src/iso && \
+    curl -o boot/isolinux/efiboot.img -fL http://slackware.mirrors.tds.net/pub/slackware/slackware64-current/isolinux/efiboot.img && \
     xorriso -as mkisofs \
-    -l -J -R -V "K3OS" \
-    -no-emul-boot -boot-load-size 4 -boot-info-table \
-    -b boot/isolinux/isolinux.bin -c boot/isolinux/boot.cat \
+    -V "K3OS" \
+    -o /output/k3os.iso \
     -isohybrid-mbr boot/isolinux/isohdpfx.bin \
-    -o /output/k3os.iso .
+    -c boot/isolinux/boot.cat \
+    -b boot/isolinux/isolinux.bin \
+    -no-emul-boot -boot-load-size 4 -boot-info-table \
+    -eltorito-alt-boot \
+    -e boot/isolinux/efiboot.img \
+    -no-emul-boot \
+    -isohybrid-gpt-basdat \
+    .

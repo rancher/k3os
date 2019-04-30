@@ -8,9 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/rancher/k3os/pkg/mode"
-
 	"github.com/rancher/k3os/pkg/config"
+	"github.com/rancher/k3os/pkg/mode"
 	"github.com/rancher/k3os/pkg/questions"
 	"github.com/rancher/k3os/pkg/util"
 )

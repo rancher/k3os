@@ -20,7 +20,7 @@ type K3OS struct {
 	K3sArgs        []string          `json:"k3sArgs,omitempty"`
 	Environment    map[string]string `json:"environment,omitempty"`
 	Taints         []string          `json:"taints,omitempty"`
-	Install        Install           `json:"install,omitempty"`
+	Install        Install           `json:"-"`
 }
 
 type Wifi struct {
@@ -36,6 +36,7 @@ type Install struct {
 	Silent    bool   `json:"silent,omitempty"`
 	ISOURL    string `json:"isoUrl,omitempty"`
 	PowerOff  bool   `json:"powerOff,omitempty"`
+	NoFormat  bool   `json:"noFormat,omitempty"`
 }
 
 type CloudConfig struct {

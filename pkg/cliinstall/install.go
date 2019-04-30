@@ -8,6 +8,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/rancher/k3os/pkg/config"
+	"github.com/rancher/k3os/pkg/questions"
 )
 
 func Run() error {
@@ -27,7 +28,11 @@ func Run() error {
 		return runInstall(cfg)
 	}
 
-	cfg.K3OS.Install = config.Install{}
+	bytes, err := config.ToBytes(cfg)
+	if err != nil {
+		return err
+	}
+
 	f, err := os.Create(config.SystemConfig)
 	if err != nil {
 		f, err = os.Create(config.LocalConfig)
@@ -37,10 +42,6 @@ func Run() error {
 	}
 	defer f.Close()
 
-	bytes, err := yaml.Marshal(&cfg)
-	if err != nil {
-		return err
-	}
 	if _, err := f.Write(bytes); err != nil {
 		return err
 	}
@@ -62,6 +63,18 @@ func runInstall(cfg config.CloudConfig) error {
 		err      error
 		tempFile *os.File
 	)
+
+	installBytes, err := config.PrintInstall(cfg)
+	if err != nil {
+		return err
+	}
+
+	val, err := questions.PromptBool("Configuration\n"+"-------------\n\n"+
+		string(installBytes)+
+		"\nYour disk will be formatted and k3OS will be installed with the above configuration.\nContinue?", false)
+	if err != nil || !val {
+		return err
+	}
 
 	if cfg.K3OS.Install.ConfigURL == "" {
 		tempFile, err = ioutil.TempFile("/tmp", "k3os.XXXXXXXX")

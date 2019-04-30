@@ -7,17 +7,15 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/rancher/k3os/pkg/mode"
-
-	"github.com/sirupsen/logrus"
-
 	"github.com/rancher/k3os/pkg/command"
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/rancher/k3os/pkg/hostname"
+	"github.com/rancher/k3os/pkg/mode"
 	"github.com/rancher/k3os/pkg/module"
 	"github.com/rancher/k3os/pkg/ssh"
 	"github.com/rancher/k3os/pkg/sysctl"
 	"github.com/rancher/k3os/pkg/writefile"
+	"github.com/sirupsen/logrus"
 )
 
 func ApplyModules(cfg *config.CloudConfig) error {
