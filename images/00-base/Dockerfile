@@ -20,6 +20,7 @@ RUN apk -U add \
     iproute2 \
     iptables \
     jq \
+    kbd-bkeymaps \
     libseccomp \
     logrotate \
     nfs-utils \
