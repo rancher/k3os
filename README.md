@@ -103,8 +103,7 @@ Below is a reference of all cmdline args used to automate installation
 | k3os.mode               |         | install                                           | Boot k3OS to the installer, not an interactive session |
 | k3os.fallback_mode      |         | install                                           | If a valid K3OS_STATE partition is not found to boot from, run the installation |
 | k3os.install.silent     | false   | true                                              | Ensure no questions will be asked |
-| k3os.install.efi        | false   | true                                              | Format device as gpt and install UEFI boot loader |
-| k3os.install.msdos      | false   | true                                              | Format device as msdos partition, not gpt |
+| k3os.install.force_efi  | false   | true                                              | Force EFI installation even when EFI is not detected |
 | k3os.install.device     |         | /dev/vda                                          | Device to partition and format (/dev/sda, /dev/vda) |
 | k3os.install.config_url |         | https://gist.github.com/something                 | The URL of the config to be installed at `/k3os/system/config.yaml` |
 | k3os.install.iso_url    |         | https://github.com/rancher/k3os/../k3os-amd64.iso | ISO to download and install from if booting from kernel/vmlinuz and not ISO. |
@@ -124,7 +123,7 @@ This script will run the same installation as the ISO but it a bit more raw and 
 
 ```
 $ ./install.sh --help
-Usage: ./install.sh [--efi] [--msdos] [--config https://.../config.yaml] DEVICE ISO_URL
+Usage: ./install.sh [--force-efi] [--config https://.../config.yaml] DEVICE ISO_URL
 
 Example: ./install.sh --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0-rc3/k3os.iso
 ```
