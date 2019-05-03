@@ -69,7 +69,7 @@ func runInstall(cfg config.CloudConfig) error {
 		return err
 	}
 
-	val, err := questions.PromptBool("Configuration\n"+"-------------\n\n"+
+	val, err := questions.PromptBool("\nConfiguration\n"+"-------------\n\n"+
 		string(installBytes)+
 		"\nYour disk will be formatted and k3OS will be installed with the above configuration.\nContinue?", false)
 	if err != nil || !val {
@@ -92,7 +92,7 @@ func runInstall(cfg config.CloudConfig) error {
 	}
 
 	if tempFile != nil {
-		cfg.K3OS.Install = config.Install{}
+		cfg.K3OS.Install = nil
 		bytes, err := yaml.Marshal(&cfg)
 		if err != nil {
 			return err

@@ -63,7 +63,11 @@ func mapToEnv(prefix string, data map[string]interface{}) []string {
 }
 
 func ReadConfig() (CloudConfig, error) {
-	var result CloudConfig
+	result := CloudConfig{
+		K3OS: K3OS{
+			Install: &Install{},
+		},
+	}
 
 	data, err := merge(append(readers, readLocalConfigs()...)...)
 	if err != nil {

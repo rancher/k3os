@@ -53,16 +53,6 @@ func AskInstall(cfg *config.CloudConfig) error {
 		return nil
 	}
 
-	if err := AskInstallEFI(cfg); err != nil {
-		return err
-	}
-
-	if !cfg.K3OS.Install.EFI {
-		if err := AskMSDOS(cfg); err != nil {
-			return err
-		}
-	}
-
 	if err := AskInstallDevice(cfg); err != nil {
 		return err
 	}
@@ -88,22 +78,6 @@ func AskInstall(cfg *config.CloudConfig) error {
 	return nil
 }
 
-func AskMSDOS(cfg *config.CloudConfig) error {
-	if cfg.K3OS.Install.MSDOS {
-		return nil
-	}
-
-	i, err := questions.PromptFormattedOptions("Choose installation partition table type", 0,
-		"gpt",
-		"msdos")
-	if err != nil {
-		return err
-	}
-
-	cfg.K3OS.Install.MSDOS = i == 1
-	return nil
-}
-
 func AskInstallDevice(cfg *config.CloudConfig) error {
 	output, err := exec.Command("/bin/sh", "-c", "lsblk -r -o NAME,TYPE | grep -w disk | awk '{print $1}'").CombinedOutput()
 	if err != nil {
@@ -116,19 +90,6 @@ func AskInstallDevice(cfg *config.CloudConfig) error {
 	}
 
 	cfg.K3OS.Install.Device = "/dev/" + fields[i]
-	return nil
-}
-
-func AskInstallEFI(cfg *config.CloudConfig) error {
-	if cfg.K3OS.Install.EFI {
-		return nil
-	}
-
-	if _, err := os.Stat("/sys/firmware/efi"); err != nil {
-		return nil
-	}
-
-	cfg.K3OS.Install.EFI = true
 	return nil
 }
 

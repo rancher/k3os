@@ -76,7 +76,6 @@ setup_root()
 
 setup_shell()
 {
-    mv /etc/profile.d/color_prompt{,.sh}
     echo 'alias vi=vim' > /etc/profile.d/vim
 }
 
@@ -119,16 +118,14 @@ setup_hostname()
 
 setup_mounts()
 {
-    ROOT_FS_TYPE=$(stat -f --format '%T' / || true)
-    BOOT=$(blkid -L K3OS_BOOT || true)
-    if [ -n "$BOOT" ] && [ "$ROOT_FS_TYPE" != "tmpfs" ]; then
+    if [ -d /.base/boot ]; then
         mkdir -p /boot
-        mount ${BOOT} /boot
+        mount --bind /.base/boot /boot
     fi
 
     if [ -e /.base/k3os/system ]; then
         mkdir -p /k3os/system
-        mount --bind /.base/k3os/system /k3os/system
+        mount -o ro --bind /.base/k3os/system /k3os/system
     fi
 
     # Twice on purpose.  A live system double mounts this

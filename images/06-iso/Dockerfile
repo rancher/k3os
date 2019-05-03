@@ -8,30 +8,27 @@ FROM ${REPO}/k3os-kernel:${TAG} as kernel
 
 ARG REPO
 ARG TAG
-FROM ${REPO}/k3os-bootloader:${TAG} as bootloader
-
-ARG REPO
-ARG TAG
 FROM ${REPO}/k3os-base:${TAG} as base
 ARG VERSION
-RUN apk add syslinux xorriso
+RUN apk add xorriso grub grub-efi grub-bios
+RUN apk add qemu-system-x86_64 libvirt qemu-img ovmf
+RUN ln -s /usr/bin/qemu-system-* /usr/bin/qemu-system
+RUN qemu-img create -f qcow2 /hd.img 40G
+COPY run-kvm.sh /usr/bin/
+COPY grub.cfg /usr/src/iso/boot/grub/grub.cfg
 
-COPY --from=bootloader /output/bootloader.tar /usr/src/tars/
+COPY --from=kernel /output/ /usr/src/kernel/
+RUN cd /usr/src/kernel && \
+    mkdir -p /usr/src/iso/k3os/system/kernel/$(cat version) && \
+    cp initrd kernel.squashfs /usr/src/iso/k3os/system/kernel/$(cat version) && \
+    ln -s $(cat version) /usr/src/iso/k3os/system/kernel/current
+
 COPY --from=tar /output/userspace.tar /usr/src/tars/
-RUN mkdir -p /usr/src/iso && \
-    tar xvf /usr/src/tars/bootloader.tar --strip-component=1 -C /usr/src/iso && \
-    tar xvf /usr/src/tars/userspace.tar --strip-components=1 --exclude=k3os/system/k3os -C /usr/src/iso
+RUN tar xvf /usr/src/tars/userspace.tar --strip-components=1 -C /usr/src/iso
 
 RUN mkdir -p /output && \
     cd /usr/src/iso && \
-    curl -o boot/isolinux/efiboot.img -fL http://slackware.mirrors.tds.net/pub/slackware/slackware64-current/isolinux/efiboot.img && \
-    xorriso -as mkisofs \
-    -V "K3OS" \
-    -o /output/k3os.iso \
-    -isohybrid-mbr boot/isolinux/isohdpfx.bin \
-    -eltorito-alt-boot \
-    -eltorito-platform 0xEF \
-    -e boot/isolinux/efiboot.img \
-    -no-emul-boot \
-    -isohybrid-gpt-basdat \
-    -o /output/k3os.iso .
+    grub-mkrescue -o /output/k3os.iso . -V K3OS && \
+    [ -e /output/k3os.iso ] # grub-mkrescue doesn't exit non-zero on failure
+
+CMD ["run-kvm.sh"]

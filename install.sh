@@ -2,6 +2,11 @@
 set -e
 
 PROG=$0
+PROGS="dd curl mkfs.ext4 mkfs.vfat fatlabel parted partprobe grub-install"
+
+if [ "$K3OS_DEBUG" = true ]; then
+    set -x
+fi
 
 get_url()
 {
@@ -20,8 +25,7 @@ get_url()
 cleanup2()
 {
     if [ -n "${TARGET}" ]; then
-        umount ${TARGET}/boot || true
-        rmdir ${TARGET}/boot || true
+        umount ${TARGET}/boot/efi || true
         umount ${TARGET} || true
     fi
 
@@ -44,20 +48,190 @@ usage()
     exit 1
 }
 
-if [ "$K3OS_DEBUG" = true ]; then
-    set -x
-fi
+do_format()
+{
+    if [ "$K3OS_INSTALL_NO_FORMAT" = "true" ]; then
+        STATE=$(blkid -L K3OS_STATE)
+        return 0
+    fi
+
+    dd if=/dev/zero of=${DEVICE} bs=1M count=1
+    parted -s ${DEVICE} mklabel ${PARTTABLE}
+    if [ "$PARTTABLE" = "gpt" ]; then
+        BOOT_NUM=1
+        STATE_NUM=2
+        parted -s ${DEVICE} mkpart primary fat32 0% 50MB
+        parted -s ${DEVICE} mkpart primary ext4 50MB 550MB
+    else
+        BOOT_NUM=
+        STATE_NUM=1
+        parted -s ${DEVICE} mkpart primary ext4 0% 500MB
+    fi
+    parted -s ${DEVICE} set 1 ${BOOTFLAG} on
+    partprobe 2>/dev/null || true
+
+    PREFIX=${DEVICE}
+    if [ ! -e ${PREFIX}${STATE_NUM} ]; then
+        PREFIX=${DEVICE}p
+    fi
+
+    if [ ! -e ${PREFIX}${STATE_NUM} ]; then
+        echo Failed to find ${PREFIX}${STATE_NUM} or ${DEVICE}${STATE_NUM} to format
+        exit 1
+    fi
+
+    if [ -n "${BOOT_NUM}" ]; then
+        BOOT=${PREFIX}${BOOT_NUM}
+    fi
+    STATE=${PREFIX}${STATE_NUM}
+
+    mkfs.ext4 -F -L K3OS_STATE ${STATE}
+    if [ -n "${BOOT}" ]; then
+        mkfs.vfat -F 32 ${BOOT}
+        fatlabel ${BOOT} K3OS_GRUB
+    fi
+}
+
+do_mount()
+{
+    TARGET=/run/k3os/target
+    mkdir -p ${TARGET}
+    mount ${STATE} ${TARGET}
+    mkdir -p ${TARGET}/boot
+    if [ -n "${BOOT}" ]; then
+        mkdir -p ${TARGET}/boot/efi
+        mount ${BOOT} ${TARGET}/boot/efi
+    fi
+
+    DISTRO=/run/k3os/iso
+    mkdir -p $DISTRO
+    mount -o ro $ISO_DEVICE $DISTRO
+}
+
+do_copy()
+{
+    tar cf - -C ${DISTRO} k3os | tar xvf - -C ${TARGET}
+    if [ -n "$STATE_NUM" ]; then
+        echo $DEVICE $STATE_NUM > $TARGET/k3os/system/growpart
+    fi
+
+    if [ -n "$K3OS_INSTALL_CONFIG_URL" ]; then
+        get_url "$K3OS_INSTALL_CONFIG_URL" ${TARGET}/k3os/system/config.yaml
+        chmod 600 ${TARGET}/k3os/system/config.yaml
+    fi
+}
+
+install_grub()
+{
+    if [ "$K3OS_INSTALL_NO_FORMAT" = "true" ]; then
+        return 0
+    fi
+    if [ "$K3OS_INSTALL_FORCE_EFI" = "true" ]; then
+        GRUB_TARGET="--target=x86_64-efi"
+    fi
+    mkdir -p ${TARGET}/boot/grub
+    cat > ${TARGET}/boot/grub/grub.cfg << "EOF"
+set default=0
+set timeout=10
+
+loadfont "unicode"
+set gfxmode=auto
+set gfxpayload=keep
+insmod all_video
+insmod gfxterm
+terminal_output gfxterm
+
+menuentry "k3OS Current" {
+  search.fs_label K3OS_STATE root
+  set sqfile=/k3os/system/kernel/current/kernel.squashfs
+  loopback loop0 /$sqfile
+  set root=($root)
+  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1
+  initrd /k3os/system/kernel/current/initrd
+}
+
+menuentry "k3OS Previous" {
+  search.fs_label K3OS_STATE root
+  set root=($root)
+  linux /k3os/system/kernel/previous/vmlinuz printk.devkmsg=on console=tty1
+  initrd /k3os/system/kernel/previous/initrd
+}
+
+menuentry "k3OS Rescue Shell" {
+  search.fs_label K3OS_STATE root
+  set root=($root)
+  linux /k3os/system/kernel/current/vmlinuz printk.devkmsg=on rescue console=tty1
+  initrd /k3os/system/kernel/current/initrd
+}
+EOF
+    TTY=$(tty | sed 's!/dev/!!')
+    if [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
+        sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/grub/grub.cfg
+    fi
+
+    grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot ${DEVICE}
+}
+
+get_iso()
+{
+    ISO_DEVICE=$(blkid -L K3OS || true)
+    if [ -z "${ISO_DEVICE}" ] && [ -n "$K3OS_INSTALL_ISO_URL" ]; then
+        TEMP_FILE=$(mktemp k3os.XXXXXXXX.iso)
+        get_url ${K3OS_INSTALL_ISO_URL} ${TEMP_FILE}
+        ISO_DEVICE=$(losetup --show -f $TEMP_FILE)
+        rm -f $TEMP_FILE
+    fi
+
+    if [ -z "${ISO_DEVICE}" ]; then
+        echo "#### There is no k3os ISO device"
+        return 1
+    fi
+}
+
+setup_style()
+{
+    if [ "$K3OS_INSTALL_FORCE_EFI" = "true" ] || [ -e /sys/firmware/efi ]; then
+        PARTTABLE=gpt
+        BOOTFLAG=esp
+        if [ ! -e /sys/firmware/efi ]; then
+            echo WARNING: installing EFI on to a system that does not support EFI
+        fi
+    else
+        PARTTABLE=msdos
+        BOOTFLAG=boot
+    fi
+}
+
+validate_progs()
+{
+    for i in $PROGS; do
+        if [ ! -x "$(which $i)" ]; then
+            MISSING="${MISSING} $i"
+        fi
+    done
+
+    if [ -n "${MISSING}" ]; then
+        echo "The following required programs are missing for installation: ${MISSING}"
+        exit 1
+    fi
+}
+
+validate_device()
+{
+    DEVICE=$K3OS_INSTALL_DEVICE
+    if [ ! -b ${DEVICE} ]; then
+        echo "You should use an available device. Device ${DEVICE} does not exist."
+        exit 1
+    fi
+}
 
 while [ "$#" -gt 0 ]; do
     case $1 in
         --no-format)
             K3OS_INSTALL_NO_FORMAT=true
             ;;
-        --msdos)
-            K3OS_INSTALL_MSDOS=true
-            ;;
-        --efi)
-            K3OS_INSTALL_EFI=true
+        --force-efi)
+            K3OS_INSTALL_FORCE_EFI=true
             ;;
         --poweroff)
             K3OS_INSTALL_POWER_OFF=true
@@ -73,7 +247,7 @@ while [ "$#" -gt 0 ]; do
             usage
             ;;
         *)
-            if [ "$#" != 2 ]; then
+            if [ "$#" -gt 2 ]; then
                 usage
             fi
             INTERACTIVE=true
@@ -104,137 +278,17 @@ if [ -z "$K3OS_INSTALL_DEVICE" ]; then
     exit 1
 fi
 
-for i in dd syslinux curl mkfs.ext4 mkfs.vfat fatlabel parted partprobe rsync; do
-    if [ ! -x "$(which $i)" ]; then
-        MISSING="${MISSING} $i"
-    fi
-done
-
-if [ -n "${MISSING}" ]; then
-    echo "The following required programs are missing for installation: ${MISSING}"
-    exit 1
-fi
-
-DEVICE=$K3OS_INSTALL_DEVICE
-PARTTABLE=${PARTTABLE:-gpt}
-
-if [ "$K3OS_INSTALL_EFI" ]; then
-    PARTTABLE=efi
-elif [ "$K3OS_INSTALL_MSDOS" ]; then
-    PARTTABLE=msdos
-fi
-
-if [ ! -b ${DEVICE} ]; then
-    echo "You should use an available device. Device ${DEVICE} does not exist."
-    exit 1
-fi
-
-if [ "${PARTTABLE}" != gpt ] && [ "${PARTTABLE}" != msdos ] && [ "${PARTTABLE}" != "efi" ]; then
-    echo "Invalid partition table type ${PARTTABLE}, must be either gpt, msdos, efi"
-    exit 1
-fi
+validate_progs
+validate_device
 
 trap cleanup exit
 
-ISO_DEVICE=$(blkid -L K3OS || true)
-if [ -z "${ISO_DEVICE}" ] && [ -n "$K3OS_INSTALL_ISO_URL" ]; then
-    TEMP_FILE=$(mktemp k3os.XXXXXXXX.iso)
-    get_url ${K3OS_INSTALL_ISO_URL} ${TEMP_FILE}
-    ISO_DEVICE=$(losetup --show -f $TEMP_FILE)
-    rm -f $TEMP_FILE
-fi
-
-if [ -z "${ISO_DEVICE}" ]; then
-    echo "#### There is no k3os ISO device"
-    exit 1
-fi
-
-BOOTFLAG=legacy_boot
-MBR_FILE=gptmbr.bin
-if [ "${PARTTABLE}" = "msdos" ]; then
-    BOOTFLAG=boot
-    MBR_FILE=mbr.bin
-elif [ "${PARTTABLE}" = "efi" ]; then
-    EFI=true
-    PARTTABLE=gpt
-    BOOTFLAG=esp
-    if [ ! -e /sys/firmware/efi ]; then
-        echo WARNING: installing EFI on to a system that does not support EFI
-        HAS_EFI=false
-    fi
-fi
-
-if [ "$K3OS_INSTALL_NO_FORMAT" = "true" ]; then
-    BOOT=$(blkid -L K3OS_BOOT)
-    STATE=$(blkid -L K3OS_STATE)
-else
-    BOOT_NUM=1
-    STATE_NUM=2
-
-    dd if=/dev/zero of=${DEVICE} bs=1M count=1
-    parted -s ${DEVICE} mklabel ${PARTTABLE}
-    parted -s ${DEVICE} mkpart primary fat32 0% 500MB
-    parted -s ${DEVICE} mkpart primary ext4 500MB 1000MB
-    parted -s ${DEVICE} set 1 ${BOOTFLAG} on
-    partprobe
-
-    PREFIX=${DEVICE}
-    if [ ! -e ${PREFIX}${STATE_NUM} ]; then
-        PREFIX=${DEVICE}p
-    fi
-
-    if [ ! -e ${PREFIX}${STATE_NUM} ]; then
-        echo Failed to find ${PREFIX}${STATE_NUM} or ${DEVICE}${STATE_NUM} to format
-        exit 1
-    fi
-
-    BOOT=${PREFIX}${BOOT_NUM}
-    STATE=${PREFIX}${STATE_NUM}
-
-    mkfs.ext4 -F -L K3OS_STATE ${STATE}
-    mkfs.vfat -F 32 ${BOOT}
-    fatlabel ${BOOT} K3OS_BOOT
-fi
-
-
-TARGET=/run/k3os/target
-mkdir -p ${TARGET}
-mount ${STATE} ${TARGET}
-mkdir -p ${TARGET}/boot
-mount ${BOOT} ${TARGET}/boot
-
-DISTRO=/run/k3os/iso
-mkdir -p $DISTRO
-mount $ISO_DEVICE $DISTRO
-
-rsync -av --exclude boot/isolinux ${DISTRO}/ $TARGET
-if [ -n "$STATE_NUM" ]; then
-    echo $DEVICE $STATE > $TARGET/k3os/system/growpart
-fi
-
-mkdir -p ${TARGET}/boot/EFI
-cp -rf ${DISTRO}/boot/isolinux ${TARGET}/boot/syslinux
-cp -rf ${DISTRO}/boot/isolinux/efi64 ${TARGET}/boot/EFI/syslinux
-cp -rf ${DISTRO}/boot/isolinux/efilinux.cfg ${TARGET}/boot/EFI/syslinux/syslinux.cfg
-TTY=$(tty | sed 's!/dev/!!')
-if [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
-    sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/syslinux/syslinux.cfg ${TARGET}/boot/EFI/syslinux/syslinux.cfg
-fi
-
-if [ "$EFI" = "true" ]; then
-    modprobe efivars 2>/dev/null || true
-    if [ "${HAS_EFI}" != "false" ]; then
-        efibootmgr -c -d ${DEVICE} -p 1 -l \\EFI\\syslinux\\syslinux.efi -L "SYSLINUX"
-    fi
-else
-    syslinux --directory /syslinux --install ${BOOT}
-    dd bs=440 conv=notrunc count=1 if=${TARGET}/boot/syslinux/${MBR_FILE} of=${DEVICE}
-fi
-
-if [ -n "$K3OS_INSTALL_CONFIG_URL" ]; then
-    get_url "$K3OS_INSTALL_CONFIG_URL" ${TARGET}/k3os/system/config.yaml
-    chmod 600 ${TARGET}/k3os/system/config.yaml
-fi
+get_iso
+setup_style
+do_format
+do_mount
+do_copy
+install_grub
 
 if [ -n "$INTERACTIVE" ]; then
     exit 0

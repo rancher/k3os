@@ -16,6 +16,7 @@ RUN apk -U add \
     e2fsprogs \
     e2fsprogs-extra \
     findutils \
+    grub-efi \
     haveged \
     iproute2 \
     iptables \
@@ -40,7 +41,7 @@ RUN apk -U add \
     wget \
     xz
 RUN if [ "$ARCH" == "amd64" ]; then \
-        apk add open-vm-tools syslinux \
+        apk add open-vm-tools grub-bios \
     ;fi
 RUN cp /etc/apk/repositories /etc/apk/repositories.orig && \
     echo 'http://dl-3.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \

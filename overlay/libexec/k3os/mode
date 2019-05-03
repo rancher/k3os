@@ -28,6 +28,10 @@ if [ -z "$MODE" ]; then
     MODE="${FALLBACK_MODE}"
 fi
 
+if [ -z "$MODE" ] && [ "$(stat -f -c '%T' /)" != "tmpfs" ]; then
+    MODE=local
+fi
+
 if [ -z "$MODE" ]; then
     pfatal Failed to determine boot mode
 elif [ ! -e $SCRIPTS/mode-${MODE} ]; then

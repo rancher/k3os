@@ -17,6 +17,7 @@ func PrintInstall(cfg CloudConfig) ([]byte, error) {
 }
 
 func ToBytes(cfg CloudConfig) ([]byte, error) {
+	cfg.K3OS.Install = nil
 	data := map[string]interface{}{}
 	data, err := convert.EncodeToMap(cfg)
 	if err != nil {

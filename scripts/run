@@ -9,5 +9,5 @@ mkdir -p build
 
 bash -x ./scripts/build
 
-ID=$(docker run --net=host --privileged --rm -itd $REPO/k3os-kvm:$TAG)
+ID=$(docker run --net=host --privileged --rm -itd $REPO/k3os-iso:$TAG)
 docker attach $ID || docker kill $ID
