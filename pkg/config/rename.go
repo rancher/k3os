@@ -22,10 +22,10 @@ func (f *FuzzyNames) ToInternal(data map[string]interface{}) error {
 	return nil
 }
 
-func (f *FuzzyNames) addName(name string) {
-	f.names[strings.ToLower(name)] = name
-	f.names[convert.ToYAMLKey(name)] = name
-	f.names[strings.ToLower(convert.ToYAMLKey(name))] = name
+func (f *FuzzyNames) addName(name, toName string) {
+	f.names[strings.ToLower(name)] = toName
+	f.names[convert.ToYAMLKey(name)] = toName
+	f.names[strings.ToLower(convert.ToYAMLKey(name))] = toName
 }
 
 func (f *FuzzyNames) ModifySchema(schema *mapper.Schema, schemas *mapper.Schemas) error {
@@ -33,13 +33,16 @@ func (f *FuzzyNames) ModifySchema(schema *mapper.Schema, schemas *mapper.Schemas
 
 	for name := range schema.ResourceFields {
 		if strings.HasSuffix(name, "s") && len(name) > 1 {
-			f.addName(name[:len(name)-1])
+			f.addName(name[:len(name)-1], name)
 		}
 		if strings.HasSuffix(name, "es") && len(name) > 2 {
-			f.addName(name[:len(name)-2])
+			f.addName(name[:len(name)-2], name)
 		}
-		f.addName(name)
+		f.addName(name, name)
 	}
+
+	f.names["pass"] = "passphrase"
+	f.names["password"] = "passphrase"
 
 	return nil
 }

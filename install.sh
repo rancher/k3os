@@ -134,12 +134,10 @@ install_grub()
 set default=0
 set timeout=10
 
-loadfont "unicode"
 set gfxmode=auto
 set gfxpayload=keep
 insmod all_video
 insmod gfxterm
-terminal_output gfxterm
 
 menuentry "k3OS Current" {
   search.fs_label K3OS_STATE root
@@ -297,7 +295,7 @@ fi
 if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.mode=install' /proc/cmdline; then
     poweroff -f
 else
-    echo " * Rebooting system in 5 seconds"
+    echo " * Rebooting system in 5 seconds (CTRL+C to cancel)"
     sleep 5
     reboot -f
 fi

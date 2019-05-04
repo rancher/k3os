@@ -36,6 +36,8 @@ var (
 		readSystemConfig,
 		readCmdline,
 		readLocalConfig,
+		readCloudConfig,
+		readUserData,
 	}
 )
 
@@ -63,13 +65,17 @@ func mapToEnv(prefix string, data map[string]interface{}) []string {
 }
 
 func ReadConfig() (CloudConfig, error) {
+	return readersToObject(append(readers, readLocalConfigs()...)...)
+}
+
+func readersToObject(readers ...reader) (CloudConfig, error) {
 	result := CloudConfig{
 		K3OS: K3OS{
 			Install: &Install{},
 		},
 	}
 
-	data, err := merge(append(readers, readLocalConfigs()...)...)
+	data, err := merge(readers...)
 	if err != nil {
 		return result, err
 	}
@@ -86,7 +92,9 @@ func merge(readers ...reader) (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-
+		if err := schema.Mapper.ToInternal(newData); err != nil {
+			return nil, err
+		}
 		data = merge2.UpdateMerge(schema, schemas, data, newData, false)
 	}
 	return data, nil
@@ -137,7 +145,7 @@ func readFile(path string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	return data, schema.Mapper.ToInternal(data)
+	return data, nil
 }
 
 func readCmdline() (map[string]interface{}, error) {
@@ -169,5 +177,5 @@ func readCmdline() (map[string]interface{}, error) {
 		}
 	}
 
-	return data, schema.Mapper.ToInternal(data)
+	return data, nil
 }

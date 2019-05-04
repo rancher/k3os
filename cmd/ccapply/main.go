@@ -1,12 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/rancher/k3os/pkg/cc"
 	"github.com/rancher/k3os/pkg/config"
-
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -16,6 +16,8 @@ var (
 	bootPhase   = false
 	configPhase = false
 	debug       = false
+	dump        = false
+	dumpJSON    = false
 )
 
 func main() {
@@ -43,6 +45,16 @@ func main() {
 			Name:        "config",
 			Destination: &configPhase,
 			Usage:       "Run os-config stage",
+		},
+		cli.BoolFlag{
+			Name:        "dump",
+			Destination: &dump,
+			Usage:       "Print current configuration",
+		},
+		cli.BoolFlag{
+			Name:        "dump-json",
+			Destination: &dumpJSON,
+			Usage:       "Print current configuration in json",
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
@@ -77,6 +89,10 @@ func doRun() error {
 		return cc.BootApply(&cfg)
 	} else if configPhase {
 		return cc.ConfigApply(&cfg)
+	} else if dump {
+		return config.Write(cfg, os.Stdout)
+	} else if dumpJSON {
+		return json.NewEncoder(os.Stdout).Encode(&cfg)
 	}
 
 	return cc.RunApply(&cfg)

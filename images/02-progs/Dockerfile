@@ -14,6 +14,8 @@ RUN mkdir -p /output && \
 WORKDIR $GOPATH/src/github.com/linuxkit/linuxkit
 RUN cd pkg/init/cmd/rc.init && \
     gobuild -o /output/rc.init
+RUN cd pkg/metadata && \
+    gobuild -o /output/metadata
 
 FROM gobuild as k3os
 COPY /cmd/ $GOPATH/src/github.com/rancher/k3os/cmd/

@@ -22,7 +22,6 @@ RUN apk -U add \
     iptables \
     jq \
     kbd-bkeymaps \
-    libseccomp \
     logrotate \
     nfs-utils \
     open-iscsi \
@@ -33,18 +32,11 @@ RUN apk -U add \
     procps \
     rsync \
     strace \
-    squashfs-tools \
     sudo \
     tar \
     util-linux \
     vim \
-    wget \
     xz
 RUN if [ "$ARCH" == "amd64" ]; then \
         apk add open-vm-tools grub-bios \
     ;fi
-RUN cp /etc/apk/repositories /etc/apk/repositories.orig && \
-    echo 'http://dl-3.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
-    apk -U add efibootmgr && \
-    mv /etc/apk/repositories.orig /etc/apk/repositories && \
-    apk update

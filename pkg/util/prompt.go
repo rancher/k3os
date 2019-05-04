@@ -22,10 +22,6 @@ func PromptPassword() (string, bool, error) {
 	if err != nil {
 		return "", false, errors.Wrapf(err, "failed to set password")
 	}
-	if len(p) == 0 {
-		fmt.Println("Empty password is not allowed")
-		return "", false, nil
-	}
 	fmt.Print("Confirm password for [rancher]: ")
 	c, err := MaskPassword(os.Stdin, os.Stdout)
 	if err != nil {

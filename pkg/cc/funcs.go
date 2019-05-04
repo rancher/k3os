@@ -1,7 +1,9 @@
 package cc
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"sort"
@@ -167,4 +169,82 @@ func ApplyInstall(cfg *config.CloudConfig) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	return cmd.Run()
+}
+
+func ApplyDNS(cfg *config.CloudConfig) error {
+	buf := &bytes.Buffer{}
+	buf.WriteString("NetworkInterfaceBlacklist=veth\n")
+	if len(cfg.K3OS.DNSNameservers) > 0 {
+		dns := strings.Join(cfg.K3OS.DNSNameservers, ",")
+		buf.WriteString("FallbackNameservers=")
+		buf.WriteString(dns)
+		buf.WriteString("\n")
+	} else {
+		buf.WriteString("FallbackNameservers=8.8.8.8\n")
+	}
+
+	if len(cfg.K3OS.NTPServers) > 0 {
+		ntp := strings.Join(cfg.K3OS.NTPServers, ",")
+		buf.WriteString("FallbackTimeservers=")
+		buf.WriteString(ntp)
+		buf.WriteString("\n")
+	}
+
+	err := ioutil.WriteFile("/etc/connman/main.conf ", buf.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write /etc/connman/main.conf: %v", err)
+	}
+
+	return nil
+}
+
+func ApplyWifi(cfg *config.CloudConfig) error {
+	if len(cfg.K3OS.Wifi) == 0 {
+		return nil
+	}
+
+	buf := &bytes.Buffer{}
+
+	buf.WriteString("[global]\n")
+	buf.WriteString("Name=cloud-config\n")
+	buf.WriteString("Description=Services defined in the cloud-config\n")
+
+	for i, w := range cfg.K3OS.Wifi {
+		name := fmt.Sprintf("wifi%d", i)
+		buf.WriteString("[service_")
+		buf.WriteString(name)
+		buf.WriteString("]\n")
+		buf.WriteString("Type=wifi\n")
+		buf.WriteString("Passphrase=")
+		buf.WriteString(w.Passphrase)
+		buf.WriteString("\n")
+		buf.WriteString("SSID=")
+		buf.WriteString(w.SSID)
+		buf.WriteString("\n")
+	}
+
+	if buf.Len() > 0 {
+		return ioutil.WriteFile("/var/lib/connman/cloud-config.config", buf.Bytes(), 0644)
+	}
+
+	return nil
+}
+
+func ApplyDataSource(cfg *config.CloudConfig) error {
+	if len(cfg.K3OS.DataSources) == 0 {
+		return nil
+	}
+
+	args := strings.Join(cfg.K3OS.DataSources, " ")
+	buf := &bytes.Buffer{}
+
+	buf.WriteString("command_args=\"")
+	buf.WriteString(args)
+	buf.WriteString("\"\n")
+
+	if err := ioutil.WriteFile("/etc/conf.d/cloud-config", buf.Bytes(), 0644); err != nil {
+		return fmt.Errorf("failed to write to /etc/conf.d/cloud-config: %v", err)
+	}
+
+	return nil
 }

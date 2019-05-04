@@ -38,7 +38,7 @@ func isInstall(cfg *config.CloudConfig) (bool, error) {
 		return false, nil
 	}
 
-	i, err := questions.PromptFormattedOptions("Choose operation", -1,
+	i, err := questions.PromptFormattedOptions("Choose operation", 0,
 		"Install to disk",
 		"Configure server or agent")
 	if err != nil {

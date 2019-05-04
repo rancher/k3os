@@ -1,6 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"io"
+
 	"github.com/ghodss/yaml"
 	"github.com/rancher/mapper/convert"
 )
@@ -14,6 +17,15 @@ func PrintInstall(cfg CloudConfig) ([]byte, error) {
 
 	toYAMLKeys(data)
 	return yaml.Marshal(data)
+}
+
+func Write(cfg CloudConfig, writer io.Writer) error {
+	bytes, err := ToBytes(cfg)
+	if err != nil {
+		return fmt.Errorf("failed to marshal [%s]: %v", string(bytes), err)
+	}
+	_, err = writer.Write(bytes)
+	return err
 }
 
 func ToBytes(cfg CloudConfig) ([]byte, error) {
