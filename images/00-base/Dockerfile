@@ -40,3 +40,8 @@ RUN apk -U add \
 RUN if [ "$ARCH" == "amd64" ]; then \
         apk add open-vm-tools grub-bios \
     ;fi
+RUN cp /etc/apk/repositories /etc/apk/repositories.orig && \
+    echo 'http://dl-3.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
+    apk -U add efibootmgr && \
+    mv /etc/apk/repositories.orig /etc/apk/repositories && \
+    apk update
