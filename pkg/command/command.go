@@ -1,6 +1,7 @@
 package command
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -29,6 +30,11 @@ func SetPassword(password string) error {
 	}
 	cmd.Stdin = strings.NewReader(fmt.Sprint("rancher:", password))
 	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	errBuffer := &bytes.Buffer{}
+	cmd.Stderr = errBuffer
+	err := cmd.Run()
+	if err != nil {
+		os.Stderr.Write(errBuffer.Bytes())
+	}
+	return err
 }

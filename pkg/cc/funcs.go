@@ -224,6 +224,9 @@ func ApplyWifi(cfg *config.CloudConfig) error {
 	}
 
 	if buf.Len() > 0 {
+		if err := os.MkdirAll("/var/lib/connman", 0755); err != nil {
+			return fmt.Errorf("failed to mkdir /var/lib/connman: %v", err)
+		}
 		return ioutil.WriteFile("/var/lib/connman/cloud-config.config", buf.Bytes(), 0644)
 	}
 

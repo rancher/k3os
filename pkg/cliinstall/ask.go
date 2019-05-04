@@ -2,6 +2,7 @@ package cliinstall
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -67,6 +68,10 @@ func AskInstall(cfg *config.CloudConfig) error {
 		}
 
 		if err := AskPassword(cfg); err != nil {
+			return err
+		}
+
+		if err := AskWifi(cfg); err != nil {
 			return err
 		}
 
@@ -193,10 +198,12 @@ func AskPassword(cfg *config.CloudConfig) error {
 
 	cmd := exec.Command("chpasswd")
 	cmd.Stdin = strings.NewReader(fmt.Sprintf("rancher:%s", pass))
+	errBuffer := &bytes.Buffer{}
 	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = errBuffer
 
 	if err := cmd.Run(); err != nil {
+		os.Stderr.Write(errBuffer.Bytes())
 		return err
 	}
 
@@ -216,6 +223,35 @@ func AskPassword(cfg *config.CloudConfig) error {
 	}
 
 	return scanner.Err()
+}
+
+func AskWifi(cfg *config.CloudConfig) error {
+	ok, err := questions.PromptBool("Configure WiFi?", false)
+	if !ok || err != nil {
+		return err
+	}
+
+	for {
+		ssid, err := questions.Prompt("WiFi SSID: ", "")
+		if err != nil {
+			return err
+		}
+
+		pass, err := questions.Prompt("WiFi Passphrase: ", "")
+		if err != nil {
+			return err
+		}
+
+		cfg.K3OS.Wifi = append(cfg.K3OS.Wifi, config.Wifi{
+			SSID:       ssid,
+			Passphrase: pass,
+		})
+
+		ok, err := questions.PromptBool("Configure another WiFi network?", false)
+		if !ok || err != nil {
+			return err
+		}
+	}
 }
 
 func AskGithub(cfg *config.CloudConfig) error {
