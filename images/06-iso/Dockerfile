@@ -10,7 +10,7 @@ ARG REPO
 ARG TAG
 FROM ${REPO}/k3os-base:${TAG} as base
 ARG VERSION
-RUN apk add xorriso grub grub-efi grub-bios
+RUN apk add xorriso grub grub-efi grub-bios mtools
 RUN apk add qemu-system-x86_64 libvirt qemu-img ovmf
 RUN ln -s /usr/bin/qemu-system-* /usr/bin/qemu-system
 RUN qemu-img create -f qcow2 /hd.img 40G
