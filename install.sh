@@ -42,16 +42,21 @@ cleanup()
 
 usage()
 {
-    echo "Usage: $PROG [--efi] [--msdos] [--config https://.../config.yaml] DEVICE ISO_URL"
+    echo "Usage: $PROG [--efi] [--msdos] [--debug] [--tty TTY] [--config https://.../config.yaml] DEVICE ISO_URL"
     echo ""
-    echo "Example: $PROG --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0-rc3/k3os.iso"
+    echo "Example: $PROG --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso"
     exit 1
 }
 
 do_format()
 {
     if [ "$K3OS_INSTALL_NO_FORMAT" = "true" ]; then
-        STATE=$(blkid -L K3OS_STATE)
+        STATE=$(blkid -L K3OS_STATE || true)
+        if [ -z "$STATE" ] && [ -n "$DEVICE" ]; then
+            tune2fs -L K3OS_STATE $DEVICE
+            STATE=$(blkid -L K3OS_STATE)
+        fi
+
         return 0
     fi
 
@@ -119,18 +124,20 @@ do_copy()
         get_url "$K3OS_INSTALL_CONFIG_URL" ${TARGET}/k3os/system/config.yaml
         chmod 600 ${TARGET}/k3os/system/config.yaml
     fi
+
+    if [ "$K3OS_INSTALL_TAKE_OVER" = "true" ]; then
+        touch ${TARGET}/k3os/system/takeover
+    fi
 }
 
 install_grub()
 {
-    if [ "$K3OS_INSTALL_NO_FORMAT" = "true" ]; then
-        return 0
+    if [ "$K3OS_INSTALL_DEBUG" ]; then
+        GRUB_DEBUG="k3os.debug"
     fi
-    if [ "$K3OS_INSTALL_FORCE_EFI" = "true" ]; then
-        GRUB_TARGET="--target=x86_64-efi"
-    fi
+
     mkdir -p ${TARGET}/boot/grub
-    cat > ${TARGET}/boot/grub/grub.cfg << "EOF"
+    cat > ${TARGET}/boot/grub/grub.cfg << EOF
 set default=0
 set timeout=10
 
@@ -142,29 +149,41 @@ insmod gfxterm
 menuentry "k3OS Current" {
   search.fs_label K3OS_STATE root
   set sqfile=/k3os/system/kernel/current/kernel.squashfs
-  loopback loop0 /$sqfile
-  set root=($root)
-  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1
+  loopback loop0 /\$sqfile
+  set root=(\$root)
+  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
   initrd /k3os/system/kernel/current/initrd
 }
 
 menuentry "k3OS Previous" {
   search.fs_label K3OS_STATE root
-  set root=($root)
-  linux /k3os/system/kernel/previous/vmlinuz printk.devkmsg=on console=tty1
+  set root=(\$root)
+  linux /k3os/system/kernel/previous/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
   initrd /k3os/system/kernel/previous/initrd
 }
 
 menuentry "k3OS Rescue Shell" {
   search.fs_label K3OS_STATE root
-  set root=($root)
+  set root=(\$root)
   linux /k3os/system/kernel/current/vmlinuz printk.devkmsg=on rescue console=tty1
   initrd /k3os/system/kernel/current/initrd
 }
 EOF
-    TTY=$(tty | sed 's!/dev/!!')
-    if [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
+    if [ -z "${K3OS_INSTALL_TTY}" ]; then
+        TTY=$(tty | sed 's!/dev/!!')
+    else
+        TTY=$K3OS_INSTALL_TTY
+    fi
+    if [ -e "/dev/$TTY" ] && [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
         sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/grub/grub.cfg
+    fi
+
+    if [ "$K3OS_INSTALL_NO_FORMAT" = "true" ]; then
+        return 0
+    fi
+
+    if [ "$K3OS_INSTALL_FORCE_EFI" = "true" ]; then
+        GRUB_TARGET="--target=x86_64-efi"
     fi
 
     grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot ${DEVICE}
@@ -234,9 +253,20 @@ while [ "$#" -gt 0 ]; do
         --poweroff)
             K3OS_INSTALL_POWER_OFF=true
             ;;
+        --takeover)
+            K3OS_INSTALL_TAKE_OVER=true
+            ;;
+        --debug)
+            set -x
+            K3OS_INSTALL_DEBUG=true
+            ;;
         --config)
             shift 1
             K3OS_INSTALL_CONFIG_URL=$1
+            ;;
+        --tty)
+            shift 1
+            K3OS_INSTALL_TTY=$1
             ;;
         -h)
             usage
@@ -272,7 +302,7 @@ fi
 if [ -z "$K3OS_INSTALL_DEVICE" ]; then
     echo "Usage: $0 [--efi] [--msdos] [--config https://.../config.yaml] DEVICE ISO_URL"
     echo ""
-    echo "Example: $0 --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0-rc3/k3os.iso"
+    echo "Example: $0 --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso"
     exit 1
 fi
 

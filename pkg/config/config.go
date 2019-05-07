@@ -36,6 +36,8 @@ type Install struct {
 	ISOURL    string `json:"isoUrl,omitempty"`
 	PowerOff  bool   `json:"powerOff,omitempty"`
 	NoFormat  bool   `json:"noFormat,omitempty"`
+	Debug     bool   `json:"debug,omitempty"`
+	TTY       string `json:"tty,omitempty"`
 }
 
 type CloudConfig struct {

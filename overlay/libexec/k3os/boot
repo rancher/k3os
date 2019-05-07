@@ -57,10 +57,6 @@ setup_services()
         ln -s /etc/init.d/$i /etc/runlevels/boot
     done
 
-    if [ -e /etc/conf.d/cloud-config ]; then
-        ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
-    fi
-
     for i in sshd k3s "local" ccapply iscsid; do
         ln -s /etc/init.d/$i /etc/runlevels/default
     done
@@ -68,6 +64,13 @@ setup_services()
     for i in savecache killproces mount-ro; do
         ln -s /etc/init.d/$i /etc/runlevels/shutdown
     done
+}
+
+setup_cloudconfig()
+{
+    if [ -e /etc/conf.d/cloud-config ]; then
+        ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
+    fi
 }
 
 setup_root()
@@ -167,6 +170,7 @@ setup_shell
 setup_root
 setup_inittab
 setup_sudoers
-ccapply --boot
 setup_services
+ccapply --boot
+setup_cloudconfig
 cleanup
