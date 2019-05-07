@@ -87,6 +87,38 @@ setup_k3s()
     fi
 }
 
+takeover()
+{
+    if [ ! -e k3os/system/takeover ]; then
+        return 0
+    fi
+
+    touch k3os/system/factory-reset
+
+    for i in *; do
+        case $i in
+            boot|k3os|sbin)
+                ;;
+            *)
+                rm -rf $i
+        esac
+    done
+    for i in sbin/*; do
+        case $i in
+            sbin/init|sbin/k3s|sbin/k3os)
+                ;;
+            *)
+                rm -rf "$i"
+        esac
+    done
+
+    rm -rf boot/[^g]*
+    rm -f k3os/system/takeover
+    rm -rf k3os/data
+    sync
+    poweroff -f
+}
+
 setup_mounts
 setup_k3os
 setup_kernel_squashfs
@@ -94,6 +126,8 @@ setup_init
 setup_k3s
 
 cd $TARGET
+
+takeover || true
 
 if [ -e k3os/system/factory-reset ] || [ -e k3os/system/ephemeral ]; then
     rm -rf k3os/data k3os/system/factory-reset
