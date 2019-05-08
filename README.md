@@ -1,6 +1,6 @@
 # k3OS
-k3OS is a linux distribution designed to remove as much as possible
-OS maintaince in a Kubernetes cluster.  It is specifically designed to only
+k3OS is a Linux distribution designed to remove as much as possible
+OS maintenance in a Kubernetes cluster.  It is specifically designed to only
 have what is need to run [k3s](https://github.com/rancher/k3s). Additionally
 the OS is designed to be managed by kubectl once a cluster is bootstrapped.
 Nodes only need to join a cluster and then all aspects of the OS can be managed
@@ -17,11 +17,11 @@ from Kubernetes. Both k3OS and k3s upgrades are handled by the k3OS operator.
 ## Quick Start
 
 Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
-in VMware, VirtualBox, or KVM.  The server will automatically start a single node kubernetes cluster. 
+in VMware, VirtualBox, or KVM.  The server will automatically start a single node Kubernetes cluster. 
 Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media 
 and changes will not persist after reboot. 
 
-To copy k3os to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO 
+To copy k3OS to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO 
 from the virtual machine and reboot. 
 
 Live install (boot from ISO) requires at least 1GB of RAM. Local install requires 512MB RAM.
@@ -63,8 +63,8 @@ writable.
 
 #### /k3os
 
-The k3os directory contains the core operating system files references on boot to construct the
-file system.  It contains a squashfs images and binares for k3os, k3s, and the linux kernel. On
+The k3OS directory contains the core operating system files references on boot to construct the
+file system.  It contains a squashfs images and binaries for k3OS, k3s, and the Linux kernel. On
 boot the appropriate version for all three will be chosen and configured.
 
 #### /var, /usr/local, /home, /opt
@@ -91,7 +91,7 @@ it will not ask which disk but just pick the first and only one.***
 ### Automated Installation
 
 Installation can be automated by using kernel cmdline parameters.  There are a lot of creative
-solutions to booting a machine with cmdline args.  You can remaster the k3os ISO, PXE boot,
+solutions to booting a machine with cmdline args.  You can remaster the k3OS ISO, PXE boot,
 use qemu/kvm, or automate input with packer. The kernel and initrd are available in the k3OS release
 artifacts, along with the ISO.
 
@@ -115,9 +115,8 @@ Below is a reference of all cmdline args used to automate installation
 
 #### Custom partition layout
 
-By default k3OS expects two partitions to exist labeled K3OS_BOOT and K3OS_STATE.  K3OS_BOOT should be a vfat formatted partition of at least 500mb of space.  K3OS_STATE is
-expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create these partitions and file system automatically, or you can create
-them manually if you have a need for an advanced file system layout.
+By default k3OS expects one partitions to exist labeled K3OS_STATE.  K3OS_STATE is expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create this
+partitions and file system automatically, or you can create them manually if you have a need for an advanced file system layout.
 
 ### Bootstrapped Installation
 
@@ -125,11 +124,56 @@ You can install k3OS to a block device from any modern Linux distribution.  Just
 This script will run the same installation as the ISO but it a bit more raw and will not prompt for configuration.
 
 ```
-$ ./install.sh --help
-Usage: ./install.sh [--force-efi] [--config https://.../config.yaml] DEVICE ISO_URL
+Usage: ./install.sh [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL
 
-Example: ./install.sh --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0-rc3/k3os.iso
+Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso
+
+DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)
+
+The parameters names refer to the same names used in the cmdline, refer to README.md for
+more info.
 ```
+
+### Remastering ISO
+
+To remaster the ISO all you need to do is copy /k3os and /boot from the ISO to a new folder.  Then modify /boot/grub/grub.cfg to add whatever kernel cmdline args for auto-installation.
+To build a new ISO just use the utility `grub-mkrescue` as follows:
+
+```
+# The current working directory must contain /k3os and /boot
+grub-mkrescue -o /tmp/k3os.iso . -V K3OS
+```
+
+### Takeover Installation
+
+A special mode of installation is designed to install to a current running Linux system.  This only works on ARM64 and x86_64.  Download [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh) 
+and run with the `--takeover` flag.  This will install k3OS to the current root and override the grub.cfg.  After you reboot the system k3OS will then delete all files on the root partition that are not k3OS and then shutdown.  This mode is particularly handy when creating cloud images.  This way you can use an existing base image like Ubuntu and install k3OS over the top, snapshot, and create a new image.
+
+In order for this to work a couple of assumptions are made.  First the root (/) is assumed to be a ext4 partition.  Also it is assumed that grub2 is installed and looking for the configuration at `/boot/grub/grub.cfg`.  When running `--takeover` ensure that you also set `--no-format` and DEVICE must be set to the partition of `/`.  Refer to the AWS packer template to see this mode in action, below is any example of how to run a takeover installation.
+
+```
+./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso
+```
+
+### ARM Overlay Installation
+
+If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
+
+```
+curl -sfL 
+
+### ARM Overlay Installation
+
+If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `k3os-rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
+
+```
+curl -sfL https://github.com/rancher/k3os/releases/download/v0.2.0/k3os-rootfs-arm.tar.gz | tar xvf - --strip-components=1 -C /
+cp myconfig.yaml /k3os/system/config.yaml
+sync
+reboot -f
+```
+
+This method places k3OS on disk and also overwrites `/sbin/init`.  On next reboot your ARM bootloader and kernel should be loaded, but then when user space is to be initialized k3OS should take over. One important consideration at the moment is that k3OS assume the root device is not read only.  This typically means you need to remove `ro` from the kernel cmdline.  This should be fixed in a future release.
 
 ## Configuration
 

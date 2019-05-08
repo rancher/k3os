@@ -42,9 +42,15 @@ cleanup()
 
 usage()
 {
-    echo "Usage: $PROG [--efi] [--msdos] [--debug] [--tty TTY] [--config https://.../config.yaml] DEVICE ISO_URL"
+    echo "Usage: $PROG [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL"
     echo ""
-    echo "Example: $PROG --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso"
+    echo "Example: $PROG /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso"
+    echo ""
+    echo "DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)"
+    echo ""
+    echo "The parameters names refer to the same names used in the cmdline, refer to README.md for"
+    echo "more info."
+    echo ""
     exit 1
 }
 
@@ -300,10 +306,7 @@ if [ -e /etc/os-release ]; then
 fi
 
 if [ -z "$K3OS_INSTALL_DEVICE" ]; then
-    echo "Usage: $0 [--efi] [--msdos] [--config https://.../config.yaml] DEVICE ISO_URL"
-    echo ""
-    echo "Example: $0 --efi /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso"
-    exit 1
+    usage
 fi
 
 validate_progs
