@@ -84,6 +84,10 @@ func AskInstall(cfg *config.CloudConfig) error {
 }
 
 func AskInstallDevice(cfg *config.CloudConfig) error {
+	if cfg.K3OS.Install.Device != "" {
+		return nil
+	}
+
 	output, err := exec.Command("/bin/sh", "-c", "lsblk -r -o NAME,TYPE | grep -w disk | awk '{print $1}'").CombinedOutput()
 	if err != nil {
 		return err
@@ -166,7 +170,7 @@ func AskServerAgent(cfg *config.CloudConfig) error {
 }
 
 func AskPassword(cfg *config.CloudConfig) error {
-	if len(cfg.SSHAuthorizedKeys) > 0 {
+	if len(cfg.SSHAuthorizedKeys) > 0 || cfg.K3OS.Password != "" {
 		return nil
 	}
 
@@ -226,6 +230,10 @@ func AskPassword(cfg *config.CloudConfig) error {
 }
 
 func AskWifi(cfg *config.CloudConfig) error {
+	if len(cfg.K3OS.Wifi) > 0 {
+		return nil
+	}
+
 	ok, err := questions.PromptBool("Configure WiFi?", false)
 	if !ok || err != nil {
 		return err
@@ -255,6 +263,10 @@ func AskWifi(cfg *config.CloudConfig) error {
 }
 
 func AskGithub(cfg *config.CloudConfig) error {
+	if len(cfg.SSHAuthorizedKeys) > 0 || cfg.K3OS.Password != "" {
+		return nil
+	}
+
 	ok, err := questions.PromptBool("Authorize GitHub users to SSH?", false)
 	if !ok || err != nil {
 		return err
