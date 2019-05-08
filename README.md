@@ -136,12 +136,18 @@ more info.
 
 ### Remastering ISO
 
-To remaster the ISO all you need to do is copy /k3os and /boot from the ISO to a new folder.  Then modify /boot/grub/grub.cfg to add whatever kernel cmdline args for auto-installation.
+To remaster the ISO all you need to do is copy `/k3os` and `/boot` from the ISO to a new folder.  Then modify `/boot/grub/grub.cfg` to add whatever kernel cmdline args for auto-installation.
 To build a new ISO just use the utility `grub-mkrescue` as follows:
 
 ```
-# The current working directory must contain /k3os and /boot
-grub-mkrescue -o /tmp/k3os.iso . -V K3OS
+mount -o loop k3os.iso /mnt
+mkdir -p iso/boot/grub
+cp -rf /mnt/k3os iso/
+cp /mnt/k3os/boot/grub/grub.cfg iso/boot/grub/
+
+# Edit iso/boot/grub/grub.cfg
+
+grub-mkrescue -o k3os-new.iso iso/ -V K3OS
 ```
 
 ### Takeover Installation
@@ -154,13 +160,6 @@ In order for this to work a couple of assumptions are made.  First the root (/) 
 ```
 ./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso
 ```
-
-### ARM Overlay Installation
-
-If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
-
-```
-curl -sfL 
 
 ### ARM Overlay Installation
 
