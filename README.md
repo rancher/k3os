@@ -198,9 +198,6 @@ These files can be manipulated manually, through scripting, or managed with the 
 A full example of the k3OS configuration file is as below.
 
 ```yaml
-data_sources:
-- aws
-- cdrom
 ssh_authorized_keys:
 - ssh-rsa AAAAB3NzaC1yc2EAAAADAQAB
 - github:ibuildthecloud
@@ -221,6 +218,9 @@ init_cmd:
 - "echo hi && echo bye"
 
 k3os:
+  data_sources:
+  - aws
+  - cdrom
   modules:
   - kvm
   - nvme
