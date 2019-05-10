@@ -14,7 +14,13 @@ EOF
 
 K3OS_ISO=$(blkid -L K3OS || true)
 if [ -n "$K3OS_ISO" ]; then
-    mount -o ro $(blkid -L K3OS) /.base
+    mount -t iso9660 -o ro $(blkid -L K3OS) /.base
+else
+    for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
+        if mount -t iso9660 /dev/$i /.base; then
+            break
+        fi
+    done
 fi
 
 setup_kernel

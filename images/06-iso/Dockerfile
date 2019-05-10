@@ -31,9 +31,10 @@ RUN cd /usr/src/kernel && \
 COPY --from=tar /output/userspace.tar /usr/src/tars/
 RUN tar xvf /usr/src/tars/userspace.tar --strip-components=1 -C /usr/src/iso
 
+COPY wrapper /usr/bin/
 RUN mkdir -p /output && \
     cd /usr/src/iso && \
-    grub-mkrescue -o /output/k3os.iso . -V K3OS && \
+    grub-mkrescue --xorriso=/usr/bin/wrapper -o /output/k3os.iso . -V K3OS && \
     [ -e /output/k3os.iso ] # grub-mkrescue doesn't exit non-zero on failure
 
 CMD ["run-kvm.sh"]

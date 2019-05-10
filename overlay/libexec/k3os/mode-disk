@@ -19,9 +19,15 @@ setup_mounts()
 
     if [ -e $TARGET/k3os/system/growpart ]; then
         read DEV NUM < $TARGET/k3os/system/growpart
-        umount /run/k3os/target
-        grow $DEV $NUM || true
-        mount -L K3OS_STATE /run/k3os/target
+        if [ ! -e "${DEV}${NUM}" ]; then
+            DEV=$(blkid -L K3OS_STATE | sed 's![0-9][0-9]*$!!')
+            NUM=$(blkid -L K3OS_STATE | sed 's!.*[^0-9]!!')
+        fi
+        if [ -e "${DEV}${NUM}" ]; then
+            umount /run/k3os/target
+            grow $DEV $NUM || true
+            mount -L K3OS_STATE /run/k3os/target
+        fi
         rm -f $TARGET/k3os/system/growpart
     fi
 }
