@@ -83,7 +83,6 @@ func readUserData() (map[string]interface{}, error) {
 		cc.Runcmd = []string{"/run/k3os/userdata"}
 
 		return convert.EncodeToMap(cc)
-	} else {
-		return result, yaml.Unmarshal(data, &result)
 	}
+	return result, yaml.Unmarshal(data, &result)
 }
