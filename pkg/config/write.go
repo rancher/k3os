@@ -9,7 +9,6 @@ import (
 )
 
 func PrintInstall(cfg CloudConfig) ([]byte, error) {
-	data := map[string]interface{}{}
 	data, err := convert.EncodeToMap(cfg.K3OS.Install)
 	if err != nil {
 		return nil, err
@@ -30,7 +29,6 @@ func Write(cfg CloudConfig, writer io.Writer) error {
 
 func ToBytes(cfg CloudConfig) ([]byte, error) {
 	cfg.K3OS.Install = nil
-	data := map[string]interface{}{}
 	data, err := convert.EncodeToMap(cfg)
 	if err != nil {
 		return nil, err
