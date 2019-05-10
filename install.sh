@@ -3,6 +3,7 @@ set -e
 
 PROG=$0
 PROGS="dd curl mkfs.ext4 mkfs.vfat fatlabel parted partprobe grub-install"
+DISTRO=/run/k3os/iso
 
 if [ "$K3OS_DEBUG" = true ]; then
     set -x
@@ -114,9 +115,8 @@ do_mount()
         mount ${BOOT} ${TARGET}/boot/efi
     fi
 
-    DISTRO=/run/k3os/iso
     mkdir -p $DISTRO
-    mount -o ro $ISO_DEVICE $DISTRO
+    mount -t iso9660 -o ro $ISO_DEVICE $DISTRO
 }
 
 do_copy()
@@ -198,6 +198,17 @@ EOF
 get_iso()
 {
     ISO_DEVICE=$(blkid -L K3OS || true)
+    if [ -z "${ISO_DEVICE}" ]; then
+        for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
+            mkdir -p ${DISTRO}
+            if mount -t iso9660 -o ro /dev/$i ${DISTRO}; then
+                ISO_DEVICE="/dev/$i"
+                umount ${DISTRO}
+                break
+            fi
+        done
+    fi
+
     if [ -z "${ISO_DEVICE}" ] && [ -n "$K3OS_INSTALL_ISO_URL" ]; then
         TEMP_FILE=$(mktemp k3os.XXXXXXXX.iso)
         get_url ${K3OS_INSTALL_ISO_URL} ${TEMP_FILE}
