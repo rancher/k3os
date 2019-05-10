@@ -4,7 +4,7 @@ FROM ${REPO}/k3os-base:${TAG}
 
 ARG ARCH
 ENV ARCH ${ARCH}
-ENV VERSION v0.4.0
+ENV VERSION v0.5.0
 RUN mkdir -p /output && \
     curl -o /output/install.sh -fL https://raw.githubusercontent.com/ibuildthecloud/k3s-dev/5d5352ba1ca742199afa062ca08bf56f40b71d4b/install.sh && \
     chmod +x /output/install.sh
