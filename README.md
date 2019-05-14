@@ -202,7 +202,7 @@ ssh_authorized_keys:
 - ssh-rsa AAAAB3NzaC1yc2EAAAADAQAB
 - github:ibuildthecloud
 write_files:
-- enconding: ""
+- encoding: ""
   content: |-
     #!/bin/bash
     echo hi
