@@ -165,7 +165,7 @@ In order for this to work a couple of assumptions are made.  First the root (/) 
 If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `k3os-rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
 
 ```
-curl -sfL https://github.com/rancher/k3os/releases/download/v0.2.0/k3os-rootfs-arm.tar.gz | tar xvf - --strip-components=1 -C /
+curl -sfL https://github.com/rancher/k3os/releases/download/v0.2.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
 cp myconfig.yaml /k3os/system/config.yaml
 sync
 reboot -f
