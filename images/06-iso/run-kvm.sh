@@ -12,5 +12,5 @@ exec /usr/bin/qemu-system \
     -smp 2 \
     -device virtio-rng-pci \
     -net nic \
-    -net user,hostfwd=::2222-:22 \
+    -net tap \
     -drive if=virtio,file=/hd.img
