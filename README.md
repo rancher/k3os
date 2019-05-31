@@ -294,9 +294,9 @@ are supported in each phase.
 | ssh_authorized_keys  |        |  x   |    x    |
 | write_files          |    x   |  x   |    x    |
 | hostname             |    x   |  x   |    x    |
-| runcmd               |        |      |    x    |
-| bootcmd              |        |  x   |         |
-| initcmd              |    x   |      |         |
+| run_cmd              |        |      |    x    |
+| boot_cmd             |        |  x   |         |
+| init_cmd             |    x   |      |         |
 | k3os.data_sources    |        |      |    x    |
 | k3os.modules         |    x   |  x   |    x    |
 | k3os.sysctls         |    x   |  x   |    x    |
@@ -396,7 +396,7 @@ Example
 hostname: myhostname
 ```
 
-### `initcmd`, `bootcmd`, `runcmd`
+### `init_cmd`, `boot_cmd`, `run_cmd`
 
 All three keys are used to run arbitrary commands on startup in the respective phases of `initrd`,
 `boot` and `runtime`.  Commands are ran after `write_files` so it is possible to write a script to
