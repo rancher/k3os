@@ -10,4 +10,4 @@ ARG ARCH
 COPY --from=tar /output/ /usr/src/tar
 
 RUN mkdir -p /output && \
-    gzip -c /usr/src/tar/userspace.tar > /output/k3os-rootfs-${ARCH}.tar.gz
+    gzip -c /usr/src/tar/userspace.tar > /output/k3os-rootfs-lite-${ARCH}.tar.gz
