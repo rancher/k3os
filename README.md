@@ -326,7 +326,7 @@ files.
 
 Upgrading and reconfiguring k3OS is all handled through the Kubernetes operator.  The operator
 is still in development.  More details to follow.  The basic design is that one can set the
-desired k3s and k3OS versions, plus there configuration and the operator will roll that out to
+desired k3s and k3OS versions, plus their configuration and the operator will roll that out to
 the cluster.
 
 ## Building
