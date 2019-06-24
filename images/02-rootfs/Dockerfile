@@ -42,6 +42,7 @@ RUN chmod +s /usr/src/image/bin/sudo
 
 # Add empty dirs to bind mount
 RUN mkdir -p /usr/src/image/lib/modules
+RUN mkdir -p /usr/src/image/src
 
 # setup /usr/local
 RUN rm -rf /usr/src/image/local && \
