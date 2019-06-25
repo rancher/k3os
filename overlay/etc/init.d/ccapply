@@ -1,7 +1,7 @@
 #!/sbin/openrc-run
 
 depend() {
-    after net-online
+    after network-online
     need net
 }
 
