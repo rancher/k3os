@@ -64,7 +64,7 @@ writable.
 #### /k3os
 
 The k3OS directory contains the core operating system files references on boot to construct the
-file system.  It contains a squashfs images and binaries for k3OS, k3s, and the Linux kernel. On
+file system.  It contains squashfs images and binaries for k3OS, k3s, and the Linux kernel. On
 boot the appropriate version for all three will be chosen and configured.
 
 #### /var, /usr/local, /home, /opt
@@ -114,7 +114,7 @@ Below is a reference of all cmdline args used to automate installation
 
 #### Custom partition layout
 
-By default k3OS expects one partitions to exist labeled K3OS_STATE.  K3OS_STATE is expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create this
+By default k3OS expects one partition to exist labeled K3OS_STATE.  K3OS_STATE is expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create this
 partitions and file system automatically, or you can create them manually if you have a need for an advanced file system layout.
 
 ### Bootstrapped Installation
@@ -171,7 +171,7 @@ sync
 reboot -f
 ```
 
-This method places k3OS on disk and also overwrites `/sbin/init`.  On next reboot your ARM bootloader and kernel should be loaded, but then when user space is to be initialized k3OS should take over. One important consideration at the moment is that k3OS assume the root device is not read only.  This typically means you need to remove `ro` from the kernel cmdline.  This should be fixed in a future release.
+This method places k3OS on disk and also overwrites `/sbin/init`.  On next reboot your ARM bootloader and kernel should be loaded, but then when user space is to be initialized k3OS should take over. One important consideration at the moment is that k3OS assumes the root device is not read only.  This typically means you need to remove `ro` from the kernel cmdline.  This should be fixed in a future release.
 
 ## Configuration
 
@@ -282,7 +282,7 @@ as `k3os.install.efi=true`.
 ### Phases
 
 Configuration is applied in three distinct phases: `initrd`, `boot`, `runtime`. `initrd`
-is ran during the initrd phase before the root disk has been mounted.  `boot` is ran after
+is run during the initrd phase before the root disk has been mounted.  `boot` is run after
 the root disk is mounted an the file system is setup, but before any services have started.
 There is no networking available yet at this point. The final stage `runtime` is executed after
 networking has come online.  If you are using a configuration from a cloud provider (like AWS
@@ -314,7 +314,7 @@ are supported in each phase.
  
 ### Networking
 
-Networking is powered by connman.  To configure networking a couple helper keys are
+Networking is powered by `connman`.  To configure networking a couple helper keys are
 available: `k3os.dns_nameserver`, `k3os.ntp_servers`, `k3os.wifi`. Refer to the
 [reference](#configuration-reference) for a full explanation of those keys.  If you wish
 to configure a HTTP proxy set the `http_proxy`, and `https_proxy` fields in `k3os.environment`.
@@ -345,7 +345,7 @@ Below is a reference of all keys available in the `config.yaml`
 ### `ssh_authorized_keys`
 
 A list of SSH authorized keys that should be added to the `rancher` user.  k3OS primarily
-has one user, `rancher`.  `root` account is always disabled, has no password, and is never
+has one user, `rancher`.  The `root` account is always disabled, has no password, and is never
 assigned a ssh key.  SSH keys can be obtained from GitHub user accounts by using the format
 `github:${USERNAME}`.  This is done by downloading the keys from `https://github.com/${USERNAME}.keys`.
 
