@@ -142,7 +142,7 @@ To build a new ISO just use the utility `grub-mkrescue` as follows:
 mount -o loop k3os.iso /mnt
 mkdir -p iso/boot/grub
 cp -rf /mnt/k3os iso/
-cp /mnt/k3os/boot/grub/grub.cfg iso/boot/grub/
+cp /mnt/boot/grub/grub.cfg iso/boot/grub/
 
 # Edit iso/boot/grub/grub.cfg
 
