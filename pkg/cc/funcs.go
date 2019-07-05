@@ -218,8 +218,8 @@ func ApplyWifi(cfg *config.CloudConfig) error {
 		buf.WriteString("Passphrase=")
 		buf.WriteString(w.Passphrase)
 		buf.WriteString("\n")
-		buf.WriteString("SSID=")
-		buf.WriteString(w.SSID)
+		buf.WriteString("Name=")
+		buf.WriteString(w.Name)
 		buf.WriteString("\n")
 	}
 

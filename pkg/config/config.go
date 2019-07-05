@@ -24,7 +24,7 @@ type K3OS struct {
 }
 
 type Wifi struct {
-	SSID       string `json:"ssid,omitempty"`
+	Name       string `json:"name,omitempty"`
 	Passphrase string `json:"passphrase,omitempty"`
 }
 
