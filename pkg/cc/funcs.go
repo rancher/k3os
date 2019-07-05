@@ -206,6 +206,21 @@ func ApplyWifi(cfg *config.CloudConfig) error {
 
 	buf := &bytes.Buffer{}
 
+	buf.WriteString("[WiFi]\n")
+	buf.WriteString("Enable=true\n")
+	buf.WriteString("Tethering=false\n")
+
+	if buf.Len() > 0 {
+		if err := os.MkdirAll("/var/lib/connman", 0755); err != nil {
+			return fmt.Errorf("failed to mkdir /var/lib/connman: %v", err)
+		}
+		if err := ioutil.WriteFile("/var/lib/connman/settings", buf.Bytes(), 0644); err != nil {
+			return fmt.Errorf("failed to write to /var/lib/connman/settings: %v", err)
+		}
+	}
+
+	buf = &bytes.Buffer{}
+
 	buf.WriteString("[global]\n")
 	buf.WriteString("Name=cloud-config\n")
 	buf.WriteString("Description=Services defined in the cloud-config\n")
@@ -219,15 +234,16 @@ func ApplyWifi(cfg *config.CloudConfig) error {
 		buf.WriteString("Passphrase=")
 		buf.WriteString(w.Passphrase)
 		buf.WriteString("\n")
-		buf.WriteString("SSID=")
-		buf.WriteString(w.SSID)
+		buf.WriteString("Name=")
+		buf.WriteString(w.Name)
+		buf.WriteString("\n")
+		buf.WriteString("AutoConnect=true")
+		buf.WriteString("\n")
+		buf.WriteString("Favorite=true")
 		buf.WriteString("\n")
 	}
 
 	if buf.Len() > 0 {
-		if err := os.MkdirAll("/var/lib/connman", 0755); err != nil {
-			return fmt.Errorf("failed to mkdir /var/lib/connman: %v", err)
-		}
 		return ioutil.WriteFile("/var/lib/connman/cloud-config.config", buf.Bytes(), 0644)
 	}
 
