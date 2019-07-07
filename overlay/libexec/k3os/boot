@@ -123,6 +123,16 @@ setup_hostname()
 
 }
 
+setup_wpa_supplicant()
+{
+    if [ -e /etc/conf.d/wpa_supplicant ]; then
+        return 0
+    fi
+
+    echo 'wpa_supplicant_args="-u"' > /etc/conf.d/wpa_supplicant
+    touch /etc/wpa_supplicant/wpa_supplicant.conf
+}
+
 setup_mounts()
 {
     if [ -d /.base/boot ]; then
@@ -166,6 +176,7 @@ setup_mounts
 grow_live
 setup_hostname
 setup_hosts
+setup_wpa_supplicant
 setup_shell
 setup_root
 setup_inittab

@@ -190,7 +190,7 @@ func ApplyDNS(cfg *config.CloudConfig) error {
 		buf.WriteString("\n")
 	}
 
-	err := ioutil.WriteFile("/etc/connman/main.conf ", buf.Bytes(), 0644)
+	err := ioutil.WriteFile("/etc/connman/main.conf", buf.Bytes(), 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write /etc/connman/main.conf: %v", err)
 	}
@@ -230,7 +230,9 @@ func ApplyWifi(cfg *config.CloudConfig) error {
 		return ioutil.WriteFile("/var/lib/connman/cloud-config.config", buf.Bytes(), 0644)
 	}
 
-	return nil
+	cmds := []string{"rc-service wpa_supplicant start", "connmanctl enable wifi"}
+
+	return command.ExecuteCommand(cmds)
 }
 
 func ApplyDataSource(cfg *config.CloudConfig) error {
