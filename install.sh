@@ -336,7 +336,7 @@ if [ -n "$INTERACTIVE" ]; then
     exit 0
 fi
 
-if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.mode=install' /proc/cmdline; then
+if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.install.power_off=true' /proc/cmdline; then
     poweroff -f
 else
     echo " * Rebooting system in 5 seconds (CTRL+C to cancel)"
