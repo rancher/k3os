@@ -146,7 +146,7 @@ cp /mnt/boot/grub/grub.cfg iso/boot/grub/
 
 # Edit iso/boot/grub/grub.cfg
 
-grub-mkrescue -o k3os-new.iso iso/ -V K3OS
+grub-mkrescue -o k3os-new.iso iso/ -v K3OS
 ```
 
 ### Takeover Installation
