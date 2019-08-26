@@ -1,5 +1,5 @@
 ### BASE ###
-FROM alpine:3.9 as base
+FROM alpine:3.10 as base
 ARG ARCH
 RUN apk -U add \
     bash \
