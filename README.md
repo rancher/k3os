@@ -82,7 +82,7 @@ kernel source is coming from Ubuntu 18.04 LTS. Some code and a lot of inspiratio
 ### Interactive Installation
 
 Interactive installation is done from booting from the ISO.  The installation is done by running
-`os-config`.  The `os-config` script is only available systems booted live.  An installation to
+`os-config`.  The `os-config` script is only available on systems booted live.  An installation to
 disk will not have `os-config`.  Follow the prompts to install k3OS to disk.
 
 ***The installation will format an entire disk.  If you have a single hard disk attached to the system
@@ -114,13 +114,13 @@ Below is a reference of all cmdline args used to automate installation
 
 #### Custom partition layout
 
-By default k3OS expects one partition to exist labeled K3OS_STATE.  K3OS_STATE is expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create this
+By default k3OS expects one partition to exist labeled `K3OS_STATE`.  `K3OS_STATE` is expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create this
 partitions and file system automatically, or you can create them manually if you have a need for an advanced file system layout.
 
 ### Bootstrapped Installation
 
 You can install k3OS to a block device from any modern Linux distribution.  Just download and run [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh).
-This script will run the same installation as the ISO but it a bit more raw and will not prompt for configuration.
+This script will run the same installation as the ISO but is a bit more raw and will not prompt for configuration.
 
 ```
 Usage: ./install.sh [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL
