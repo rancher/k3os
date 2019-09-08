@@ -190,7 +190,7 @@ func ApplyDNS(cfg *config.CloudConfig) error {
 		buf.WriteString("\n")
 	}
 
-	err := ioutil.WriteFile("/etc/connman/main.conf ", buf.Bytes(), 0644)
+	err := ioutil.WriteFile("/etc/connman/main.conf", buf.Bytes(), 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write /etc/connman/main.conf: %v", err)
 	}
