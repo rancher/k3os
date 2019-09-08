@@ -1,23 +1,7 @@
 #!/bin/bash
 
-setup_inittab()
+setup_ttys()
 {
-    cat > /etc/inittab << "EOF"
-# /etc/inittab
-
-::sysinit:/sbin/openrc sysinit
-::sysinit:/sbin/openrc boot
-::wait:/sbin/openrc default
-
-# Stuff to do for the 3-finger salute
-::ctrlaltdel:/sbin/reboot
-
-# Stuff to do before rebooting
-::shutdown:/sbin/openrc shutdown
-EOF
-
-    echo console > /etc/securetty
-
     for i in 1 2 3 4 5 6; do
         if [ -e /dev/tty${i} ]; then
             echo 'tty'$i'::respawn:/sbin/getty 38400 tty'$i >> /etc/inittab
@@ -168,7 +152,7 @@ setup_hostname
 setup_hosts
 setup_shell
 setup_root
-setup_inittab
+setup_ttys
 setup_sudoers
 setup_services
 ccapply --boot
