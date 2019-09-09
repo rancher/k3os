@@ -173,6 +173,7 @@ func ApplyInstall(cfg *config.CloudConfig) error {
 
 func ApplyDNS(cfg *config.CloudConfig) error {
 	buf := &bytes.Buffer{}
+	buf.WriteString("[General]\n")
 	buf.WriteString("NetworkInterfaceBlacklist=veth\n")
 	if len(cfg.K3OS.DNSNameservers) > 0 {
 		dns := strings.Join(cfg.K3OS.DNSNameservers, ",")
