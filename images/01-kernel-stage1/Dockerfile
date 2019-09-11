@@ -6,7 +6,7 @@ RUN apt-get update -y && \
     apt-get install -y kmod initramfs-tools curl rsync xz-utils
 
 ARG ARCH
-ENV KVERSION=4.15.0-47-generic
+ENV KVERSION=4.15.0-62-generic
 ENV URL=https://github.com/rancher/k3os-kernel/releases/download/4.15.0-62.69-rancher1
 ENV KERNEL_XZ=${URL}/kernel-generic_${ARCH}.tar.xz
 ENV KERNEL_EXTRA_XZ=${URL}/kernel-extra-generic_${ARCH}.tar.xz
