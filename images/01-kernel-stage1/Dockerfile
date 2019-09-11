@@ -33,6 +33,7 @@ RUN mkdir /usr/src/initrd && \
 
 # Generate initrd firmware and module lists
 RUN mkdir -p /output/lib && \
+    mkdir -p /output/headers && \
     cd /usr/src/initrd && \
     gzip -dc /usr/src/initrd.tmp | cpio -idmv && \
     find lib/modules -name \*.ko > /output/initrd-modules && \
@@ -43,7 +44,7 @@ RUN mkdir -p /output/lib && \
 
 # Copy output assets
 RUN cd /usr/src/root && \
-    cp -r usr/src/linux-headers* /output/headers && \
+    cp -r linux-headers*/usr/src/linux-headers* /output/headers && \
     cp -r lib/firmware /output/lib/firmware && \
     cp -r lib/modules /output/lib/modules && \
     cp boot/System.map* /output/System.map && \
