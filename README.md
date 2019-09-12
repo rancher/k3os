@@ -235,9 +235,9 @@ k3os:
   - 0.us.pool.ntp.org
   - 1.us.pool.ntp.org
   wifi:
-  - ssid: home
+  - name: home
     passphrase: mypassword
-  - ssid: nothome
+  - name: nothome
     passphrase: somethingelse
   password: rancher
   server_url: https://someserver:6443
@@ -474,16 +474,16 @@ k3os:
 
 ### `k3os.wifi`
 
-Simple wifi configuration. All that is accepted is SSID and Passphrase.  If you require more
+Simple wifi configuration. All that is accepted is Name and Passphrase.  If you require more
 complex configuration then you should use `write_files` to write a connman service config.
 
 Example:
 ```yaml
 k3os:
   wifi:
-  - ssid: home
+  - name: home
     passphrase: mypassword
-  - ssid: nothome
+  - name: nothome
     passphrase: somethingelse
 ```
 
