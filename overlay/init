@@ -14,7 +14,7 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 pinfo Welcome to $PRETTY_NAME
 
-if [ "$K3S_DEBUG" = "true" ]; then
+if [ "$K3OS_DEBUG" = "true" ]; then
     set -x
 fi
 
