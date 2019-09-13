@@ -41,7 +41,7 @@
     {
       "type": "shell",
       "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'",
-      "inline": ["echo hello world"]
+      "inline": ["rm -rf /var/lib/rancher/k3s","echo hello world"]
     }
   ],
   "post-processors": [ 
