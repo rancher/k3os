@@ -45,6 +45,11 @@
     }
   ],
   "post-processors": [ 
-    "vagrant"
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "k3os_{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile.template"
+    }
   ]
 }
