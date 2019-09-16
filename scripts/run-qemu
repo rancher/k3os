@@ -1,0 +1,29 @@
+#!/bin/bash
+. $(dirname $0)/version
+: ${STATEDIR:=/tmp/k3os-$TAG} # unique value per vm instance
+
+set -e
+
+if [ "$ARCH" = "amd64" ]; then
+    QEMU_SYSTEM="qemu-system-x86_64"
+elif [ "$ARCH" = "arm64" ]; then
+    QEMU_SYSTEM="qemu-system-aarch64"
+else
+    QEMU_SYSTEM="qemu-system-$ARCH"
+fi
+
+if [ ! -e $STATEDIR/hd.img ]; then
+    mkdir -p $STATEDIR
+    ID=$(docker container create $REPO/k3os-iso:$TAG)
+    docker container cp $ID:/hd.img $STATEDIR/
+    docker container rm -vf $ID
+fi
+
+exec $QEMU_SYSTEM \
+    -m 1024 \
+    -machine accel=${QEMU_MACHINE_ACCEL:="hax:kvm:hvf:tcg"} \
+    -nographic \
+    -serial mon:stdio \
+    -rtc base=utc,clock=rt \
+    -cdrom $(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
+    -drive if=virtio,file=$STATEDIR/hd.img
