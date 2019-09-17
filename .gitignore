@@ -2,6 +2,7 @@
 /.dapper
 /.cache
 /.trash-cache
-/bin
-/dist
+/bin/
+/dist/
+/build/
 *.swp
