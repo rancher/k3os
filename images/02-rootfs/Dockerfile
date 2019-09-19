@@ -62,7 +62,7 @@ RUN rm -rf \
     cp -rf /etc/ssl/certs/ca-certificates.crt /usr/src/image/etc/ssl/certs
 
 RUN rm -rf \
-    /usr/src/image/usr/sbin/apk \
+    /usr/src/image/sbin/apk \
     /usr/src/image/usr/include \
     /usr/src/image/usr/lib/apk \
     /usr/src/image/usr/lib/pkgconfig \

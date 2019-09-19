@@ -41,7 +41,7 @@ setup_services()
         ln -s /etc/init.d/$i /etc/runlevels/boot
     done
 
-    for i in sshd k3s "local" ccapply iscsid; do
+    for i in sshd "local" ccapply iscsid; do
         ln -s /etc/init.d/$i /etc/runlevels/default
     done
 

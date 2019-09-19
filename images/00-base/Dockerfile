@@ -1,7 +1,8 @@
 ### BASE ###
-FROM alpine:3.10 as base
+FROM alpine:3.9 as base
 ARG ARCH
-RUN apk -U add \
+RUN apk --no-cache add \
+    $([ "$ARCH" == "amd64" ] && echo "open-vm-tools grub-bios") \
     bash \
     bash-completion \
     blkid \
@@ -37,12 +38,7 @@ RUN apk -U add \
     util-linux \
     vim \
     xz
-RUN if [ "$ARCH" == "amd64" ]; then \
-        apk add open-vm-tools grub-bios \
-    ;fi
-RUN cp /etc/apk/repositories /etc/apk/repositories.orig && \
-    echo 'http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories && \
-    echo 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
-    apk -U add efibootmgr && \
-    mv /etc/apk/repositories.orig /etc/apk/repositories && \
-    apk update
+RUN apk --no-cache add \
+    --repository 'http://dl-cdn.alpinelinux.org/alpine/edge/community' \
+    --repository 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' \
+    efibootmgr
