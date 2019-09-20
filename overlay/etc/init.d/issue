@@ -1,8 +1,7 @@
 #!/sbin/openrc-run
 
 depend() {
-    after network-online
-    need net
+    use network-online
 }
 
 name="issue"

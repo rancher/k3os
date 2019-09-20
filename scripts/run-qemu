@@ -1,6 +1,6 @@
 #!/bin/bash
 . $(dirname $0)/version
-: ${STATEDIR:=/tmp/k3os-$TAG} # unique value per vm instance
+: ${STATEDIR:=$(dirname $0)/../build/state/k3os-$TAG} # unique value per vm instance
 
 set -e
 
