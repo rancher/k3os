@@ -24,6 +24,7 @@ var (
 	schemas = mapper.NewSchemas().Init(func(s *mapper.Schemas) *mapper.Schemas {
 		s.DefaultMappers = func() []mapper.Mapper {
 			return []mapper.Mapper{
+				NewToMap(),
 				NewToSlice(),
 				NewToBool(),
 				&FuzzyNames{},
