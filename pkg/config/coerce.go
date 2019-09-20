@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/rancher/mapper"
+	"github.com/rancher/mapper/convert"
 	"github.com/rancher/mapper/mappers"
 )
 
@@ -50,6 +51,19 @@ func NewTypeConverter(fieldType string, converter Converter) mapper.Mapper {
 		fieldType: fieldType,
 		converter: converter,
 	}
+}
+
+func NewToMap() mapper.Mapper {
+	return NewTypeConverter("map[string]", func(val interface{}) interface{} {
+		if m, ok := val.(map[string]interface{}); ok {
+			obj := make(map[string]string, len(m))
+			for k, v := range m {
+				obj[k] = convert.ToString(v)
+			}
+			return obj
+		}
+		return val
+	})
 }
 
 func NewToSlice() mapper.Mapper {
