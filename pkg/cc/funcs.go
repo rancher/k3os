@@ -1,12 +1,14 @@
 package cc
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/rancher/k3os/pkg/command"
@@ -264,6 +266,51 @@ func ApplyDataSource(cfg *config.CloudConfig) error {
 
 	if err := ioutil.WriteFile("/etc/conf.d/cloud-config", buf.Bytes(), 0644); err != nil {
 		return fmt.Errorf("failed to write to /etc/conf.d/cloud-config: %v", err)
+	}
+
+	return nil
+}
+
+func ApplyEnvironment(cfg *config.CloudConfig) error {
+	if len(cfg.K3OS.Environment) == 0 {
+		return nil
+	}
+	env := make(map[string]string, len(cfg.K3OS.Environment))
+	if buf, err := ioutil.ReadFile("/etc/environment"); err == nil {
+		scanner := bufio.NewScanner(bytes.NewReader(buf))
+		for scanner.Scan() {
+			line := scanner.Text()
+			line = strings.TrimSpace(line)
+			if strings.HasPrefix(line, "#") {
+				continue
+			}
+			line = strings.TrimPrefix(line, "export")
+			line = strings.TrimSpace(line)
+			if len(line) > 1 {
+				parts := strings.SplitN(line, "=", 2)
+				key := parts[0]
+				val := ""
+				if len(parts) > 1 {
+					if val, err = strconv.Unquote(parts[1]); err != nil {
+						val = parts[1]
+					}
+				}
+				env[key] = val
+			}
+		}
+	}
+	for key, val := range cfg.K3OS.Environment {
+		env[key] = val
+	}
+	buf := &bytes.Buffer{}
+	for key, val := range env {
+		buf.WriteString(key)
+		buf.WriteString("=")
+		buf.WriteString(strconv.Quote(val))
+		buf.WriteString("\n")
+	}
+	if err := ioutil.WriteFile("/etc/environment", buf.Bytes(), 0644); err != nil {
+		return fmt.Errorf("failed to write to /etc/environment: %v", err)
 	}
 
 	return nil
