@@ -50,8 +50,12 @@ setup_services()
     done
 }
 
-setup_cloudconfig()
+ccapply_boot()
 {
+    ccapply --boot
+    if [ -e /var/lib/connman/cloud-config.config ]; then
+        echo 'rc_want="wpa_supplicant"' >> /etc/conf.d/connman
+    fi
     if [ -e /etc/conf.d/cloud-config ]; then
         ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
     fi
@@ -149,6 +153,5 @@ setup_root
 setup_ttys
 setup_sudoers
 setup_services
-ccapply --boot
-setup_cloudconfig
+ccapply_boot
 cleanup
