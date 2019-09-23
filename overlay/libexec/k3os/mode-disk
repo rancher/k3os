@@ -32,7 +32,7 @@ setup_mounts()
             # /dev/nvme0n1p2 => 2
             NUM=$(echo "$PART" | sed 's!.*[^0-9]!!')
         fi
-        if [ -e "${PART}" ]; then
+        if [ -e "${PART:=${DEV}${NUM}}" ]; then
             umount /run/k3os/target
             grow $DEV $NUM $PART || true
             mount -L K3OS_STATE /run/k3os/target
@@ -56,7 +56,7 @@ setup_k3os()
     if [ -e $TARGET/k3os/system/k3os/current/k3os ]; then
         return 0
     fi
-    
+
     K3OS_SRC=/.base/k3os/system/k3os/current/k3os
     K3OS_FILE=$TARGET/k3os/system/k3os/${VERSION_ID}/k3os
 
