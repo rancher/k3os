@@ -128,7 +128,7 @@ do_grow_live()
 {
     parted $1 resizepart $2 yes 100%
     partprobe $1
-    resize2fs ${1}${2}
+    resize2fs $3
 }
 
 grow_live()
@@ -139,8 +139,21 @@ grow_live()
 
     if [ -e /k3os/system/growpart ]; then
         read DEV NUM < /k3os/system/growpart
-        pinfo Growing ${DEV}${NUM}
-        do_grow_live $DEV $NUM || true
+        if [ ! -e "${DEV}${NUM}" ]; then
+            # /dev/sda2 => /dev/sda2
+            # /dev/nvme0n1p2 => /dev/nvme0n1p2
+            PART=$(blkid -L K3OS_STATE)
+
+            # /dev/sda2 => /dev/sda
+            # /dev/nvme0n1p2 => /dev/nvme0n1
+            DEV=$(echo "$PART" | sed -r 's/((\d+)p)?\d+$/\2/')
+
+            # /dev/sda2 => 2
+            # /dev/nvme0n1p2 => 2
+            NUM=$(echo "$PART" | sed 's!.*[^0-9]!!')
+        fi
+        pinfo Growing ${PART:=${DEV}${NUM}}
+        do_grow_live $DEV $NUM $PART || true
         rm -f /k3os/system/growpart
     fi
 }
