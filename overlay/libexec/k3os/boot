@@ -50,8 +50,12 @@ setup_services()
     done
 }
 
-setup_cloudconfig()
+ccapply_boot()
 {
+    ccapply --boot
+    if [ -e /var/lib/connman/cloud-config.config ]; then
+        echo 'rc_want="wpa_supplicant"' >> /etc/conf.d/connman
+    fi
     if [ -e /etc/conf.d/cloud-config ]; then
         ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
     fi
@@ -124,7 +128,7 @@ do_grow_live()
 {
     parted $1 resizepart $2 yes 100%
     partprobe $1
-    resize2fs ${1}${2}
+    resize2fs $3
 }
 
 grow_live()
@@ -135,8 +139,21 @@ grow_live()
 
     if [ -e /k3os/system/growpart ]; then
         read DEV NUM < /k3os/system/growpart
-        pinfo Growing ${DEV}${NUM}
-        do_grow_live $DEV $NUM || true
+        if [ ! -e "${DEV}${NUM}" ]; then
+            # /dev/sda2 => /dev/sda2
+            # /dev/nvme0n1p2 => /dev/nvme0n1p2
+            PART=$(blkid -L K3OS_STATE)
+
+            # /dev/sda2 => /dev/sda
+            # /dev/nvme0n1p2 => /dev/nvme0n1
+            DEV=$(echo "$PART" | sed -r 's/((\d+)p)?\d+$/\2/')
+
+            # /dev/sda2 => 2
+            # /dev/nvme0n1p2 => 2
+            NUM=$(echo "$PART" | sed 's!.*[^0-9]!!')
+        fi
+        pinfo Growing ${PART:=${DEV}${NUM}}
+        do_grow_live $DEV $NUM $PART || true
         rm -f /k3os/system/growpart
     fi
 }
@@ -149,6 +166,5 @@ setup_root
 setup_ttys
 setup_sudoers
 setup_services
-ccapply --boot
-setup_cloudconfig
+ccapply_boot
 cleanup
