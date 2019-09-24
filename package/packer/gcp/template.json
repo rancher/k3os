@@ -11,7 +11,7 @@
       "account_file": "account.json",
       "project_id": "{{user `gcp_project_id`}}",
       "source_image": "ubuntu-1804-bionic-v20190911",
-      "zone": "us-east1-d",
+      "zone": "{{user `region`}}",
       "ssh_username": "ubuntu",
       "network": "default",
       "use_internal_ip": false,
