@@ -32,6 +32,7 @@ cleanup2()
 
     losetup -d ${ISO_DEVICE} || true
     umount $DISTRO || true
+    [ "$K3OS_INSTALL_DEVICE" = "$DEVICE" ] || losetup -d "$DEVICE"
 }
 
 cleanup()
@@ -43,11 +44,13 @@ cleanup()
 
 usage()
 {
-    echo "Usage: $PROG [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL"
+    echo "Usage: $PROG [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] [--mount-file] DEVICE ISO_URL"
     echo ""
     echo "Example: $PROG /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso"
     echo ""
-    echo "DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)"
+    echo "If --mount-file is set, DEVICE must be the file to be used as a disk."
+    echo "If --no-format is set, DEVICE should be the device of the K3OS_STATE partition (e.g. /dev/vda2)."
+    echo "Otherwise, DEVICE must be the disk that will be partitioned (/dev/vda)."
     echo ""
     echo "The parameters names refer to the same names used in the cmdline, refer to README.md for"
     echo "more info."
@@ -252,9 +255,20 @@ validate_progs()
 
 validate_device()
 {
-    DEVICE=$K3OS_INSTALL_DEVICE
+    if $K3OS_MOUNT_FILE_AS_DEVICE; then
+        # mount the file as a device, so we can continue validations
+        if [ ! -f ${K3OS_INSTALL_DEVICE} ]; then
+            echo "File ${K3OS_INSTALL_DEVICE} does not exist."
+            exit 1
+        fi
+
+        DEVICE=$(losetup --find --nooverlap --show "${K3OS_INSTALL_DEVICE}")
+    else
+        DEVICE="$K3OS_INSTALL_DEVICE"
+    fi
+
     if [ ! -b ${DEVICE} ]; then
-        echo "You should use an available device. Device ${DEVICE} does not exist."
+        echo "${DEVICE} does not exist or is not a block device."
         exit 1
     fi
 }
@@ -284,6 +298,9 @@ while [ "$#" -gt 0 ]; do
         --tty)
             shift 1
             K3OS_INSTALL_TTY=$1
+            ;;
+        --mount-file)
+            K3OS_MOUNT_FILE_AS_DEVICE=true
             ;;
         -h)
             usage
