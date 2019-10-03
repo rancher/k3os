@@ -8,8 +8,8 @@ grow()
 {
     parted $1 resizepart $2 100%
     partprobe $1
-    e2fsck -f ${1}${2}
-    resize2fs ${1}${2}
+    e2fsck -f $3
+    resize2fs $3
 }
 
 setup_mounts()
@@ -20,12 +20,21 @@ setup_mounts()
     if [ -e $TARGET/k3os/system/growpart ]; then
         read DEV NUM < $TARGET/k3os/system/growpart
         if [ ! -e "${DEV}${NUM}" ]; then
-            DEV=$(blkid -L K3OS_STATE | sed 's![0-9][0-9]*$!!')
-            NUM=$(blkid -L K3OS_STATE | sed 's!.*[^0-9]!!')
+            # /dev/sda2 => /dev/sda2
+            # /dev/nvme0n1p2 => /dev/nvme0n1p2
+            PART=$(blkid -L K3OS_STATE)
+
+            # /dev/sda2 => /dev/sda
+            # /dev/nvme0n1p2 => /dev/nvme0n1
+            DEV=$(echo "$PART" | sed -r 's/((\d+)p)?\d+$/\2/')
+
+            # /dev/sda2 => 2
+            # /dev/nvme0n1p2 => 2
+            NUM=$(echo "$PART" | sed 's!.*[^0-9]!!')
         fi
-        if [ -e "${DEV}${NUM}" ]; then
+        if [ -e "${PART:=${DEV}${NUM}}" ]; then
             umount /run/k3os/target
-            grow $DEV $NUM || true
+            grow $DEV $NUM $PART || true
             mount -L K3OS_STATE /run/k3os/target
         fi
         rm -f $TARGET/k3os/system/growpart
@@ -47,7 +56,7 @@ setup_k3os()
     if [ -e $TARGET/k3os/system/k3os/current/k3os ]; then
         return 0
     fi
-    
+
     K3OS_SRC=/.base/k3os/system/k3os/current/k3os
     K3OS_FILE=$TARGET/k3os/system/k3os/${VERSION_ID}/k3os
 

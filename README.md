@@ -311,7 +311,6 @@ are supported in each phase.
 | k3os.k3s_args        |        |  x   |    x    |
 | k3os.environment     |    x   |  x   |    x    |
 | k3os.taints          |        |  x   |    x    |
-| k3os.token           |        |  x   |    x    |
  
 ### Networking
 
