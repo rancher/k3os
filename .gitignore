@@ -6,3 +6,8 @@
 /dist/
 /build/
 *.swp
+
+# Packer and vagrant
+.vagrant/
+packer_cache/
+*.box

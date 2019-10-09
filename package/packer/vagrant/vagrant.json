@@ -1,15 +1,33 @@
 {
   "variables": {
-    "password": "rancher"
+    "password": "rancher",
+    "version": "v0.3.0",
+    "checksum": "e3a0b0f22ac492fc76363a0319c733f392c6ce829825f3dc76cd72a45da384ca"
   },
   "builders": [{
     "type": "virtualbox-iso",
-    "boot_wait": "14s",
-    "boot_command": ["rancher","<enter>","wget --no-check-certificate https://raw.githubusercontent.com/wjimenez5271/k3os-vagrant/master/cloud-config.yml","<enter>","sudo os-config","<enter>","1","<enter>","1","<enter>","y","<enter>","/home/rancher/cloud-config.yml","<enter>","N","<enter>","{{user `password`}}","<enter>","{{user `password`}}","<enter>","1","<enter>","<enter>"],
+    "boot_wait": "6s",
+    "boot_command": [
+      "<enter>",
+      "<wait10>",
+      "rancher",
+      "<enter>",
+      "sudo os-config",
+      "<enter>",
+      "1",
+      "<enter>",
+      "y",
+      "<enter>",
+      "http://{{ .HTTPIP }}:{{ .HTTPPort }}/cloud-config.yml",
+      "<enter>",
+      "y",
+      "<enter>"
+    ],
     "guest_os_type": "Linux_64",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.3.0/k3os-amd64.iso",
-    "iso_checksum": "14fd5f81adb6b4e20ae354e3cd9fa23a",
-    "iso_checksum_type": "md5",
+    "http_directory": ".",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/{{user `version`}}/k3os-amd64.iso",
+    "iso_checksum": "{{user `checksum`}}",
+    "iso_checksum_type": "sha256",
     "ssh_username": "rancher",
     "ssh_password": "{{user `password`}}",
     "ssh_wait_timeout":"1000s",
@@ -23,9 +41,15 @@
     {
       "type": "shell",
       "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'",
-      "inline": ["echo hello world"]
+      "inline": ["rm -rf /var/lib/rancher/k3s","echo hello world"]
     }
   ],
-  "post-processors": [
-    "vagrant"]
+  "post-processors": [ 
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "k3os_{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile.template"
+    }
+  ]
 }
