@@ -31,11 +31,10 @@ RUN cd /usr/src/image && \
    ;done && \
    rmdir usr
 
-# Fix coreutils links
-RUN cd /usr/src/image/bin && \
-    mv coreutils coreutils.save && \
-    find -xtype l -exec rm {} \; -exec ln -s coreutils {} \; && \
-    mv coreutils.save coreutils
+# Fix ldd and coreutils links
+RUN cd /usr/src/image/bin \
+ && ln -sf $(realpath $(which ldd)) ldd \
+ && find -xtype l -ilname ../usr/bin/coreutils -exec ln -sf coreutils {} \;
 
 # Fix sudo
 RUN chmod +s /usr/src/image/bin/sudo
@@ -62,7 +61,7 @@ RUN rm -rf \
     cp -rf /etc/ssl/certs/ca-certificates.crt /usr/src/image/etc/ssl/certs
 
 RUN rm -rf \
-    /usr/src/image/usr/sbin/apk \
+    /usr/src/image/sbin/apk \
     /usr/src/image/usr/include \
     /usr/src/image/usr/lib/apk \
     /usr/src/image/usr/lib/pkgconfig \

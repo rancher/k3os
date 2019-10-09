@@ -1,8 +1,8 @@
 #!/sbin/openrc-run
 
 depend() {
-    after network-online
-    need net
+    want network-online
+    before ccapply
 }
 
 name="cloud-config"
