@@ -7,7 +7,7 @@
     "boot_wait": "14s",
     "boot_command": ["rancher","<enter>","wget --no-check-certificate https://raw.githubusercontent.com/wjimenez5271/k3os-vagrant/master/cloud-config.yml","<enter>","sudo os-config","<enter>","1","<enter>","1","<enter>","y","<enter>","/home/rancher/cloud-config.yml","<enter>","N","<enter>","{{user `password`}}","<enter>","{{user `password`}}","<enter>","1","<enter>","<enter>"],
     "guest_os_type": "Linux_64",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.2.0-rc4/k3os-amd64.iso",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.3.0/k3os-amd64.iso",
     "iso_checksum": "14fd5f81adb6b4e20ae354e3cd9fa23a",
     "iso_checksum_type": "md5",
     "ssh_username": "rancher",
@@ -26,6 +26,6 @@
       "inline": ["echo hello world"]
     }
   ],
-  "post-processors": [ 
+  "post-processors": [
     "vagrant"]
 }

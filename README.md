@@ -17,12 +17,12 @@ from Kubernetes. Both k3OS and k3s upgrades are handled by the k3OS operator.
 ## Quick Start
 
 Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
-in VMware, VirtualBox, or KVM.  The server will automatically start a single node Kubernetes cluster. 
-Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media 
-and changes will not persist after reboot. 
+in VMware, VirtualBox, or KVM.  The server will automatically start a single node Kubernetes cluster.
+Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media
+and changes will not persist after reboot.
 
-To copy k3OS to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO 
-from the virtual machine and reboot. 
+To copy k3OS to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO
+from the virtual machine and reboot.
 
 Live install (boot from ISO) requires at least 1GB of RAM. Local install requires 512MB RAM.
 
@@ -125,7 +125,7 @@ This script will run the same installation as the ISO but is a bit more raw and 
 ```
 Usage: ./install.sh [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL
 
-Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso
+Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.3.0/k3os.iso
 
 DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)
 
@@ -152,13 +152,13 @@ grub-mkrescue -o k3os-new.iso iso/ -- -volid K3OS
 
 ### Takeover Installation
 
-A special mode of installation is designed to install to a current running Linux system.  This only works on ARM64 and x86_64.  Download [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh) 
+A special mode of installation is designed to install to a current running Linux system.  This only works on ARM64 and x86_64.  Download [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh)
 and run with the `--takeover` flag.  This will install k3OS to the current root and override the grub.cfg.  After you reboot the system k3OS will then delete all files on the root partition that are not k3OS and then shutdown.  This mode is particularly handy when creating cloud images.  This way you can use an existing base image like Ubuntu and install k3OS over the top, snapshot, and create a new image.
 
 In order for this to work a couple of assumptions are made.  First the root (/) is assumed to be a ext4 partition.  Also it is assumed that grub2 is installed and looking for the configuration at `/boot/grub/grub.cfg`.  When running `--takeover` ensure that you also set `--no-format` and DEVICE must be set to the partition of `/`.  Refer to the AWS packer template to see this mode in action, below is any example of how to run a takeover installation.
 
 ```
-./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso
+./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.3.0/k3os.iso
 ```
 
 ### ARM Overlay Installation
@@ -166,7 +166,7 @@ In order for this to work a couple of assumptions are made.  First the root (/) 
 If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `k3os-rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
 
 ```
-curl -sfL https://github.com/rancher/k3os/releases/download/v0.2.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
+curl -sfL https://github.com/rancher/k3os/releases/download/v0.3.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
 cp myconfig.yaml /k3os/system/config.yaml
 sync
 reboot -f
@@ -311,7 +311,7 @@ are supported in each phase.
 | k3os.k3s_args        |        |  x   |    x    |
 | k3os.environment     |    x   |  x   |    x    |
 | k3os.taints          |        |  x   |    x    |
- 
+
 ### Networking
 
 Networking is powered by `connman`.  To configure networking a couple helper keys are
