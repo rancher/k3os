@@ -8,7 +8,7 @@ exec /usr/bin/qemu-system \
     -rtc \
     base=utc,clock=host \
     -cdrom /output/k3os.iso \
-    -m 1024 \
+    -m 1280 \
     -smp 2 \
     -device virtio-rng-pci \
     -net nic \
