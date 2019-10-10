@@ -69,7 +69,7 @@ boot the appropriate version for all three will be chosen and configured.
 
 #### /var, /usr/local, /home, /opt
 
-Persistent changes should be kept in `/var`, '/usr/local', '/home', or '/opt'.
+Persistent changes should be kept in `/var`, `/usr/local`, `/home`, or `/opt`.
 
 ### Upstream Distros
 
