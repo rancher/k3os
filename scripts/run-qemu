@@ -20,7 +20,7 @@ if [ ! -e $STATEDIR/hd.img ]; then
 fi
 
 exec $QEMU_SYSTEM \
-    -m 1024 \
+    -m 1280 \
     -machine accel=${QEMU_MACHINE_ACCEL:="hax:kvm:hvf:tcg"} \
     -nographic \
     -serial mon:stdio \
