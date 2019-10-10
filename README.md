@@ -125,7 +125,7 @@ This script will run the same installation as the ISO but is a bit more raw and 
 ```
 Usage: ./install.sh [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL
 
-Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.3.0/k3os.iso
+Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.4.0/k3os.iso
 
 DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)
 
@@ -158,7 +158,7 @@ and run with the `--takeover` flag.  This will install k3OS to the current root 
 In order for this to work a couple of assumptions are made.  First the root (/) is assumed to be a ext4 partition.  Also it is assumed that grub2 is installed and looking for the configuration at `/boot/grub/grub.cfg`.  When running `--takeover` ensure that you also set `--no-format` and DEVICE must be set to the partition of `/`.  Refer to the AWS packer template to see this mode in action, below is any example of how to run a takeover installation.
 
 ```
-./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.3.0/k3os.iso
+./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.4.0/k3os.iso
 ```
 
 ### ARM Overlay Installation
@@ -166,7 +166,7 @@ In order for this to work a couple of assumptions are made.  First the root (/) 
 If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `k3os-rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
 
 ```
-curl -sfL https://github.com/rancher/k3os/releases/download/v0.3.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
+curl -sfL https://github.com/rancher/k3os/releases/download/v0.4.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
 cp myconfig.yaml /k3os/system/config.yaml
 sync
 reboot -f

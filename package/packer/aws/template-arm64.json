@@ -3,8 +3,8 @@
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "region": "us-east-1",
-    "k3os_version": "v0.3.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.3.0/k3os-arm64.iso"
+    "k3os_version": "v0.4.0",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.4.0/k3os-arm64.iso"
   },
   "builders": [{
     "type": "amazon-ebs",

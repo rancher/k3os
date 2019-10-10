@@ -1,7 +1,7 @@
 {
   "variables": {
     "password": "rancher",
-    "version": "v0.3.0",
+    "version": "v0.4.0",
     "checksum": "e3a0b0f22ac492fc76363a0319c733f392c6ce829825f3dc76cd72a45da384ca"
   },
   "builders": [{
