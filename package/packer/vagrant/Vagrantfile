@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure('2') do |config|
+  config.vm.box = 'rancher/k3os'
+  config.vm.box_check_update = true
+  config.vm.box_url = 'file://k3os_virtualbox.box'
+end
