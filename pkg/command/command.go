@@ -6,10 +6,13 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 func ExecuteCommand(commands []string) error {
 	for _, cmd := range commands {
+		logrus.Debugf("running cmd `%s`", cmd)
 		c := exec.Command("sh", "-c", cmd)
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr
