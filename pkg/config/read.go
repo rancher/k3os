@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/ghodss/yaml"
@@ -150,6 +151,12 @@ func readFile(path string) (map[string]interface{}, error) {
 }
 
 func readCmdline() (map[string]interface{}, error) {
+	//supporting regex https://regexr.com/4mq0s
+	parser, err := regexp.Compile(`(\"[^\"]+\")|([^\s]+=(\"[^\"]+\")|([^\s]+))`)
+	if err != nil {
+		return nil, nil
+	}
+
 	bytes, err := ioutil.ReadFile("/proc/cmdline")
 	if os.IsNotExist(err) {
 		return nil, nil
@@ -158,13 +165,13 @@ func readCmdline() (map[string]interface{}, error) {
 	}
 
 	data := map[string]interface{}{}
-	for _, item := range strings.Fields(string(bytes)) {
+	for _, item := range parser.FindAllString(string(bytes), -1) {
 		parts := strings.SplitN(item, "=", 2)
 		value := "true"
 		if len(parts) > 1 {
-			value = parts[1]
+			value = strings.Trim(parts[1], `"`)
 		}
-		keys := strings.Split(parts[0], ".")
+		keys := strings.Split(strings.Trim(parts[0], `"`), ".")
 		existing, ok := values.GetValue(data, keys...)
 		if ok {
 			switch v := existing.(type) {
