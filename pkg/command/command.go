@@ -3,6 +3,7 @@ package command
 import (
 	"bytes"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
 	"strings"
@@ -10,6 +11,7 @@ import (
 
 func ExecuteCommand(commands []string) error {
 	for _, cmd := range commands {
+		logrus.Debugf("running cmd `%s`", cmd)
 		c := exec.Command("sh", "-c", cmd)
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr
