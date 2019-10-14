@@ -152,7 +152,7 @@ func readFile(path string) (map[string]interface{}, error) {
 
 func readCmdline() (map[string]interface{}, error) {
 	//supporting regex https://regexr.com/4mq0s
-	parser, err := regexp.Compile(`([^\s]+=(\"[^\"]*\")|([^\s]+))`)
+	parser, err := regexp.Compile(`(\"[^\"]+\")|([^\s]+=(\"[^\"]+\")|([^\s]+))`)
 	if err != nil {
 		return nil, nil
 	}
@@ -171,7 +171,7 @@ func readCmdline() (map[string]interface{}, error) {
 		if len(parts) > 1 {
 			value = strings.Trim(parts[1], `"`)
 		}
-		keys := strings.Split(parts[0], ".")
+		keys := strings.Split(strings.Trim(parts[0], `"`), ".")
 		existing, ok := values.GetValue(data, keys...)
 		if ok {
 			switch v := existing.(type) {
