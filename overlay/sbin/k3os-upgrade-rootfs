@@ -35,8 +35,6 @@ K3OS_ROOTFS_URL="https://github.com/rancher/k3os/releases/download/${K3OS_VERSIO
 cd /k3os/system/
 mount -o remount rw .
 curl -fsSL "${K3OS_ROOTFS_URL}" | tar xz --strip-components=3
-cp -R ${K3OS_VERSION}/k3os/system/* .
-rm -rf k3os-rootfs-${ARCH}.tar.gz ${K3OS_VERSION}
 sync
 
 echo "Upgrade complete! Please reboot."
