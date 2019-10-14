@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 if [ $(whoami) != "root" ]
 then
