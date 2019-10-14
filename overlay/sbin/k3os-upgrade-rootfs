@@ -25,7 +25,7 @@ then
 	ARCH="arm"
 else
 	echo "Unsupported CPU architecture."
-	exit 0
+	exit 1
 fi
 
 echo "Upgrading k3os to ${K3OS_VERSION}"
