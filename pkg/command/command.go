@@ -3,10 +3,11 @@ package command
 import (
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 func ExecuteCommand(commands []string) error {
