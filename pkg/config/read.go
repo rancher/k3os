@@ -152,7 +152,7 @@ func readFile(path string) (map[string]interface{}, error) {
 
 func readCmdline() (map[string]interface{}, error) {
 	//supporting regex https://regexr.com/4mq0s
-	parser, err := regexp.Compile(`([^\s]+=(\".*\")|([^\s]+))`)
+	parser, err := regexp.Compile(`([^\s]+=(\"[^\"]*\")|([^\s]+))`)
 	if err != nil {
 		return nil, nil
 	}
