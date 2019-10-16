@@ -331,7 +331,7 @@ the cluster.
 
 ### Manual Upgrades
 
-For development or single-node purposes where the operator is not used, you can upgrade the rootfs and kernel with the following commands.
+For single-node or development use cases where the operator is not being used, you can upgrade the rootfs and kernel with the following commands. If you do not specify K3OS_VERSION, it will default to the latest release.
 
 ```
 K3OS_VERSION=v0.4.0 /sbin/k3os-upgrade-rootfs
