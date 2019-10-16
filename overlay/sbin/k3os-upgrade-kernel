@@ -23,7 +23,7 @@ then
 elif [ $PROC == "armv7l" ]
 then
 	ARCH="arm"
-	echo "K3os for 32-bit ARM architecture only provides rootfs, no kernel updates available."
+	echo "k3os for 32-bit ARM architecture only provides rootfs, no kernel updates available."
 	exit 1
 else
 	echo "Unsupported CPU architecture."
