@@ -334,8 +334,9 @@ the cluster.
 For single-node or development use cases where the operator is not being used, you can upgrade the rootfs and kernel with the following commands. If you do not specify K3OS_VERSION, it will default to the latest release.
 
 ```
-K3OS_VERSION=v0.4.0 /sbin/k3os-upgrade-rootfs
-K3OS_VERSION=v0.4.0 /sbin/k3os-upgrade-kernel
+export K3OS_VERSION=v0.4.0
+/sbin/k3os-upgrade-rootfs
+/sbin/k3os-upgrade-kernel
 ```
 
 You should always remember to backup your data first, and reboot after upgrading. 
