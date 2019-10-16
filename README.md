@@ -329,6 +329,17 @@ is still in development.  More details to follow.  The basic design is that one 
 desired k3s and k3OS versions, plus their configuration and the operator will roll that out to
 the cluster.
 
+### Manual Upgrades
+
+For development or single-node purposes where the operator is not used, you can upgrade the rootfs and kernel with the following commands.
+
+```
+K3OS_VERSION=v0.4.0 /sbin/k3os-upgrade-rootfs
+K3OS_VERSION=v0.4.0 /sbin/k3os-upgrade-kernel
+```
+
+You should always remember to backup your data first, and reboot after upgrading. 
+
 ## Building
 
 To build k3OS you just need Docker and then run `make`.  All artifacts will be put in `./dist/artifacts`.
