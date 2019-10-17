@@ -259,6 +259,13 @@ validate_device()
     fi
 }
 
+create_opt()
+{
+    if [ ! -d "${TARGET}/opt" ]; then
+        mkdir "${TARGET}/opt"
+    fi
+}
+
 while [ "$#" -gt 0 ]; do
     case $1 in
         --no-format)
@@ -331,6 +338,7 @@ do_format
 do_mount
 do_copy
 install_grub
+create_opt
 
 if [ -n "$INTERACTIVE" ]; then
     exit 0
