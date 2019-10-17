@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [ $(whoami) != "root" ]
+then
+	echo "This script must be run as root."
+	exit 1
+fi
+
+PROC=$(uname -m)
+
+# Take a parameter of the version number (i.e. v0.4.0) if it is given, otherwise use latest
+if [ -z $K3OS_VERSION ]
+then
+	K3OS_VERSION=latest
+fi
+
+if [ $PROC == "x86_64" ]
+then
+	ARCH="amd64"
+elif [ $PROC == "aarch64" ]
+then
+	ARCH="arm64"
+elif [ $PROC == "armv7l" ]
+then
+	ARCH="arm"
+	echo "k3os for 32-bit ARM architecture only provides rootfs, no kernel updates available."
+	exit 1
+else
+	echo "Unsupported CPU architecture."
+	exit 1
+fi
+
+KERNEL_VERSION=$(curl -sL https://github.com/rancher/k3os/releases/${K3OS_VERSION}/download/k3os-kernel-version-${ARCH})
+
+echo "Upgrading k3os kernel to ${KERNEL_VERSION}"
+
+cd /k3os/system/
+mount -o remount rw .
+cd kernel
+mkdir -p ${KERNEL_VERSION}
+cd ${KERNEL_VERSION}
+curl -sL https://github.com/rancher/k3os/releases/${K3OS_VERSION}/download/k3os-initrd-${ARCH} --output initrd
+curl -sL https://github.com/rancher/k3os/releases/${K3OS_VERSION}/download/k3os-kernel-${ARCH}.squashfs --output kernel.squashfs
+cd ..
+
+PREVIOUS_KERNEL=$(ls -l current | awk '{print $11}')
+ln -s ${PREVIOUS_KERNEL} previous
+unlink current
+ln -s ${KERNEL_VERSION} current
+sync
+
+echo "Upgrade complete! Please reboot."
+
