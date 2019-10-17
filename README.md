@@ -333,6 +333,8 @@ the cluster.
 
 For single-node or development use cases where the operator is not being used, you can upgrade the rootfs and kernel with the following commands. If you do not specify K3OS_VERSION, it will default to the latest release.
 
+When using an overlay install such as on Raspberry Pi (see [ARM Overlay Installation](#arm-overlay-installation)) the original distro kernel (such as Raspbian) will continue to be used. On these systems the k3os-upgrade-kernel script will exit with a warning and perform no action.
+
 ```
 export K3OS_VERSION=v0.4.0
 /sbin/k3os-upgrade-rootfs
