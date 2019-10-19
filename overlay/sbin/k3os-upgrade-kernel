@@ -14,7 +14,11 @@ then
 	K3OS_VERSION=latest
 fi
 
-if [ $PROC == "x86_64" ]
+if [ ! -d /k3os/system/kernel ]
+then
+  echo "This system seems to be using a custom kernel, no kernel updates available."
+	exit 1
+elif [ $PROC == "x86_64" ]
 then
 	ARCH="amd64"
 elif [ $PROC == "aarch64" ]
@@ -50,4 +54,3 @@ ln -s ${KERNEL_VERSION} current
 sync
 
 echo "Upgrade complete! Please reboot."
-
