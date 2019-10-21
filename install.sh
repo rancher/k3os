@@ -261,9 +261,7 @@ validate_device()
 
 create_opt()
 {
-    if [ ! -d "${TARGET}/opt" ]; then
-        mkdir "${TARGET}/opt"
-    fi
+    mkdir -p "${TARGET}/k3os/data/opt"
 }
 
 while [ "$#" -gt 0 ]; do
