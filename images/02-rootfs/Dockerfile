@@ -81,6 +81,7 @@ COPY --from=progs /output/rc.init /usr/src/image/bin/rc.init
 COPY --from=progs /output/k3os-config /usr/src/image/libexec/k3os/k3os-config
 COPY --from=progs /output/ccapply /usr/src/image/sbin/ccapply
 COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
+COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
 
 COPY overlay/ /usr/src/image/
 COPY install.sh /usr/src/image/libexec/k3os/install
