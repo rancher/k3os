@@ -35,7 +35,7 @@ KERNEL_VERSION=$(curl -sL https://github.com/rancher/k3os/releases/${K3OS_VERSIO
 echo "Upgrading k3os kernel to ${KERNEL_VERSION}"
 
 cd /k3os/system/
-mount -o remount rw .
+mount -o remount,rw .
 cd kernel
 mkdir -p ${KERNEL_VERSION}
 cd ${KERNEL_VERSION}
