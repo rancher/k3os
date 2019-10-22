@@ -27,11 +27,11 @@ RUN cd /usr/src/kernel && \
     mkdir -p /usr/src/iso/k3os/system/kernel/$(cat version) && \
     cp initrd kernel.squashfs /usr/src/iso/k3os/system/kernel/$(cat version) && \
     ln -s $(cat version) /usr/src/iso/k3os/system/kernel/current
-
 COPY --from=tar /output/userspace.tar /usr/src/tars/
 RUN tar xvf /usr/src/tars/userspace.tar --strip-components=1 -C /usr/src/iso
 
 COPY wrapper /usr/bin/
+COPY config.yaml /usr/src/iso/k3os/system/
 RUN mkdir -p /output && \
     cd /usr/src/iso && \
     grub-mkrescue --xorriso=/usr/bin/wrapper -o /output/k3os.iso . -V K3OS && \
