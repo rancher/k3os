@@ -5,9 +5,7 @@ source $(dirname $0)/version
 
 cd $(dirname $0)/..
 
-mkdir -p build
-
 bash -x ./scripts/build
 
-ID=$(docker run --net=host --privileged --rm -itd $REPO/k3os-iso:$TAG)
+ID=$(docker run --net=host --privileged --rm -itd $REPO/k3os-qemu:$TAG run-kvm.sh)
 docker attach $ID || docker kill $ID

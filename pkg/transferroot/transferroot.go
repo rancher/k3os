@@ -235,8 +235,8 @@ func Relocate() {
 		}
 
 		// exec /sbin/init
-		if err := syscall.Exec(nextInit, []string{nextInit}, append(os.Environ(), "K3OS_RELOCATED=true")); err != nil {
-			log.Fatalf("Cannot exec /sbin/init")
+		if err := syscall.Exec(nextInit, []string{nextInit}, append(os.Environ(), relocated+"=true")); err != nil {
+			log.Fatalf("Cannot exec %s", nextInit)
 		}
 	}
 }

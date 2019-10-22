@@ -20,6 +20,7 @@ COPY --from=kernel /output/initrd /output/k3os-initrd-${ARCH}
 COPY --from=kernel /output/kernel.squashfs /output/k3os-kernel-${ARCH}.squashfs
 COPY --from=kernel /output/version /output/k3os-kernel-version-${ARCH}
 COPY --from=iso /output/k3os.iso /output/k3os-${ARCH}.iso
+COPY --from=iso /output/k3os-tests.iso /output/k3os-tests-${ARCH}.iso
 
 COPY --from=tar /output/ /usr/src/tar
 COPY --from=kernel /output/initrd /usr/src/initrd/initrd

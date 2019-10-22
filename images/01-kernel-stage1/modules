@@ -1,0 +1,4 @@
+# /etc/initramfs-tools/modules
+9p
+9pnet
+9pnet_virtio

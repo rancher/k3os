@@ -14,7 +14,7 @@ EOF
 
 K3OS_ISO=$(blkid -L K3OS || true)
 if [ -n "$K3OS_ISO" ]; then
-    mount -t iso9660 -o ro $(blkid -L K3OS) /.base
+    mount -t iso9660 -o ro $K3OS_ISO /.base
 else
     success=false
     for (( j=0; j < 5 ; j++ )); do

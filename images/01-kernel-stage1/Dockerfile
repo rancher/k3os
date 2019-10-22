@@ -26,6 +26,7 @@ RUN mkdir -p /usr/src/root && \
     tar xvf /usr/src/kernel-headers.tar.xz
 
 # Create initrd
+COPY modules /etc/initramfs-tools/modules
 RUN mkdir /usr/src/initrd && \
     rsync -av /usr/src/root/lib/ /lib/ && \
     depmod $KVERSION && \

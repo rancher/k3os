@@ -18,6 +18,7 @@ RUN cd pkg/metadata && \
     gobuild -o /output/metadata
 
 FROM gobuild as k3os
+RUN apk add rsync
 COPY /cmd/ $GOPATH/src/github.com/rancher/k3os/cmd/
 COPY /pkg/ $GOPATH/src/github.com/rancher/k3os/pkg/
 COPY /main.go $GOPATH/src/github.com/rancher/k3os/
@@ -25,7 +26,11 @@ COPY /vendor/ $GOPATH/src/github.com/rancher/k3os/vendor/
 WORKDIR $GOPATH/src/github.com/rancher/k3os
 RUN gobuild -o /output/k3os && \
     gobuild -o /output/k3os-config ./cmd/config && \
-    gobuild -o /output/ccapply ./cmd/ccapply
+    gobuild -o /output/ccapply ./cmd/ccapply && \
+    cd pkg/test && \
+    find . -mindepth 1 -type d -exec sh -xc 'gotest -c -o {}/package.test {} || true' \; && \
+    rsync -av --exclude '*.go' ../test/ /output/test/ && \
+    rsync -av ../testdata/ /output/test/
 
 FROM gobuild
 COPY --from=linuxkit /output/ /output/

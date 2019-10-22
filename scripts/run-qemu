@@ -4,26 +4,16 @@
 
 set -e
 
-if [ "$ARCH" = "amd64" ]; then
-    QEMU_SYSTEM="qemu-system-x86_64"
-elif [ "$ARCH" = "arm64" ]; then
-    QEMU_SYSTEM="qemu-system-aarch64"
-else
-    QEMU_SYSTEM="qemu-system-$ARCH"
-fi
-
-if [ ! -e $STATEDIR/hd.img ]; then
+if [ ! -e $STATEDIR/disk.img ]; then
     mkdir -p $STATEDIR
-    ID=$(docker container create $REPO/k3os-iso:$TAG)
-    docker container cp $ID:/hd.img $STATEDIR/
-    docker container rm -vf $ID
+    qemu-img create -f qcow2 $STATEDIR/disk.img 20g
 fi
 
-exec $QEMU_SYSTEM \
+exec ${QEMU_SYSTEM:=qemu-system-$(uname -m)} \
     -m 1280 \
     -machine accel=${QEMU_MACHINE_ACCEL:="hax:kvm:hvf:tcg"} \
     -nographic \
     -serial mon:stdio \
     -rtc base=utc,clock=rt \
     -cdrom $(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
-    -drive if=virtio,file=$STATEDIR/hd.img
+    -drive if=virtio,file=$STATEDIR/disk.img

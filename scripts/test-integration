@@ -1,0 +1,16 @@
+#!/bin/bash
+[ "$ARCH" == "arm" ] && exit 0
+
+set -e
+
+source $(dirname $0)/version
+
+cd $(dirname $0)/..
+
+bash -x ./scripts/build
+bash -x ./scripts/package
+
+echo Running regression tests
+set -x
+ID=$(docker run --net=host --privileged --rm -itd $REPO/k3os-qemu:$TAG run-kvm-test.sh)
+docker attach $ID || docker kill $ID

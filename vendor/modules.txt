@@ -1,8 +1,10 @@
 # github.com/docker/docker v1.13.1
-github.com/docker/docker/pkg/reexec
 github.com/docker/docker/pkg/mount
+github.com/docker/docker/pkg/reexec
 # github.com/docker/go-units v0.3.3
 github.com/docker/go-units
+# github.com/dustin/go-humanize v1.0.0
+github.com/dustin/go-humanize
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
@@ -22,8 +24,16 @@ github.com/rancher/mapper/values
 github.com/rancher/mapper/definition
 # github.com/rancher/wrangler v0.0.0-20190329182315-1e7b870cf096
 github.com/rancher/wrangler/pkg/name
+# github.com/sclevine/spec v1.3.0
+github.com/sclevine/spec
+github.com/sclevine/spec/report
 # github.com/sirupsen/logrus v1.4.1
 github.com/sirupsen/logrus
+# github.com/u-root/u-root v6.0.0+incompatible
+github.com/u-root/u-root/pkg/cpio
+github.com/u-root/u-root/pkg/ls
+github.com/u-root/u-root/pkg/uio
+github.com/u-root/u-root/pkg/ubinary
 # github.com/urfave/cli v1.20.0
 github.com/urfave/cli
 # golang.org/x/crypto v0.0.0-20190422183909-d864b10871cd

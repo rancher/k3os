@@ -1,0 +1,68 @@
+#!/bin/bash
+
+TEST_RUN=/mnt/test/run
+TEST_LOG=/mnt/test/log
+
+do_mount()
+{
+    mkdir -p ${TEST_RUN} ${TEST_LOG}
+
+    if ! mount -L K3OS_TEST_RUN ${TEST_RUN}; then
+        mount -t 9p -o trans=virtio,version=9p2000.L K3OS_TEST_RUN ${TEST_RUN} || true
+    fi
+    if ! mount -L K3OS_TEST_LOG ${TEST_LOG}; then
+        if ! mount -t 9p -o trans=virtio,version=9p2000.L K3OS_TEST_LOG ${TEST_LOG}; then
+            TEST_LOG=/tmp/test/log
+            mkdir -p ${TEST_LOG}
+        fi
+    fi
+}
+
+do_setup()
+{
+    if [ -f ${TEST_RUN}/setup ] && [ -x ${TEST_RUN}/setup ]; then
+        ${TEST_RUN}/setup | tee -a ${TEST_LOG}/setup.log
+    fi
+}
+
+do_execute()
+{
+    if [ -f ${TEST_RUN}/execute ] && [ -x ${TEST_RUN}/execute ]; then
+        ${TEST_RUN}/execute | tee -a ${TEST_LOG}/execute.log
+    else
+        for t in $(find ${TEST_RUN} -name '*.test'); do
+            local log=${TEST_LOG}/$(realpath --relative-base=${TEST_RUN} $t).log
+            mkdir -p $(dirname $log)
+            $t -test.v -integration | tee -a $log
+        done
+    fi
+}
+
+do_teardown()
+{
+    for x in $(</proc/cmdline); do
+        case $x in
+            k3os.test.tar=*)
+                tar cf ${x##k3os.test.tar=} -C ${TEST_LOG} .
+                ;;
+        esac
+    done
+    if [ -f ${TEST_RUN}/teardown ] && [ -x ${TEST_RUN}/teardown ]; then
+        ${TEST_RUN}/teardown > ${TEST_LOG}/teardown.log
+    else
+        /sbin/poweroff
+    fi
+}
+
+trap do_teardown EXIT
+
+set -e
+
+do_mount
+
+if mountpoint -q ${TEST_RUN}; then
+    do_setup
+    do_execute
+fi
+
+do_teardown

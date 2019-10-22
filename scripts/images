@@ -16,7 +16,7 @@ build_all()
         IMAGE=${i##[0-9][0-9]-}
         FULL_IMAGE=$REPO/k3os-$IMAGE:$TAG
 
-        cd $i
+        pushd $i
         if [ -e archs ] && ! grep -w -q $ARCH archs; then
             echo skipping $FULL_IMAGE for $ARCH
             cd ..
@@ -29,7 +29,7 @@ build_all()
             ROOT=$(readlink -f root)
         fi
         docker build --build-arg TAG=$TAG --build-arg VERSION=${VERSION} --build-arg REPO=${REPO} --build-arg ARCH=${ARCH} -f $(pwd)/Dockerfile -t $FULL_IMAGE $ROOT
-        cd ..
+        popd
     done
 }
 
@@ -47,7 +47,7 @@ copy_all()
         IMAGE=${i##[0-9][0-9]-}
         FULL_IMAGE=$REPO/k3os-$IMAGE:$TAG
 
-        cd $i
+        pushd $i
         if [ -e archs ] && ! grep -w -q $ARCH archs; then
             echo skipping $FULL_IMAGE for $ARCH
             cd ..
@@ -62,6 +62,6 @@ copy_all()
         docker rm -fv $ID
         cp ./output/* ${OUTPUT}/
         rm -rf ./output
-        cd ..
+        popd
     done
 }
