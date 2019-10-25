@@ -259,6 +259,11 @@ validate_device()
     fi
 }
 
+create_opt()
+{
+    mkdir -p "${TARGET}/k3os/data/opt"
+}
+
 while [ "$#" -gt 0 ]; do
     case $1 in
         --no-format)
@@ -331,6 +336,7 @@ do_format
 do_mount
 do_copy
 install_grub
+create_opt
 
 if [ -n "$INTERACTIVE" ]; then
     exit 0
