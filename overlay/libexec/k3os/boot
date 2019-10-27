@@ -53,12 +53,27 @@ setup_services()
 ccapply_boot()
 {
     ccapply --boot
+    # connman
     if [ -e /var/lib/connman/cloud-config.config ]; then
         echo 'rc_want="wpa_supplicant"' >> /etc/conf.d/connman
     fi
     if [ -e /etc/conf.d/cloud-config ]; then
         ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
     fi
+    # net-online
+    for x in $(cat /proc/cmdline); do
+        case $x in
+            k3os.net.noping*)
+                echo 'include_ping_test="no"' >> /etc/conf.d/net-online
+            ;;
+            k3os.net.minup=*)
+                echo "minimum_up=${x#k3os.net.minup=}" >> /etc/conf.d/net-online
+            ;;
+            k3os.net.timeout=*)
+                echo "timeout=${x#k3os.net.timeout=}" >> /etc/conf.d/net-online
+            ;;
+        esac
+    done
 }
 
 setup_root()
