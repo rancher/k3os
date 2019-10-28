@@ -2,8 +2,8 @@
   "variables": {
     "gcp_project_id": "{{env `GCP_PROJECT_ID`}}",
     "region": "us-east1-d",
-    "k3os_version": "v0.4.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.4.0/k3os-amd64.iso"
+    "k3os_version": "v0.5.0",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.5.0/k3os-amd64.iso"
   },
   "builders": [
     {
