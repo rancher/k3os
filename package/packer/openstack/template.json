@@ -9,18 +9,18 @@
     "os_password": "{{env `OS_PASSWORD`}}",
     "os_domain_name": "{{env `OS_DOMAIN_NAME`}}",
     "os_tenant_name": "{{env `OS_TENANT_NAME`}}",
-    "os_packer_source_image_id": "cc568f99-d3b2-489b-b7c6-877e3d6ff1fd",
-    "os_networks_id": "11e4411f-e3ff-414e-a216-15b998e03e76",
-    "os_floating_ip_pool": "public1",
+    "os_source_image_id": "{{env `OS_SOURCE_IMAGE`}}",
+    "os_networks_id": "{{env `OS_NETWORKS_ID`}}",
+    "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
     "k3os_version": "v0.5.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.5.0/k3os-arm64.iso"
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.5.0/k3os-amd64.iso"
   },
   "builders": [
     {
      "type": "openstack",
      "flavor": "2",
      "ssh_username": "ubuntu",
-     "image_name":  "k3OS-{{user `k3os_version`}}-arm64",
+     "image_name":  "k3OS-{{user `k3os_version`}}-amd64",
      "source_image": "{{user `os_packer_source_image_id`}}",
      "networks": "{{user `os_networks_id`}}",
      "floating_ip_pool": "{{user `os_floating_ip_pool`}}",
