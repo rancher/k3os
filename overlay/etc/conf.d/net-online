@@ -10,7 +10,7 @@ minimum_up=1
 
 # This setting controls whether a ping test is included in the test for
 # network connectivity after all interfaces are active.
-include_ping_test=yes
+#include_ping_test=yes
 
 # This setting is the host to attempt to ping if the above is yes.
 # The default is google.com.
