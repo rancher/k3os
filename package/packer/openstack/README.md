@@ -1,6 +1,6 @@
 # k3os/package/packer/openstack
 
-This is an Example for building an OpenStack Image using packer.  
+This is an Example for building a K3OS OpenStack Image using packer.  
 
 ## Quick start
 
