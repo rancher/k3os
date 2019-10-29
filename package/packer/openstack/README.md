@@ -1,4 +1,4 @@
-# k3os openstack image
+# K3OS Packer OpenStack Image
 
 This is an Example for building a K3OS OpenStack Image using packer.  
 
