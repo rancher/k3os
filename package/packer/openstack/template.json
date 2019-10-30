@@ -21,7 +21,7 @@
      "flavor": "2",
      "ssh_username": "ubuntu",
      "image_name":  "k3OS-{{user `k3os_version`}}-amd64",
-     "source_image": "{{user `os_packer_source_image_id`}}",
+     "source_image": "{{user `os_source_image_id`}}",
      "networks": "{{user `os_networks_id`}}",
      "floating_ip_pool": "{{user `os_floating_ip_pool`}}",
      "use_floating_ip": true,
