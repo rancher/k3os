@@ -1,3 +1,0 @@
-export OS_SOURCE_IMAGE="cc568f99-d3b2-489b-b7c6-877e3d6ff1fd"
-export OS_NETWORKS_ID="11e4411f-e3ff-414e-a216-15b998e03e76"
-export OS_FLOATING_IP_POOL="public1"
