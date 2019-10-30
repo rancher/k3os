@@ -4,7 +4,7 @@ This is a template for building a K3OS OpenStack Image using packer.
 
 It was developed using ARM64 images on an Ampere Computing eMAG running an OpenStack All-In-One deployed via Kolla and Kolla Ansible.  
 
-The image used was a stock Ubuntu 18.04 cloud image for arm64.  The image was loaded into the openstack deployment using Terrfaform from the project located [here](https://github.com/amperecomputing/terraform-openstack-images].
+The image used was a stock Ubuntu 18.04 cloud image for arm64.  The image was loaded into the openstack deployment using Terrfaform from the project located [here](https://github.com/amperecomputing/terraform-openstack-images).
 
 
 ## Quick start
