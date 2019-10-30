@@ -1,5 +1,5 @@
 {
-  "_comment:": "OS_PACKER_SOURCE_IMAGE_ID is the OpenStack Glance Image Id of the Ubuntu 18.04 image that has been already uploaded into glacee",
+  "_comment:": "OS_PACKER_SOURCE_IMAGE_ID is the OpenStack Glance Image Id of the Ubuntu 18.04 image that has been already uploaded into glance",
   "_comment:": "OS_NETWORKS_ID is the ID under the name of the nework located under Networks in the Horizion WebUI ",
   "_comment:": "OS_FLOATING_IP_POOL is the name of the OpenStack floating ip network to use",
   "_comment:": "Packer needed to be rebuiled from source during the making of this due the the following issue: https://github.com/hashicorp/packer/issues/8258",
