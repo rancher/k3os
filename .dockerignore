@@ -2,5 +2,8 @@
 ./.dapper
 ./.cache
 ./.trash-cache
-./dist
-./build
+./dist/
+./build/
+package/packer/vagrant/.vagrant/
+package/packer/vagrant/packer_cache/
+package/packer/vagrant/*.box
