@@ -24,7 +24,7 @@ and changes will not persist after reboot.
 To copy k3OS to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO
 from the virtual machine and reboot.
 
-Live install (boot from ISO) requires at least 1GB of RAM. Local install requires 512MB RAM.
+Live install (boot from ISO) requires at least 2GB of RAM. Local install requires 1GB RAM.
 
 ## Design
 
@@ -341,7 +341,7 @@ export K3OS_VERSION=v0.5.0
 /sbin/k3os-upgrade-kernel
 ```
 
-You should always remember to backup your data first, and reboot after upgrading. 
+You should always remember to backup your data first, and reboot after upgrading.
 
 ## Building
 
