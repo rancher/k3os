@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Licened under Apache 2.0
+# A simple way to bring your own tools to the K3OS Kubernetes Linux distribution
+# Inspired by https://github.com/debarshiray/toolbox
+
+if [ $(whoami) != "root" ]
+then
+	echo "This script must be run as root."
+	exit 1
+fi
+
+if [ "$1" = "" ]; then
+    echo "toolbox: missing command" >&2
+    echo >&2
+    echo "These are some common commands:" >&2
+    echo "create    Create a new toolbox container" >&2
+    echo "enter     Enter an existing toolbox container" >&2
+    echo "rm     Remove an existing toolbox container" >&2
+    echo >&2
+    exit 1
+fi
+
+op=$1
+shift
+
+CTR='k3s ctr'
+registry="docker.io/library"
+image="ubuntu:latest"
+
+case $op in
+	create )
+		# Check if the container already exists
+		# If not, create it.
+		${CTR} container info toolbox &> /dev/null
+		INFO=$(echo $?)
+		if [ ${INFO} == "1" ]
+		then
+			${CTR} image pull docker.io/library/ubuntu:latest
+			${CTR} run -d --net-host --privileged ${registry}/${image} toolbox bash
+			#${CTR} task kill toolbox --signal 9
+		else
+			echo "Container 'toolbox' already exists"
+			exit 1
+		fi
+		;;
+	enter )
+		#${CTR} tasks start toolbox
+		k3s ctr task exec -t --exec-id 100 toolbox bash
+		;;
+	rm )
+		${CTR} task kill toolbox --signal 9
+		${CTR} container rm toolbox
+		;;
+
+esac
