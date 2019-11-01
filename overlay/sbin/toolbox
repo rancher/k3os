@@ -38,7 +38,6 @@ case $op in
 		then
 			${CTR} image pull docker.io/library/ubuntu:latest
 			${CTR} run -d --net-host --privileged ${registry}/${image} toolbox bash
-			#${CTR} task kill toolbox --signal 9
 		else
 			echo "Container 'toolbox' already exists"
 			exit 1
