@@ -11,14 +11,14 @@ then
 fi
 
 if [ "$1" = "" ]; then
-    echo "toolbox: missing command" >&2
-    echo >&2
-    echo "These are some common commands:" >&2
-    echo "create    Create a new toolbox container" >&2
-    echo "enter     Enter an existing toolbox container" >&2
-    echo "rm     Remove an existing toolbox container" >&2
-    echo >&2
-    exit 1
+	echo "toolbox: missing command" >&2
+	echo >&2
+	echo "These are some common commands:" >&2
+	echo "create	Create a new toolbox container" >&2
+	echo "enter	 Enter an existing toolbox container" >&2
+	echo "rm	 Remove an existing toolbox container" >&2
+	echo >&2
+	exit 1
 fi
 
 op=$1
