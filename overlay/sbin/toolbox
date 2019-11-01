@@ -45,7 +45,7 @@ case $op in
 		fi
 		;;
 	enter )
-		k3s ctr task exec -t --exec-id 100 toolbox bash
+		${CTR} task exec -t --exec-id 100 toolbox bash
 		;;
 	rm )
 		${CTR} task kill toolbox --signal 9
