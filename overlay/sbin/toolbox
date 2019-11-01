@@ -2,7 +2,7 @@
 
 # Licened under Apache 2.0
 # A simple way to bring your own tools to the K3OS Kubernetes Linux distribution
-# Inspired by https://github.com/debarshiray/toolbox
+# Inspired by https://github.com/containers/toolbox
 
 if [ $(whoami) != "root" ]
 then
