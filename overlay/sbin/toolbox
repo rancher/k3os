@@ -45,7 +45,6 @@ case $op in
 		fi
 		;;
 	enter )
-		#${CTR} tasks start toolbox
 		k3s ctr task exec -t --exec-id 100 toolbox bash
 		;;
 	rm )
