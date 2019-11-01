@@ -26,7 +26,7 @@ shift
 
 CTR='k3s ctr'
 registry="docker.io/library"
-image="ubuntu:latest"
+image="ubuntu:19.10"
 
 case $op in
 	create )
@@ -36,7 +36,7 @@ case $op in
 		INFO=$(echo $?)
 		if [ ${INFO} == "1" ]
 		then
-			${CTR} image pull docker.io/library/ubuntu:latest
+			${CTR} image pull ${registry}/${image}
 			${CTR} run -d --net-host --privileged ${registry}/${image} toolbox bash
 		else
 			echo "Container 'toolbox' already exists"
