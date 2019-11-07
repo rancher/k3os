@@ -24,6 +24,8 @@ RUN apk --no-cache add \
     jq \
     kbd-bkeymaps \
     logrotate \
+    mdadm \
+    mdadm-misc \
     ncurses \
     nfs-utils \
     open-iscsi \
