@@ -31,17 +31,17 @@ RUN cd /usr/src/image && \
    ;done && \
    rmdir usr
 
-# Fix coreutils links
-RUN cd /usr/src/image/bin && \
-    mv coreutils coreutils.save && \
-    find -xtype l -exec rm {} \; -exec ln -s coreutils {} \; && \
-    mv coreutils.save coreutils
+# Fix ldd and coreutils links
+RUN cd /usr/src/image/bin \
+ && ln -sf $(realpath $(which ldd)) ldd \
+ && find -xtype l -ilname ../usr/bin/coreutils -exec ln -sf coreutils {} \;
 
 # Fix sudo
 RUN chmod +s /usr/src/image/bin/sudo
 
 # Add empty dirs to bind mount
 RUN mkdir -p /usr/src/image/lib/modules
+RUN mkdir -p /usr/src/image/src
 
 # setup /usr/local
 RUN rm -rf /usr/src/image/local && \
@@ -61,7 +61,7 @@ RUN rm -rf \
     cp -rf /etc/ssl/certs/ca-certificates.crt /usr/src/image/etc/ssl/certs
 
 RUN rm -rf \
-    /usr/src/image/usr/sbin/apk \
+    /usr/src/image/sbin/apk \
     /usr/src/image/usr/include \
     /usr/src/image/usr/lib/apk \
     /usr/src/image/usr/lib/pkgconfig \
@@ -81,6 +81,7 @@ COPY --from=progs /output/rc.init /usr/src/image/bin/rc.init
 COPY --from=progs /output/k3os-config /usr/src/image/libexec/k3os/k3os-config
 COPY --from=progs /output/ccapply /usr/src/image/sbin/ccapply
 COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
+COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
 
 COPY overlay/ /usr/src/image/
 COPY install.sh /usr/src/image/libexec/k3os/install

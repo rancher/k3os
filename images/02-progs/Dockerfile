@@ -30,3 +30,7 @@ RUN gobuild -o /output/k3os && \
 FROM gobuild
 COPY --from=linuxkit /output/ /output/
 COPY --from=k3os /output/ /output/
+WORKDIR /output
+RUN set -x \
+ && git clone --branch v0.7.0 https://github.com/ahmetb/kubectx.git \
+ && chmod -v +x kubectx/kubectx kubectx/kubens

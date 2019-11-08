@@ -17,14 +17,14 @@ from Kubernetes. Both k3OS and k3s upgrades are handled by the k3OS operator.
 ## Quick Start
 
 Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
-in VMware, VirtualBox, or KVM.  The server will automatically start a single node Kubernetes cluster. 
-Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media 
-and changes will not persist after reboot. 
+in VMware, VirtualBox, or KVM.  The server will automatically start a single node Kubernetes cluster.
+Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media
+and changes will not persist after reboot.
 
-To copy k3OS to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO 
-from the virtual machine and reboot. 
+To copy k3OS to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO
+from the virtual machine and reboot.
 
-Live install (boot from ISO) requires at least 1GB of RAM. Local install requires 512MB RAM.
+Live install (boot from ISO) requires at least 2GB of RAM. Local install requires 1GB RAM.
 
 ## Design
 
@@ -64,12 +64,12 @@ writable.
 #### /k3os
 
 The k3OS directory contains the core operating system files references on boot to construct the
-file system.  It contains a squashfs images and binaries for k3OS, k3s, and the Linux kernel. On
+file system.  It contains squashfs images and binaries for k3OS, k3s, and the Linux kernel. On
 boot the appropriate version for all three will be chosen and configured.
 
 #### /var, /usr/local, /home, /opt
 
-Persistent changes should be kept in `/var`, '/usr/local', '/home', or '/opt'.
+Persistent changes should be kept in `/var`, `/usr/local`, `/home`, or `/opt`.
 
 ### Upstream Distros
 
@@ -82,7 +82,7 @@ kernel source is coming from Ubuntu 18.04 LTS. Some code and a lot of inspiratio
 ### Interactive Installation
 
 Interactive installation is done from booting from the ISO.  The installation is done by running
-`os-config`.  The `os-config` script is only available systems booted live.  An installation to
+`os-config`.  The `os-config` script is only available on systems booted live.  An installation to
 disk will not have `os-config`.  Follow the prompts to install k3OS to disk.
 
 ***The installation will format an entire disk.  If you have a single hard disk attached to the system
@@ -114,18 +114,18 @@ Below is a reference of all cmdline args used to automate installation
 
 #### Custom partition layout
 
-By default k3OS expects one partitions to exist labeled K3OS_STATE.  K3OS_STATE is expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create this
+By default k3OS expects one partition to exist labeled `K3OS_STATE`.  `K3OS_STATE` is expected to be an ext4 formatted filesystem with at least 2GB of disk space.  The installer will create this
 partitions and file system automatically, or you can create them manually if you have a need for an advanced file system layout.
 
 ### Bootstrapped Installation
 
 You can install k3OS to a block device from any modern Linux distribution.  Just download and run [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh).
-This script will run the same installation as the ISO but it a bit more raw and will not prompt for configuration.
+This script will run the same installation as the ISO but is a bit more raw and will not prompt for configuration.
 
 ```
 Usage: ./install.sh [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL
 
-Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso
+Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.5.0/k3os.iso
 
 DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)
 
@@ -139,25 +139,26 @@ To remaster the ISO all you need to do is copy `/k3os` and `/boot` from the ISO 
 To build a new ISO just use the utility `grub-mkrescue` as follows:
 
 ```
+# apt-get install grub-efi mtools xorriso
 mount -o loop k3os.iso /mnt
 mkdir -p iso/boot/grub
 cp -rf /mnt/k3os iso/
-cp /mnt/k3os/boot/grub/grub.cfg iso/boot/grub/
+cp /mnt/boot/grub/grub.cfg iso/boot/grub/
 
 # Edit iso/boot/grub/grub.cfg
 
-grub-mkrescue -o k3os-new.iso iso/ -V K3OS
+grub-mkrescue -o k3os-new.iso iso/ -- -volid K3OS
 ```
 
 ### Takeover Installation
 
-A special mode of installation is designed to install to a current running Linux system.  This only works on ARM64 and x86_64.  Download [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh) 
+A special mode of installation is designed to install to a current running Linux system.  This only works on ARM64 and x86_64.  Download [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh)
 and run with the `--takeover` flag.  This will install k3OS to the current root and override the grub.cfg.  After you reboot the system k3OS will then delete all files on the root partition that are not k3OS and then shutdown.  This mode is particularly handy when creating cloud images.  This way you can use an existing base image like Ubuntu and install k3OS over the top, snapshot, and create a new image.
 
 In order for this to work a couple of assumptions are made.  First the root (/) is assumed to be a ext4 partition.  Also it is assumed that grub2 is installed and looking for the configuration at `/boot/grub/grub.cfg`.  When running `--takeover` ensure that you also set `--no-format` and DEVICE must be set to the partition of `/`.  Refer to the AWS packer template to see this mode in action, below is any example of how to run a takeover installation.
 
 ```
-./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso
+./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.5.0/k3os.iso
 ```
 
 ### ARM Overlay Installation
@@ -165,13 +166,13 @@ In order for this to work a couple of assumptions are made.  First the root (/) 
 If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `k3os-rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
 
 ```
-curl -sfL https://github.com/rancher/k3os/releases/download/v0.2.0/k3os-rootfs-arm.tar.gz | tar xvf - --strip-components=1 -C /
+curl -sfL https://github.com/rancher/k3os/releases/download/v0.5.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
 cp myconfig.yaml /k3os/system/config.yaml
 sync
 reboot -f
 ```
 
-This method places k3OS on disk and also overwrites `/sbin/init`.  On next reboot your ARM bootloader and kernel should be loaded, but then when user space is to be initialized k3OS should take over. One important consideration at the moment is that k3OS assume the root device is not read only.  This typically means you need to remove `ro` from the kernel cmdline.  This should be fixed in a future release.
+This method places k3OS on disk and also overwrites `/sbin/init`.  On next reboot your ARM bootloader and kernel should be loaded, but then when user space is to be initialized k3OS should take over. One important consideration at the moment is that k3OS assumes the root device is not read only.  This typically means you need to remove `ro` from the kernel cmdline.  This should be fixed in a future release.
 
 ## Configuration
 
@@ -234,9 +235,9 @@ k3os:
   - 0.us.pool.ntp.org
   - 1.us.pool.ntp.org
   wifi:
-  - ssid: home
+  - name: home
     passphrase: mypassword
-  - ssid: nothome
+  - name: nothome
     passphrase: somethingelse
   password: rancher
   server_url: https://someserver:6443
@@ -282,7 +283,7 @@ as `k3os.install.efi=true`.
 ### Phases
 
 Configuration is applied in three distinct phases: `initrd`, `boot`, `runtime`. `initrd`
-is ran during the initrd phase before the root disk has been mounted.  `boot` is ran after
+is run during the initrd phase before the root disk has been mounted.  `boot` is run after
 the root disk is mounted an the file system is setup, but before any services have started.
 There is no networking available yet at this point. The final stage `runtime` is executed after
 networking has come online.  If you are using a configuration from a cloud provider (like AWS
@@ -294,9 +295,9 @@ are supported in each phase.
 | ssh_authorized_keys  |        |  x   |    x    |
 | write_files          |    x   |  x   |    x    |
 | hostname             |    x   |  x   |    x    |
-| runcmd               |        |      |    x    |
-| bootcmd              |        |  x   |         |
-| initcmd              |    x   |      |         |
+| run_cmd              |        |      |    x    |
+| boot_cmd             |        |  x   |         |
+| init_cmd             |    x   |      |         |
 | k3os.data_sources    |        |      |    x    |
 | k3os.modules         |    x   |  x   |    x    |
 | k3os.sysctls         |    x   |  x   |    x    |
@@ -310,11 +311,10 @@ are supported in each phase.
 | k3os.k3s_args        |        |  x   |    x    |
 | k3os.environment     |    x   |  x   |    x    |
 | k3os.taints          |        |  x   |    x    |
-| k3os.token           |        |  x   |    x    |
- 
+
 ### Networking
 
-Networking is powered by connman.  To configure networking a couple helper keys are
+Networking is powered by `connman`.  To configure networking a couple helper keys are
 available: `k3os.dns_nameserver`, `k3os.ntp_servers`, `k3os.wifi`. Refer to the
 [reference](#configuration-reference) for a full explanation of those keys.  If you wish
 to configure a HTTP proxy set the `http_proxy`, and `https_proxy` fields in `k3os.environment`.
@@ -326,8 +326,22 @@ files.
 
 Upgrading and reconfiguring k3OS is all handled through the Kubernetes operator.  The operator
 is still in development.  More details to follow.  The basic design is that one can set the
-desired k3s and k3OS versions, plus there configuration and the operator will roll that out to
+desired k3s and k3OS versions, plus their configuration and the operator will roll that out to
 the cluster.
+
+### Manual Upgrades
+
+For single-node or development use cases where the operator is not being used, you can upgrade the rootfs and kernel with the following commands. If you do not specify K3OS_VERSION, it will default to the latest release.
+
+When using an overlay install such as on Raspberry Pi (see [ARM Overlay Installation](#arm-overlay-installation)) the original distro kernel (such as Raspbian) will continue to be used. On these systems the k3os-upgrade-kernel script will exit with a warning and perform no action.
+
+```
+export K3OS_VERSION=v0.5.0
+/sbin/k3os-upgrade-rootfs
+/sbin/k3os-upgrade-kernel
+```
+
+You should always remember to backup your data first, and reboot after upgrading.
 
 ## Building
 
@@ -345,7 +359,7 @@ Below is a reference of all keys available in the `config.yaml`
 ### `ssh_authorized_keys`
 
 A list of SSH authorized keys that should be added to the `rancher` user.  k3OS primarily
-has one user, `rancher`.  `root` account is always disabled, has no password, and is never
+has one user, `rancher`.  The `root` account is always disabled, has no password, and is never
 assigned a ssh key.  SSH keys can be obtained from GitHub user accounts by using the format
 `github:${USERNAME}`.  This is done by downloading the keys from `https://github.com/${USERNAME}.keys`.
 
@@ -396,7 +410,7 @@ Example
 hostname: myhostname
 ```
 
-### `initcmd`, `bootcmd`, `runcmd`
+### `init_cmd`, `boot_cmd`, `run_cmd`
 
 All three keys are used to run arbitrary commands on startup in the respective phases of `initrd`,
 `boot` and `runtime`.  Commands are ran after `write_files` so it is possible to write a script to
@@ -473,16 +487,16 @@ k3os:
 
 ### `k3os.wifi`
 
-Simple wifi configuration. All that is accepted is SSID and Passphrase.  If you require more
+Simple wifi configuration. All that is accepted is Name and Passphrase.  If you require more
 complex configuration then you should use `write_files` to write a connman service config.
 
 Example:
 ```yaml
 k3os:
   wifi:
-  - ssid: home
+  - name: home
     passphrase: mypassword
-  - ssid: nothome
+  - name: nothome
     passphrase: somethingelse
 ```
 

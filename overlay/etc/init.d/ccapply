@@ -1,8 +1,7 @@
 #!/sbin/openrc-run
 
 depend() {
-    after net-online
-    need net
+    want network-online
 }
 
 name="ccapply"

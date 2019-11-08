@@ -4,7 +4,7 @@
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "region": "us-east-1",
     "k3os_version": "v0.5.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.5.0/k3os-amd64.iso"
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.5.0/k3os-arm64.iso"
   },
   "builders": [{
     "type": "amazon-ebs",
@@ -14,13 +14,13 @@
     "source_ami_filter": {
       "filters": {
         "virtualization-type": "hvm",
-        "name": "ubuntu-minimal/images/*/ubuntu-bionic-18.04-amd64-minimal-*",
+        "name": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-arm64-server-*",
         "root-device-type": "ebs"
       },
       "owners": ["099720109477"],
       "most_recent": true
     },
-    "instance_type": "t3.small",
+    "instance_type": "a1.large",
     "ssh_username": "ubuntu",
     "ami_name": "Rancher k3OS {{user `k3os_version`}}"
   }],
