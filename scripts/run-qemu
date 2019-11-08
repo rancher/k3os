@@ -25,5 +25,8 @@ exec $QEMU_SYSTEM \
     -nographic \
     -serial mon:stdio \
     -rtc base=utc,clock=rt \
+    -kernel $(dirname $0)/../dist/artifacts/k3os-vmlinuz-$ARCH \
+    -initrd $(dirname $0)/../dist/artifacts/k3os-initrd-$ARCH \
     -cdrom $(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
-    -drive if=virtio,file=$STATEDIR/hd.img
+    -drive if=virtio,file=$STATEDIR/hd.img \
+    -append "printk.devkmsg=on console=ttyS0 loglevel=4 ${@}"
