@@ -19,6 +19,7 @@ RUN apk --no-cache add \
     findutils \
     grub-efi \
     haveged \
+    htop \
     iproute2 \
     iptables \
     jq \
