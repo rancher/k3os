@@ -34,6 +34,7 @@ RUN apk --no-cache add \
     openssh-server \
     parted \
     procps \
+    rng-tools \
     rsync \
     strace \
     sudo \
