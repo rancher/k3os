@@ -40,7 +40,7 @@
             "inline":[
                 "sudo apt-get update -y",
                 "sudo apt-get install -y dosfstools parted",
-                "sudo bash -x /tmp/install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format $(findmnt / -o SOURCE -n) \"{{user `iso_url`}}\""
+                "sudo bash -x /tmp/install.sh --takeover --poweroff --debug --tty ttyS0 --config /tmp/config.yaml --no-format $(findmnt / -o SOURCE -n) \"{{user `iso_url`}}\""
             ]
         },
         {
