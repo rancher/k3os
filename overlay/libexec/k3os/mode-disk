@@ -131,7 +131,13 @@ takeover()
     rm -f k3os/system/takeover
     rm -rf k3os/data
     sync
-    poweroff -f
+    
+    if [ -e k3os/system/poweroff ]; then
+        rm -f k3os/system/poweroff
+        poweroff -f
+    else
+        reboot -f
+    fi
 }
 
 setup_mounts
