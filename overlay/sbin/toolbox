@@ -44,7 +44,7 @@ case $op in
 	create )
 		if [ ${TOOLBOX_EXISTS} == "1" ]
 		then
-			echo "Container 'toolbox' already exists"
+			echo "The toolbox container already exists. To start over, you can use 'toolbox rm' first."
 			exit 1
 		else
 			ctr image pull ${TOOLBOX_IMAGE}
@@ -57,7 +57,7 @@ case $op in
 			ctr task start -d toolbox &> /dev/null || true
 			ctr task exec -t --exec-id 100 toolbox ${TOOLBOX_SHELL}
 		else
-			echo "toolbox container does not exist. consider creating it with 'toolbox create'."
+			echo "The toolbox container does not exist. Create a container with 'toolbox create' first."
 			exit 1
 		fi
 		;;
@@ -67,9 +67,9 @@ case $op in
 			ctr task kill toolbox --signal 9
 			ctr container rm toolbox
 		else
-			echo "toolbox container does not exist."
+			echo "The toolbox container does not exist."
 			exit 1
 		fi
 		;;
-
 esac
+
