@@ -18,37 +18,58 @@ if [ "$1" = "" ]; then
 	echo "enter	 Enter an existing toolbox container" >&2
 	echo "rm	 Remove an existing toolbox container" >&2
 	echo >&2
+	echo "Toolbox supports this environment variables:" >&2
+	echo "TOOLBOX_IMAGE	The image to use, such as docker.io/library/fedora:31" >&2
+	echo "TOOLBOX_SHELL	The shell to use, such as bash" >&2
+	echo >&2
 	exit 1
 fi
 
 op=$1
 shift
 
-CTR='k3s ctr'
 : ${TOOLBOX_IMAGE:=docker.io/library/ubuntu:bionic}
 : ${TOOLBOX_SHELL:=sh}
 
+# Check if the toolbox exists
+ctr container info toolbox &> /dev/null
+if [ $? -eq 1 ]
+then
+	TOOLBOX_EXISTS=0
+else
+	TOOLBOX_EXISTS=1
+fi
+
 case $op in
 	create )
-		# Check if the container already exists
-		# If not, create it.
-		${CTR} container info toolbox &> /dev/null
-		INFO=$(echo $?)
-		if [ ${INFO} == "1" ]
+		if [ ${TOOLBOX_EXISTS} == "1" ]
 		then
-			${CTR} image pull ${TOOLBOX_IMAGE}
-			${CTR} run -d --net-host --privileged ${TOOLBOX_IMAGE} toolbox ${TOOLBOX_SHELL}
-		else
 			echo "Container 'toolbox' already exists"
 			exit 1
+		else
+			ctr image pull ${TOOLBOX_IMAGE}
+			ctr run -d --net-host --privileged ${TOOLBOX_IMAGE} toolbox ${TOOLBOX_SHELL}
 		fi
 		;;
 	enter )
-		${CTR} task exec -t --exec-id 100 toolbox ${TOOLBOX_SHELL}
+		if [ ${TOOLBOX_EXISTS} == "1" ]
+		then
+			ctr task start -d toolbox &> /dev/null || true
+			ctr task exec -t --exec-id 100 toolbox ${TOOLBOX_SHELL}
+		else
+			echo "toolbox container does not exist. consider creating it with 'toolbox create'."
+			exit 1
+		fi
 		;;
 	rm )
-		${CTR} task kill toolbox --signal 9
-		${CTR} container rm toolbox
+		if [ ${TOOLBOX_EXISTS} == "1" ]
+		then
+			ctr task kill toolbox --signal 9
+			ctr container rm toolbox
+		else
+			echo "toolbox container does not exist."
+			exit 1
+		fi
 		;;
 
 esac
