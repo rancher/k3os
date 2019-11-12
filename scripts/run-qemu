@@ -1,6 +1,6 @@
 #!/bin/bash
 . $(dirname $0)/version
-: ${STATEDIR:=$(dirname $0)/../build/state/k3os-$TAG} # unique value per vm instance
+: ${STATE_DIR:=$(dirname $0)/../build/state/k3os-$TAG} # unique value per vm instance
 
 set -e
 
@@ -12,21 +12,34 @@ else
     QEMU_SYSTEM="qemu-system-$ARCH"
 fi
 
-if [ ! -e $STATEDIR/hd.img ]; then
-    mkdir -p $STATEDIR
-    ID=$(docker container create $REPO/k3os-iso:$TAG)
-    docker container cp $ID:/hd.img $STATEDIR/
-    docker container rm -vf $ID
+if [ ! -d $STATE_DIR ]; then
+    mkdir -p $STATE_DIR
+fi
+if [ ! -e $STATE_DIR/${DISK_NAME:=vda.img} ]; then
+    qemu-img create -f qcow2 $STATE_DIR/${DISK_NAME} ${DISK_SIZE:=8g}
 fi
 
+# Example Usage
+## live cd boot
+# ./scripts/run-qemu k3os.mode=live
+
+## silent install
+# DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher k3os.mode=install k3os.install.silent k3os.install.device=/dev/vda
+
+## run installed vm
+# DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher
+
+## recover installed vm
+# DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher k3os.mode=live
+
 exec $QEMU_SYSTEM \
-    -m 2048 \
-    -machine accel=${QEMU_MACHINE_ACCEL:="hax:kvm:hvf:tcg"} \
+    -m ${MEMORY:=2048} \
+    -machine accel=${ACCEL:="hax:kvm:hvf:tcg"} \
     -nographic \
     -serial mon:stdio \
     -rtc base=utc,clock=rt \
     -kernel $(dirname $0)/../dist/artifacts/k3os-vmlinuz-$ARCH \
     -initrd $(dirname $0)/../dist/artifacts/k3os-initrd-$ARCH \
-    -cdrom $(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
-    -drive if=virtio,file=$STATEDIR/hd.img \
-    -append "printk.devkmsg=on console=ttyS0 loglevel=4 ${@}"
+    -drive if=ide,media=cdrom,file=$(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
+    -drive if=virtio,media=disk,file=$STATE_DIR/${DISK_NAME} \
+    -append "console=${CONSOLE:=ttyS0} loglevel=${LOGLEVEL:=4} printk.devkmsg=${PRINTK_DEVKMSG:=on} $*"
