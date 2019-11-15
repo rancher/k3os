@@ -1,0 +1,174 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: k3os-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    apps.kubernetes.io/component: controller
+    apps.kubernetes.io/name: k3os-operator
+  name: k3os-operator
+  namespace: k3os-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    apps.kubernetes.io/component: controller
+    apps.kubernetes.io/name: k3os-operator
+  name:  k3os-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: k3os-operator
+  namespace: k3os-system
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: updatechannels.k3os.cattle.io
+  namespace: k3os-system
+spec:
+  group: k3os.cattle.io
+  names:
+    kind: UpdateChannel
+    plural: updatechannels
+    singular: updatechannel
+    shortNames:
+    - upchan
+    - upchans
+    categories:
+    - all
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          spec:
+            type: object
+            properties:
+              concurrency:
+                type: integer
+              version:
+                type: string
+              url:
+                type: string
+          status:
+            type: object
+            properties:
+              polling:
+                type: string
+              upgrading:
+                type: array
+                items:
+                  type: string
+    # subresources:
+    #   status: {}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: k3os-operator
+  namespace: k3os-system
+spec:
+  selector:
+    matchLabels:
+      name: k3os-operator
+  template:
+    metadata:
+      labels:
+        name: k3os-operator
+    spec:
+      hostPID: true
+      hostIPC: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingRequiredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: k3os.io/mode
+                operator: Exists
+      containers:
+        - name: k3os-operator
+          image: k8s.gcr.io/pause
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["CAP_SYS_BOOT"]
+          command: ["k3os-operator", "agent", "--namespace", "k3os-system"]
+          env:
+            # - name: K3OS_DEBUG
+            #   value: 'true'
+            - name: K3OS_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: etc-os-release
+              mountPath: /etc/os-release
+            - name: etc-ssl
+              mountPath: /etc/ssl
+            - name: k3os-system
+              mountPath: /k3os/system
+            - name: k3os-temp
+              mountPath: /tmp
+            - name: k3os-operator
+              mountPath: /sbin/k3os-operator
+            - name: run-k3os
+              mountPath: /run/k3os
+            - name: var-lib-rancher
+              mountPath: /var/lib/rancher
+      serviceAccountName: k3os-operator
+      volumes:
+        - name: etc-os-release
+          hostPath:
+            path: /etc/os-release
+            type: File
+        - name: etc-ssl
+          hostPath:
+            path: /etc/ssl
+            type: Directory
+        - name: k3os-operator
+          hostPath:
+            path: /usr/libexec/k3os/k3os-operator
+            type: File
+        - name: k3os-system
+          hostPath:
+            path: /k3os/system
+            type: Directory
+        - name: k3os-temp
+          hostPath:
+            path: /tmp
+            type: Directory
+        - name: run-k3os
+          hostPath:
+            path: /run/k3os
+            type: Directory
+        - name: var-lib-rancher
+          hostPath:
+            path: /var/lib/rancher
+            type: Directory
+# ---
+# apiVersion: k3os.cattle.io/v1
+# kind: UpdateChannel
+# metadata:
+#   name: github-releases
+#   namespace: k3os-system
+# spec:
+#   concurrency: 1
+#   version: latest
+#   url: github-releases://rancher/k3os

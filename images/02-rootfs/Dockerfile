@@ -79,11 +79,14 @@ RUN rm -rf \
 COPY --from=k3s /output/install.sh /usr/src/image/libexec/k3os/k3s-install.sh
 COPY --from=progs /output/rc.init /usr/src/image/bin/rc.init
 COPY --from=progs /output/k3os-config /usr/src/image/libexec/k3os/k3os-config
+COPY --from=progs /output/k3os-operator /usr/src/image/libexec/k3os/k3os-operator
 COPY --from=progs /output/ccapply /usr/src/image/sbin/ccapply
 COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
 COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
 
 COPY overlay/ /usr/src/image/
+COPY manifests/ /usr/src/image/share/rancher/k3s/manifests/
+RUN find /usr/src/image/share/rancher/k3s/manifests -type f -exec chmod 0600 {} \;
 COPY install.sh /usr/src/image/libexec/k3os/install
 RUN sed -i -e "s/%VERSION%/${VERSION}/g" -e "s/%ARCH%/${ARCH}/g" /usr/src/image/lib/os-release
 RUN mkdir -p /output && \

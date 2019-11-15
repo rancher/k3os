@@ -25,6 +25,7 @@ COPY /vendor/ $GOPATH/src/github.com/rancher/k3os/vendor/
 WORKDIR $GOPATH/src/github.com/rancher/k3os
 RUN gobuild -o /output/k3os && \
     gobuild -o /output/k3os-config ./cmd/config && \
+    gobuild -o /output/k3os-operator ./cmd/operator && \
     gobuild -o /output/ccapply ./cmd/ccapply
 
 FROM gobuild

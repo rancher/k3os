@@ -106,6 +106,12 @@ setup_hostname()
 
 }
 
+setup_manifests()
+{
+    mkdir -p /var/lib/rancher/k3s/server/manifests
+    rsync -a /usr/share/rancher/k3s/manifests/ /var/lib/rancher/k3s/server/manifests/
+}
+
 setup_mounts()
 {
     if [ -d /.base/boot ]; then
@@ -166,5 +172,6 @@ setup_root
 setup_ttys
 setup_sudoers
 setup_services
+setup_manifests
 ccapply_boot
 cleanup
