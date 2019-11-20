@@ -59,6 +59,12 @@ ccapply_boot()
     if [ -e /etc/conf.d/cloud-config ]; then
         ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
     fi
+    if [ -e /etc/conf.d/qemu-guest-agent ]; then
+        ln -s /etc/init.d/qemu-guest-agent /etc/runlevels/boot/
+    fi
+    if [ -e /etc/conf.d/rngd ]; then
+        ln -s /etc/init.d/rngd /etc/runlevels/boot/
+    fi
 }
 
 setup_root()
