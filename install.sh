@@ -73,11 +73,11 @@ do_format()
         BOOT_NUM=1
         STATE_NUM=2
         parted -s ${DEVICE} mkpart primary fat32 0% 50MB
-        parted -s ${DEVICE} mkpart primary ext4 50MB 550MB
+        parted -s ${DEVICE} mkpart primary ext4 50MB 750MB
     else
         BOOT_NUM=
         STATE_NUM=1
-        parted -s ${DEVICE} mkpart primary ext4 0% 500MB
+        parted -s ${DEVICE} mkpart primary ext4 0% 700MB
     fi
     parted -s ${DEVICE} set 1 ${BOOTFLAG} on
     partprobe 2>/dev/null || true
