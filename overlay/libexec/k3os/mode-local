@@ -10,4 +10,12 @@ setup_ssh()
     ln -s /var/lib/rancher/k3os/ssh /etc/ssh
 }
 
+setup_rancher_node()
+{
+    mkdir -p /etc/rancher
+    mkdir -p /var/lib/rancher/k3os/node
+    ln -s /var/lib/rancher/k3os/node /etc/rancher/
+}
+
 setup_ssh
+setup_rancher_node
