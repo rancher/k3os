@@ -10,6 +10,8 @@ ARG REPO
 ARG TAG
 FROM ${REPO}/k3os-k3s:${TAG} as k3s
 
+FROM linuxkit/metadata:v0.7 as metadata
+
 FROM base as k3os-build
 ARG VERSION
 ARG ARCH
@@ -80,8 +82,8 @@ COPY --from=k3s /output/install.sh /usr/src/image/libexec/k3os/k3s-install.sh
 COPY --from=progs /output/rc.init /usr/src/image/bin/rc.init
 COPY --from=progs /output/k3os-config /usr/src/image/libexec/k3os/k3os-config
 COPY --from=progs /output/ccapply /usr/src/image/sbin/ccapply
-COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
 COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
+COPY --from=metadata /usr/bin/metadata /usr/src/image/sbin/metadata
 
 COPY overlay/ /usr/src/image/
 
