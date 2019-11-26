@@ -35,13 +35,13 @@ setup_dirs()
     mkdir -p /run/k3os
 }
 
-ccapply_initrd()
+setup_config()
 {
     if [ "$K3OS_MODE" = "local" ]; then
         return 0
     fi
 
-    ccapply --initrd
+    $K3OS_SYSTEM/k3os/current/k3os config --initrd
 }
 
 setup_etc
@@ -50,9 +50,9 @@ setup_etc
 
 setup_modules
 setup_users
-rc.init
+$K3OS_SYSTEM/k3os/current/k3os rc
 setup_dirs
 setup_kernel
-ccapply_initrd
+setup_config
 
 pinfo Bootstrapped

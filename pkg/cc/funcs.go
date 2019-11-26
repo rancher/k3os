@@ -169,7 +169,7 @@ func ApplyInstall(cfg *config.CloudConfig) error {
 		return nil
 	}
 
-	cmd := exec.Command("os-config")
+	cmd := exec.Command("k3os", "install")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin

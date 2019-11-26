@@ -51,7 +51,7 @@ func Run() error {
 }
 
 func runCCApply() error {
-	cmd := exec.Command("/usr/sbin/ccapply", "--config")
+	cmd := exec.Command(os.Args[0], "config", "--install")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin

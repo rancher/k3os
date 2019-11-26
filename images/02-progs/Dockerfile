@@ -1,5 +1,6 @@
 ARG REPO
 ARG TAG
+ARG VERSION
 FROM ${REPO}/k3os-gobuild:${TAG} as gobuild
 
 ENV LINUXKIT v0.7
@@ -10,15 +11,13 @@ WORKDIR $GOPATH/src/github.com/linuxkit/linuxkit/pkg/metadata
 RUN gobuild -o /output/metadata
 
 FROM gobuild as k3os
-COPY /cmd/ $GOPATH/src/github.com/rancher/k3os/cmd/
+ARG VERSION
+# COPY /cmd/ $GOPATH/src/github.com/rancher/k3os/cmd/
 COPY /pkg/ $GOPATH/src/github.com/rancher/k3os/pkg/
 COPY /main.go $GOPATH/src/github.com/rancher/k3os/
 COPY /vendor/ $GOPATH/src/github.com/rancher/k3os/vendor/
 WORKDIR $GOPATH/src/github.com/rancher/k3os
 RUN gobuild -o /output/k3os
-RUN gobuild -o /output/k3os-config ./cmd/config
-RUN gobuild -o /output/ccapply ./cmd/ccapply
-RUN gobuild -o /output/rc.init ./cmd/rc.init
 
 FROM gobuild
 COPY --from=linuxkit /output/ /output/

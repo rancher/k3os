@@ -6,6 +6,8 @@
 /dist/
 /build/
 *.swp
+/.bash_history
+/.docker/
 
 # Packer and vagrant
 .vagrant/
