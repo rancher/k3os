@@ -444,8 +444,6 @@ func IoctlGetTermios(fd int, req uint) (*Termios, error) {
 //sysnb	Times(tms *Tms) (ticks uintptr, err error)
 //sysnb	Umask(mask int) (oldmask int)
 //sysnb	Uname(buf *Utsname) (err error)
-//TODO umount
-// //sys	Unmount(target string, flags int) (err error) = umount
 //sys   Unlink(path string) (err error)
 //sys   Unlinkat(dirfd int, path string, flags int) (err error)
 //sys	Ustat(dev int, ubuf *Ustat_t) (err error)
@@ -548,3 +546,12 @@ func Poll(fds []PollFd, timeout int) (n int, err error) {
 //sys	Utime(path string, buf *Utimbuf) (err error)
 
 //sys	Getsystemcfg(label int) (n uint64)
+
+//sys	umount(target string) (err error)
+func Unmount(target string, flags int) (err error) {
+	if flags != 0 {
+		// AIX doesn't have any flags for umount.
+		return ENOSYS
+	}
+	return umount(target)
+}
