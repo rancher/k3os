@@ -1,3 +1,5 @@
+# github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d
+github.com/cpuguy83/go-md2man/v2/md2man
 # github.com/docker/docker v1.13.1
 github.com/docker/docker/pkg/mount
 github.com/docker/docker/pkg/reexec
@@ -5,30 +7,34 @@ github.com/docker/docker/pkg/reexec
 github.com/docker/go-units
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
-# github.com/konsorten/go-windows-terminal-sequences v1.0.2
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/mattn/go-isatty v0.0.7
+# github.com/mattn/go-isatty v0.0.10
 github.com/mattn/go-isatty
 # github.com/mattn/go-shellwords v1.0.5
 github.com/mattn/go-shellwords
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
-# github.com/rancher/mapper v0.0.0-20190417000032-48be2d1eadc0
+# github.com/rancher/mapper v0.0.0-20190814232720-058a8b7feb99
 github.com/rancher/mapper
 github.com/rancher/mapper/convert
 github.com/rancher/mapper/convert/merge
+github.com/rancher/mapper/definition
 github.com/rancher/mapper/mappers
 github.com/rancher/mapper/values
-github.com/rancher/mapper/definition
-# github.com/rancher/wrangler v0.0.0-20190329182315-1e7b870cf096
+# github.com/rancher/wrangler v0.0.0-20190426050201-5946f0eaed19
 github.com/rancher/wrangler/pkg/name
-# github.com/sirupsen/logrus v1.4.1
+# github.com/russross/blackfriday/v2 v2.0.1
+github.com/russross/blackfriday/v2
+# github.com/shurcooL/sanitized_anchor_name v1.0.0
+github.com/shurcooL/sanitized_anchor_name
+# github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
-# github.com/urfave/cli v1.20.0
+# github.com/urfave/cli v1.22.2
 github.com/urfave/cli
-# golang.org/x/crypto v0.0.0-20190422183909-d864b10871cd
+# golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/sys v0.0.0-20190418153312-f0ce4c0180be
+# golang.org/x/sys v0.0.0-20191127021746-63cb32ae39b2
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # gopkg.in/freddierice/go-losetup.v1 v1.0.0-20170407175016-fc9adea44124
