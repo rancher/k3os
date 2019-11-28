@@ -1,12 +1,10 @@
-package main
+package rc
 
-// Incorporated from:
-//	https://github.com/ibuildthecloud/linuxkit/blob/63afed7b131eef89d3a36b077d090a8e2b790b7a/pkg/init/cmd/rc.init/main.go
-// which was forked from:
-//  https://github.com/linuxkit/linuxkit
+// forked from https://github.com/linuxkit/linuxkit
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,8 +12,32 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/urfave/cli"
 	"golang.org/x/sys/unix"
 )
+
+func Command() cli.Command {
+	return cli.Command{
+		Name:  "rc",
+		Usage: "early phase \"run commands\" / \"run control\"",
+		Flags: []cli.Flag{},
+		Before: func(c *cli.Context) error {
+			if os.Getuid() != 0 {
+				return fmt.Errorf("must be run as root")
+			}
+			return nil
+		},
+		Action: func(*cli.Context) {
+			doMounts()
+			doHotplug()
+			doClock()
+			doLoopback()
+			doLimits()
+			// doHostname()
+			doResolvConf()
+		},
+	}
+}
 
 const (
 	nodev    = unix.MS_NODEV
@@ -291,34 +313,6 @@ func doLimits() {
 	rlimit(unix.RLIMIT_NPROC, infinity, infinity)
 }
 
-func doHostname() {
-	hostname := read("/etc/hostname")
-	if hostname != "" {
-		if err := unix.Sethostname([]byte(hostname)); err != nil {
-			log.Printf("Setting hostname failed: %v", err)
-		}
-	}
-	hostname, err := os.Hostname()
-	if err != nil {
-		log.Printf("Cannot read hostname: %v", err)
-		return
-	}
-
-	if hostname != "(none)" && hostname != "" {
-		return
-	}
-
-	mac := read("/sys/class/net/eth0/address")
-	if mac == "" {
-		return
-	}
-
-	mac = strings.Replace(mac, ":", "", -1)
-	if err := unix.Sethostname([]byte("linuxkit-" + mac)); err != nil {
-		log.Printf("Setting hostname failed: %v", err)
-	}
-}
-
 func doResolvConf() {
 	// for containerizing dhcpcd and other containers that need writable /etc/resolv.conf
 	// if it is a symlink (usually to /run) make the directory and empty file
@@ -338,14 +332,4 @@ func doLoopback() {
 	_ = cmd.Run()
 	cmd = exec.Command("/sbin/ip", "link", "set", "lo", "up")
 	_ = cmd.Run()
-}
-
-func main() {
-	doMounts()
-	doHotplug()
-	doClock()
-	doLoopback()
-	doLimits()
-	doHostname()
-	doResolvConf()
 }

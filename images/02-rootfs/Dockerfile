@@ -77,18 +77,16 @@ RUN rm -rf \
     /usr/src/image/usr/share/vim/vim81/doc
 
 COPY --from=k3s /output/install.sh /usr/src/image/libexec/k3os/k3s-install.sh
-COPY --from=progs /output/k3os-config /usr/src/image/libexec/k3os/k3os-config
-COPY --from=progs /output/ccapply /usr/src/image/sbin/ccapply
-COPY --from=progs /output/rc.init /usr/src/image/sbin/rc.init
 COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
 COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
 
 COPY overlay/ /usr/src/image/
 
+RUN ln -s /k3os/system/k3os/current/k3os /usr/src/image/sbin/k3os
 RUN ln -s /k3os/system/k3s/current/k3s /usr/src/image/sbin/k3s
+RUN ln -s k3s /usr/src/image/sbin/kubectl
 RUN ln -s k3s /usr/src/image/sbin/crictl
 RUN ln -s k3s /usr/src/image/sbin/ctr
-RUN ln -s k3s /usr/src/image/sbin/kubectl
 
 COPY install.sh /usr/src/image/libexec/k3os/install
 RUN sed -i -e "s/%VERSION%/${VERSION}/g" -e "s/%ARCH%/${ARCH}/g" /usr/src/image/lib/os-release
