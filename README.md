@@ -254,7 +254,7 @@ k3os:
   - "--disable-agent"
   environment:
     http_proxy: http://myserver
-    http_proxys: http://myserver
+    https_proxy: http://myserver
   taints:
   - key1=value1:NoSchedule
   - key1=value1:NoExecute
@@ -585,7 +585,7 @@ Example
 k3os:
   environment:
     http_proxy: http://myserver
-    http_proxys: http://myserver
+    https_proxy: http://myserver
 ```
 
 ### `k3os.taints`
