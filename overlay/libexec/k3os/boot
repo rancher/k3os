@@ -50,14 +50,20 @@ setup_services()
     done
 }
 
-ccapply_boot()
+setup_config()
 {
-    ccapply --boot
+    k3os config --boot
     if [ -e /var/lib/connman/cloud-config.config ]; then
         echo 'rc_want="wpa_supplicant"' >> /etc/conf.d/connman
     fi
     if [ -e /etc/conf.d/cloud-config ]; then
         ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
+    fi
+    if [ -e /etc/conf.d/qemu-guest-agent ]; then
+        ln -s /etc/init.d/qemu-guest-agent /etc/runlevels/boot/
+    fi
+    if [ -e /etc/conf.d/rngd ]; then
+        ln -s /etc/init.d/rngd /etc/runlevels/boot/
     fi
 }
 
@@ -166,5 +172,5 @@ setup_root
 setup_ttys
 setup_sudoers
 setup_services
-ccapply_boot
+setup_config
 cleanup

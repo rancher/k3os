@@ -12,7 +12,7 @@
       "<wait10>",
       "rancher",
       "<enter>",
-      "sudo os-config",
+      "sudo k3os install",
       "<enter>",
       "1",
       "<enter>",
@@ -44,7 +44,7 @@
       "inline": ["rm -rf /var/lib/rancher/k3s","echo hello world"]
     }
   ],
-  "post-processors": [ 
+  "post-processors": [
     {
       "type": "vagrant",
       "keep_input_artifact": false,

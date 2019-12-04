@@ -35,7 +35,7 @@ func RunApply(cfg *config.CloudConfig) error {
 	)
 }
 
-func ConfigApply(cfg *config.CloudConfig) error {
+func InstallApply(cfg *config.CloudConfig) error {
 	return runApplies(cfg,
 		ApplyK3SWithRestart,
 	)

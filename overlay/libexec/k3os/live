@@ -1,41 +1,42 @@
 #!/bin/bash
 
-setup_os_config()
+setup_motd()
 {
     echo >> /etc/motd
-    echo 'You can configure this system or install to disk using "sudo os-config"' >> /etc/motd
-    mkdir -p /usr/local/bin
-    cat > /usr/local/bin/os-config << "EOF"
-#!/bin/bash
-exec /usr/libexec/k3os/k3os-config
-EOF
-    chmod +x /usr/local/bin/os-config
+    echo 'You can configure this system or install to disk using "sudo k3os install"' >> /etc/motd
 }
 
-K3OS_ISO=$(blkid -L K3OS || true)
-if [ -n "$K3OS_ISO" ]; then
-    mount -t iso9660 -o ro $(blkid -L K3OS) /.base
-else
-    success=false
-    for (( j=0; j < 5 ; j++ )); do
-        for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
-            if mount -t iso9660 /dev/$i /.base; then
-                success=true
+setup_base()
+{
+    K3OS_ISO=$(blkid -L K3OS || true)
+    if [ -n "$K3OS_ISO" ]; then
+        mount -t iso9660 -o ro $(blkid -L K3OS) /.base
+    else
+        success=false
+        for (( j=0; j < 5 ; j++ )); do
+            for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
+                if mount -t iso9660 /dev/$i /.base; then
+                    success=true
+                    break
+                fi
+            done
+            if [ "$success" = "true" ]; then
                 break
+            else
+                pinfo "Waiting for USB for $((j+1)) seconds"
+                sleep 1
             fi
         done
-        if [ "$success" = "true" ]; then
-            break
-        else
-            pinfo "Waiting for USB for $((j+1)) seconds"
-            sleep 1
-        fi
-    done
-fi
+    fi
+}
 
+setup_passwd()
+{
+    # no passwords in live mode
+    passwd -d rancher >/dev/null 2>&1
+}
+
+setup_base
 setup_kernel
-
-# no passwords in live mode
-passwd -d rancher >/dev/null 2>&1
-
-setup_os_config
+setup_passwd
+setup_motd

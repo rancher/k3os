@@ -27,11 +27,8 @@ var (
 	DebugCmdline = ""
 )
 
-func init() {
-	reexec.Register("enter-root", enter)
-}
-
-func enter() {
+// Enter the k3OS root
+func Enter() {
 	if os.Getenv("ENTER_DEBUG") == "true" {
 		logrus.SetLevel(logrus.DebugLevel)
 	}

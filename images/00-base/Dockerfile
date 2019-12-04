@@ -19,11 +19,14 @@ RUN apk --no-cache add \
     findutils \
     grub-efi \
     haveged \
+    htop \
     iproute2 \
     iptables \
     jq \
     kbd-bkeymaps \
     logrotate \
+    mdadm \
+    mdadm-misc \
     ncurses \
     nfs-utils \
     open-iscsi \
@@ -32,13 +35,19 @@ RUN apk --no-cache add \
     openssh-server \
     parted \
     procps \
+    qemu-guest-agent \
+    rng-tools \
+    rng-tools-openrc \
     rsync \
     strace \
     sudo \
     tar \
     util-linux \
     vim \
-    xz
+    xz \
+ && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
+ && mv -vf /etc/conf.d/rngd             /etc/conf.d/rngd.orig \
+ && true
 RUN apk --no-cache add \
     --repository 'http://dl-cdn.alpinelinux.org/alpine/edge/community' \
     --repository 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' \
