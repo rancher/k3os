@@ -3,7 +3,6 @@ package mapper
 import (
 	"github.com/rancher/mapper/convert"
 	"github.com/rancher/mapper/definition"
-	"github.com/rancher/mapper/values"
 )
 
 type Mapper interface {
@@ -47,9 +46,6 @@ type typeMapper struct {
 }
 
 func (t *typeMapper) FromInternal(data map[string]interface{}) {
-	name, _ := values.GetValueN(data, "metadata", "name").(string)
-	namespace, _ := values.GetValueN(data, "metadata", "namespace").(string)
-
 	for fieldName, schema := range t.subSchemas {
 		if schema.Mapper == nil {
 			continue
@@ -80,34 +76,7 @@ func (t *typeMapper) FromInternal(data map[string]interface{}) {
 		}
 	}
 
-	if _, ok := data["type"]; !ok && data != nil {
-		data["type"] = t.typeName
-	}
-
 	Mappers(t.Mappers).FromInternal(data)
-
-	if data != nil && t.root {
-		if _, ok := data["id"]; ok {
-			if namespace != "" {
-				id, _ := data["id"].(string)
-				data["id"] = namespace + ":" + id
-			}
-		} else {
-			if name != "" {
-				if namespace == "" {
-					data["id"] = name
-				} else {
-					data["id"] = namespace + ":" + name
-				}
-			}
-		}
-	}
-
-	if _, ok := data["type"]; !ok && data != nil {
-		if _, ok := data["id"]; ok {
-			data["type"] = t.typeName
-		}
-	}
 }
 
 func (t *typeMapper) ToInternal(data map[string]interface{}) error {

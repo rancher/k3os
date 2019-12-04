@@ -38,6 +38,9 @@ exec $QEMU_SYSTEM \
     -nographic \
     -serial mon:stdio \
     -rtc base=utc,clock=rt \
+    -chardev socket,path=$STATE_DIR/qga.sock,server,nowait,id=qga0 \
+    -device virtio-serial \
+    -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0 \
     -kernel $(dirname $0)/../dist/artifacts/k3os-vmlinuz-$ARCH \
     -initrd $(dirname $0)/../dist/artifacts/k3os-initrd-$ARCH \
     -drive if=ide,media=cdrom,file=$(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \

@@ -9,16 +9,19 @@ import (
 	"strings"
 
 	"github.com/ghodss/yaml"
+	"github.com/rancher/k3os/pkg/system"
 	"github.com/rancher/mapper"
 	"github.com/rancher/mapper/convert"
 	merge2 "github.com/rancher/mapper/convert/merge"
 	"github.com/rancher/mapper/values"
 )
 
-const (
-	SystemConfig = "/k3os/system/config.yaml"
-	LocalConfig  = "/var/lib/rancher/k3os/config.yaml"
-	localConfigs = "/var/lib/rancher/k3os/config.d"
+var (
+	// SystemConfig is the default system configuration
+	SystemConfig = system.RootPath("config.yaml")
+	// LocalConfig is the local system configuration
+	LocalConfig  = system.LocalPath("config.yaml")
+	localConfigs = system.LocalPath("config.d")
 )
 
 var (

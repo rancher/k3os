@@ -1,3 +1,7 @@
+
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/rancher/k3os)
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/rancher/k3os?include_prereleases&label=release&sort=semver)
+
 # k3OS
 k3OS is a Linux distribution designed to remove as much OS maintenance
 as possible in a Kubernetes cluster.  It is specifically designed to only
@@ -21,7 +25,7 @@ in VMware, VirtualBox, or KVM.  The server will automatically start a single nod
 Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media
 and changes will not persist after reboot.
 
-To copy k3OS to local disk, after logging in as `rancher` run `sudo os-config`. Then remove the ISO
+To copy k3OS to local disk, after logging in as `rancher` run `sudo k3os install`. Then remove the ISO
 from the virtual machine and reboot.
 
 Live install (boot from ISO) requires at least 2GB of RAM. Local install requires 1GB RAM.
@@ -82,8 +86,8 @@ kernel source is coming from Ubuntu 18.04 LTS. Some code and a lot of inspiratio
 ### Interactive Installation
 
 Interactive installation is done from booting from the ISO.  The installation is done by running
-`os-config`.  The `os-config` script is only available on systems booted live.  An installation to
-disk will not have `os-config`.  Follow the prompts to install k3OS to disk.
+`k3os install`.  The `k3os install` sub-command is only available on systems booted live.
+An installation to disk will not have `k3os install`.  Follow the prompts to install k3OS to disk.
 
 ***The installation will format an entire disk.  If you have a single hard disk attached to the system
 it will not ask which disk but just pick the first and only one.***
@@ -250,7 +254,7 @@ k3os:
   - "--disable-agent"
   environment:
     http_proxy: http://myserver
-    http_proxys: http://myserver
+    https_proxy: http://myserver
   taints:
   - key1=value1:NoSchedule
   - key1=value1:NoExecute
@@ -581,7 +585,7 @@ Example
 k3os:
   environment:
     http_proxy: http://myserver
-    http_proxys: http://myserver
+    https_proxy: http://myserver
 ```
 
 ### `k3os.taints`

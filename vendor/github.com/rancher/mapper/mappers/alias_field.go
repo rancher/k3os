@@ -30,5 +30,9 @@ func (d AliasField) ToInternal(data map[string]interface{}) error {
 }
 
 func (d AliasField) ModifySchema(schema *mapper.Schema, schemas *mapper.Schemas) error {
+	for _, name := range d.Names {
+		schema.ResourceFields[name] = mapper.Field{}
+	}
+
 	return ValidateField(d.Field, schema)
 }

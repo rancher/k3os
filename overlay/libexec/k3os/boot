@@ -50,9 +50,9 @@ setup_services()
     done
 }
 
-ccapply_boot()
+setup_config()
 {
-    ccapply --boot
+    k3os config --boot
     if [ -e /var/lib/connman/cloud-config.config ]; then
         echo 'rc_want="wpa_supplicant"' >> /etc/conf.d/connman
     fi
@@ -172,5 +172,5 @@ setup_root
 setup_ttys
 setup_sudoers
 setup_services
-ccapply_boot
+setup_config
 cleanup
