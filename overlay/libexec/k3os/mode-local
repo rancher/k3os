@@ -8,6 +8,7 @@ setup_ssh()
     fi
     rm -rf /etc/ssh
     ln -s /var/lib/rancher/k3os/ssh /etc/ssh
+    sed -i 's:/usr/lib/ssh/sftp-server:internal-sftp:g' /etc/ssh/sshd_config
 }
 
 setup_rancher_node()
