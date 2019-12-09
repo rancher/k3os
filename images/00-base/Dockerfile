@@ -37,7 +37,6 @@ RUN apk --no-cache add \
     procps \
     qemu-guest-agent \
     rng-tools \
-    rng-tools-openrc \
     rsync \
     strace \
     sudo \
