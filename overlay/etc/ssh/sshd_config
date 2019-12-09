@@ -1,0 +1,9 @@
+# See https://man.openbsd.org/sshd_config for
+# details on these and other parameters.
+
+AllowTcpForwarding      no
+GatewayPorts            no
+PasswordAuthentication  no
+X11Forwarding           no
+
+Subsystem   sftp    internal-sftp
