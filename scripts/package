@@ -6,10 +6,19 @@ source $(dirname $0)/images
 
 cd $(dirname $0)/..
 
+docker build \
+  --build-arg ARCH=${ARCH} \
+  --build-arg REPO=${REPO} \
+  --build-arg TAG=${TAG} \
+  --build-arg VERSION=${VERSION} \
+  --file package/Dockerfile \
+  --tag ${REPO}/k3os:${TAG} \
+.
+
 DIST=$(pwd)/dist/artifacts
 
-cd images/output
-
+pushd images/output
 build_all "$@"
 mkdir -p ${DIST}
 copy_all ${DIST} "$@"
+popd

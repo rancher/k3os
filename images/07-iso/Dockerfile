@@ -1,10 +1,6 @@
 ARG REPO
 ARG TAG
-FROM ${REPO}/k3os-tar:${TAG} as tar
-
-ARG REPO
-ARG TAG
-FROM ${REPO}/k3os-kernel:${TAG} as kernel
+FROM ${REPO}/k3os-package:${TAG} as package
 
 ARG REPO
 ARG TAG
@@ -22,13 +18,7 @@ RUN qemu-img create -f qcow2 /hd.img 40G
 COPY run-kvm.sh /usr/bin/
 COPY grub.cfg /usr/src/iso/boot/grub/grub.cfg
 
-COPY --from=kernel /output/ /usr/src/kernel/
-RUN cd /usr/src/kernel && \
-    mkdir -p /usr/src/iso/k3os/system/kernel/$(cat version) && \
-    cp initrd kernel.squashfs /usr/src/iso/k3os/system/kernel/$(cat version) && \
-    ln -s $(cat version) /usr/src/iso/k3os/system/kernel/current
-COPY --from=tar /output/userspace.tar /usr/src/tars/
-RUN tar xvf /usr/src/tars/userspace.tar --strip-components=1 -C /usr/src/iso
+COPY --from=package /output/ /usr/src/iso/
 
 COPY wrapper /usr/bin/
 COPY config.yaml /usr/src/iso/k3os/system/

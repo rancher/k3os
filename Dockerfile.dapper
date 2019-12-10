@@ -19,7 +19,7 @@ RUN go get -d github.com/rancher/trash && \
 
 ENV DAPPER_ENV REPO TAG DRONE_TAG
 ENV DAPPER_SOURCE /go/src/github.com/rancher/k3os/
-ENV DAPPER_OUTPUT ./bin ./dist
+ENV DAPPER_OUTPUT ./dist
 ENV DAPPER_DOCKER_SOCKET true
 ENV TRASH_CACHE ${DAPPER_SOURCE}/.trash-cache
 ENV HOME ${DAPPER_SOURCE}
