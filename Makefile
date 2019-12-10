@@ -8,6 +8,7 @@ TARGETS := $(shell ls scripts)
 	@mv .dapper.tmp .dapper
 
 $(TARGETS): .dapper
+	@rm -rf ./dist ./build
 	./.dapper $@
 
 .DEFAULT_GOAL := default

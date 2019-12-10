@@ -3,7 +3,6 @@
 ./.cache
 ./.trash-cache
 ./dist/
-./build/
 package/packer/vagrant/.vagrant/
 package/packer/vagrant/packer_cache/
 package/packer/vagrant/*.box
