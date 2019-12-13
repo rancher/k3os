@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ $(whoami) != "root" ]
 then
 	echo "This script must be run as root."
@@ -20,7 +22,7 @@ then
 elif [ $PROC == "aarch64" ]
 then
 	ARCH="arm64"
-elif [ $PROC == "armv7l" ]
+elif [[ $PROC == arm* ]] # catches armv7l and armhf
 then
 	ARCH="arm"
 else
@@ -30,11 +32,9 @@ fi
 
 echo "Upgrading k3os to ${K3OS_VERSION}"
 
-K3OS_ROOTFS_URL="https://github.com/rancher/k3os/releases/download/${K3OS_VERSION}/k3os-rootfs-${ARCH}.tar.gz"
-
-cd /k3os/system/
+cd /k3os/system
 mount -o remount,rw .
-curl -fsSL "${K3OS_ROOTFS_URL}" | tar xz --strip-components=3
+curl -fsSL "https://github.com/rancher/k3os/releases/download/${K3OS_VERSION}/k3os-rootfs-${ARCH}.tar.gz" | tar xz --strip-components=3
 sync
 
 echo "Upgrade complete! Please reboot."
