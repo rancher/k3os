@@ -6,8 +6,8 @@ RUN apt-get update -y && \
     apt-get install -y kmod initramfs-tools curl rsync xz-utils
 
 ARG ARCH
-ENV KVERSION=4.15.0-72-generic
-ENV URL=https://github.com/rancher/k3os-kernel/releases/download/4.15.0-72.81-rancher1
+ENV KVERSION=5.0.0-36-generic
+ENV URL=https://github.com/rancher/k3os-kernel/releases/download/5.0.0-36.39-rancher1
 ENV KERNEL_XZ=${URL}/kernel-generic_${ARCH}.tar.xz
 ENV KERNEL_EXTRA_XZ=${URL}/kernel-extra-generic_${ARCH}.tar.xz
 ENV KERNEL_HEADERS_XZ=${URL}/kernel-headers-generic_${ARCH}.tar.xz
@@ -44,7 +44,7 @@ RUN mkdir -p /output/lib && \
 
 # Copy output assets
 RUN cd /usr/src/root && \
-    cp -r linux-headers*/usr/src/linux-headers* /output/headers && \
+    cp -r usr/src/linux-headers* /output/headers && \
     cp -r lib/firmware /output/lib/firmware && \
     cp -r lib/modules /output/lib/modules && \
     cp boot/System.map* /output/System.map && \
