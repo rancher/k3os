@@ -4,19 +4,22 @@ go 1.13
 
 require (
 	github.com/docker/docker v1.13.1
-	github.com/docker/go-units v0.4.0 // indirect
 	github.com/ghodss/yaml v1.0.0
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-isatty v0.0.10
 	github.com/pkg/errors v0.8.1
 	github.com/rancher/mapper v0.0.0-20190814232720-058a8b7feb99
-	github.com/rancher/wrangler v0.3.1 // indirect
+	github.com/rancher/norman v0.0.0-20191015045301-1fdd5cbabdd9
+	github.com/rancher/wrangler v0.3.1
+	github.com/rancher/wrangler-api v0.2.1-0.20191025043713-b1ca9c21825a
 	github.com/sirupsen/logrus v1.4.2
-	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/urfave/cli v1.22.2
 	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
 	golang.org/x/sys v0.0.0-20191127021746-63cb32ae39b2
 	gopkg.in/freddierice/go-losetup.v1 v1.0.0-20170407175016-fc9adea44124
+	k8s.io/api v0.0.0
+	k8s.io/apiextensions-apiserver v0.0.0
+	k8s.io/apimachinery v0.0.0
+	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 )
 
 replace (
