@@ -5,7 +5,9 @@ import (
 
 	"github.com/rancher/k3os/pkg/cli/config"
 	"github.com/rancher/k3os/pkg/cli/install"
+	"github.com/rancher/k3os/pkg/cli/operator"
 	"github.com/rancher/k3os/pkg/cli/rc"
+	"github.com/rancher/k3os/pkg/cli/upgrade"
 	"github.com/rancher/k3os/pkg/mode"
 	"github.com/rancher/k3os/pkg/version"
 	"github.com/sirupsen/logrus"
@@ -38,9 +40,12 @@ func New() *cli.App {
 	app.Commands = []cli.Command{
 		rc.Command(),
 		config.Command(),
+		operator.Command(),
 	}
 	if mode, _ := mode.Get(); mode != "local" {
 		app.Commands = append(app.Commands, install.Command())
+	} else {
+		app.Commands = append(app.Commands, upgrade.Command())
 	}
 
 	app.Before = func(c *cli.Context) error {

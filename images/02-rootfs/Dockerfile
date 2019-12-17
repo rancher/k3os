@@ -81,6 +81,7 @@ COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
 COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
 
 COPY overlay/ /usr/src/image/
+COPY manifests/ /usr/src/image/share/rancher/k3s/manifests/
 
 RUN ln -s /k3os/system/k3os/current/k3os /usr/src/image/sbin/k3os
 RUN ln -s /k3os/system/k3s/current/k3s /usr/src/image/sbin/k3s

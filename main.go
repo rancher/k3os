@@ -1,3 +1,7 @@
+//go:generate go run pkg/codegen/cleanup/cleanup.go
+//go:generate /bin/rm -rf pkg/generated
+//go:generate go run pkg/codegen/codegen.go
+
 package main
 
 // Copyright 2019 Rancher Labs, Inc.

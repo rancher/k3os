@@ -20,10 +20,6 @@ docker cp ${ID}:/output/k3os ./build/
 docker rm -fv $ID
 
 docker build \
-  --build-arg ARCH=${ARCH} \
-  --build-arg REPO=${REPO} \
-  --build-arg TAG=${TAG} \
-  --build-arg VERSION=${VERSION} \
   --file package/Dockerfile \
   --tag ${REPO}/k3os:${TAG} \
 .

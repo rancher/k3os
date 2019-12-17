@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rancher/k3os/pkg/apis/k3os.io"
 	"github.com/rancher/k3os/pkg/command"
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/rancher/k3os/pkg/hostname"
@@ -18,6 +19,7 @@ import (
 	"github.com/rancher/k3os/pkg/module"
 	"github.com/rancher/k3os/pkg/ssh"
 	"github.com/rancher/k3os/pkg/sysctl"
+	"github.com/rancher/k3os/pkg/system"
 	"github.com/rancher/k3os/pkg/writefile"
 	"github.com/sirupsen/logrus"
 )
@@ -138,12 +140,17 @@ func ApplyK3S(cfg *config.CloudConfig, restart, install bool) error {
 		labels = append(labels, fmt.Sprintf("%s=%s", k, v))
 	}
 	if mode != "" {
-		labels = append(labels, fmt.Sprintf("k3os.io/mode=%s", mode))
+		labels = append(labels, fmt.Sprintf("%s=%s", k3os.LabelMode, mode))
+	}
+	if ver, err := system.GetVersion(); err != nil {
+		logrus.Error(err)
+	} else {
+		labels = append(labels, fmt.Sprintf("%s=%s", k3os.LabelVersion, ver.Runtime))
 	}
 	sort.Strings(labels)
 
 	for _, l := range labels {
-		args = append(args, "--kubelet-arg", "node-labels="+l)
+		args = append(args, "--node-label", l)
 	}
 
 	for _, taint := range cfg.K3OS.Taints {

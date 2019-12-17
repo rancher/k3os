@@ -130,6 +130,12 @@ setup_mounts()
     done
 }
 
+setup_manifests()
+{
+    mkdir -p /var/lib/rancher/k3s/server/manifests
+    rsync -a /usr/share/rancher/k3s/manifests/ /var/lib/rancher/k3s/server/manifests/
+}
+
 do_grow_live()
 {
     parted $1 resizepart $2 yes 100%
@@ -172,5 +178,6 @@ setup_root
 setup_ttys
 setup_sudoers
 setup_services
+setup_manifests
 setup_config
 cleanup
