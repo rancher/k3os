@@ -66,7 +66,6 @@ func readUserData() (map[string]interface{}, error) {
 				Encoding: "b64",
 			},
 		}
-		cc.Runcmd = []string{"/run/k3os/userdata"}
 	} else if strings.HasPrefix(string(data), "#!") {
 		script = true
 		cc.WriteFiles = []File{
@@ -80,7 +79,7 @@ func readUserData() (map[string]interface{}, error) {
 		cc.WriteFiles[0].Owner = "root"
 		cc.WriteFiles[0].RawFilePermissions = "0700"
 		cc.WriteFiles[0].Path = "/run/k3os/userdata"
-		cc.Runcmd = []string{"/run/k3os/userdata"}
+		cc.Runcmd = []string{"source /run/k3os/userdata"}
 
 		return convert.EncodeToMap(cc)
 	}
