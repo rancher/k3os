@@ -1,5 +1,5 @@
 ### BASE ###
-FROM alpine:3.9 as base
+FROM alpine:3.11 as base
 ARG ARCH
 RUN apk --no-cache add \
     $([ "$ARCH" == "amd64" ] && echo "open-vm-tools grub-bios") \
@@ -16,6 +16,7 @@ RUN apk --no-cache add \
     dosfstools \
     e2fsprogs \
     e2fsprogs-extra \
+    efibootmgr \
     findutils \
     grub-efi \
     haveged \
@@ -47,7 +48,3 @@ RUN apk --no-cache add \
  && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
  && mv -vf /etc/conf.d/rngd             /etc/conf.d/rngd.orig \
  && true
-RUN apk --no-cache add \
-    --repository 'http://dl-cdn.alpinelinux.org/alpine/edge/community' \
-    --repository 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' \
-    efibootmgr
