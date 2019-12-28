@@ -467,7 +467,7 @@ k3os:
 
 ### `k3os.ntp_servers`
 
-Fallback ntp servers to use if NTP is not configured elsewhere in connman.
+**Fallback** ntp servers to use if NTP is not configured elsewhere in connman.
 
 Example
 ```yaml
@@ -479,7 +479,7 @@ k3os:
 
 ### `k3os.dns_nameservers`
 
-Fallback DNS name servers to use if DNS is not configured by DHCP or in a connman service config.
+**Fallback** DNS name servers to use if DNS is not configured by DHCP or in a connman service config.
 
 Example
 ```yaml
@@ -488,6 +488,22 @@ k3os:
   - 8.8.8.8
   - 1.1.1.1
 ```
+
+### A small addendum to networking
+
+As you see, the network config bere are for **fallback** purposes. So, this means these settings are not reflecting its naming, and is also not authentic at all. Sometime you might get a weird problem of for example not getting an agent connect to a master under a certain DNS server you think you believed it is setup with, you can suspect that your DNS settings were overriden by connman to prefer DHCP based DNS advertisement instead.
+
+You can debug this by repeatingly curl'ing/nslookup to the server_url you specified in your agent server, and see if the result is consistent. Then check for `/etc/resolv.conf` and see if it's properly setup.
+
+In the meanwhile, use these workaround to manually override the DNS/NTP server:
+```bash
+k3os-31683 [~]# connmanctl services
+*AO Wired                ethernet_<random hash>_cable
+k3os-31683 [~]# connmanctl config ethernet_<random hash>_cable --nameservers <IPV(4|6) DNS server 1>,<IPV(4|6) DNS server 2>,...
+```
+Or just brutally write the connman config in the YAML setup mentioned above using write_files.
+
+This ethernet service name can also be found on `/var/lib/connman/`
 
 ### `k3os.wifi`
 
@@ -532,6 +548,12 @@ Example
 k3os:
   server_url: https://myserver:6443
 ```
+
+## ⚠️ WARNING
+
+**If you had placed a server_url key on your config, this will be enforced to act as an agent node.** The K3S master node will listen at https://0.0.0.0:6443 and the port cannot be changed anyway. As such, this could naturally confuse you in a way that make you think if you can change the port, or to not listen to the broadcast address.
+
+So, please either remove this key if you plan to run with 'k3s_args: server', or run it as a worker node.
 
 ### `k3os.token`
 
