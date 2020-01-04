@@ -32,8 +32,7 @@ func Command() cli.Command {
 			doHotplug()
 			doClock()
 			doLoopback()
-			doLimits()
-			// doHostname()
+			doHostname()
 			doResolvConf()
 		},
 	}
@@ -43,24 +42,10 @@ const (
 	nodev    = unix.MS_NODEV
 	noexec   = unix.MS_NOEXEC
 	nosuid   = unix.MS_NOSUID
-	readonly = unix.MS_RDONLY
 	rec      = unix.MS_REC
 	relatime = unix.MS_RELATIME
-	remount  = unix.MS_REMOUNT
 	shared   = unix.MS_SHARED
 )
-
-var (
-	infinity = uint64(unix.RLIM_INFINITY)
-)
-
-// set as a subreaper
-func subreaper() {
-	err := unix.Prctl(unix.PR_SET_CHILD_SUBREAPER, uintptr(1), 0, 0, 0)
-	if err != nil {
-		log.Printf("error setting as a subreaper: %v", err)
-	}
-}
 
 // nothing really to error to, so just warn
 func mount(source string, target string, fstype string, flags uintptr, data string) {
@@ -196,8 +181,6 @@ func doMounts() {
 	mount("tmpfs", "/run", "tmpfs", nodev|nosuid|noexec|relatime, "size=10%,mode=755")
 	mount("tmpfs", "/tmp", "tmpfs", nodev|nosuid|noexec|relatime, "size=10%,mode=1777")
 
-	// mount tmpfs for /var. This may be overmounted with a persistent filesystem later
-	//mount("tmpfs", "/var", "tmpfs", nodev|nosuid|noexec|relatime, "size=50%,mode=755")
 	// add standard directories in /var
 	mkdir("/var/cache", 0755)
 	mkdir("/var/empty", 0555)
@@ -300,19 +283,6 @@ func doClock() {
 	}
 }
 
-func rlimit(resource int, cur, max uint64) {
-	lim := unix.Rlimit{Cur: cur, Max: max}
-	err := unix.Setrlimit(resource, &lim)
-	if err != nil {
-		log.Printf("Failed to set rlimit %d: %v", resource, err)
-	}
-}
-
-func doLimits() {
-	rlimit(unix.RLIMIT_NOFILE, 1048576, 1048576)
-	rlimit(unix.RLIMIT_NPROC, infinity, infinity)
-}
-
 func doResolvConf() {
 	// for containerizing dhcpcd and other containers that need writable /etc/resolv.conf
 	// if it is a symlink (usually to /run) make the directory and empty file
@@ -332,4 +302,32 @@ func doLoopback() {
 	_ = cmd.Run()
 	cmd = exec.Command("/sbin/ip", "link", "set", "lo", "up")
 	_ = cmd.Run()
+}
+
+func doHostname() {
+	hostname := read("/etc/hostname")
+	if hostname != "" {
+		if err := unix.Sethostname([]byte(hostname)); err != nil {
+			log.Printf("Setting hostname failed: %v", err)
+		}
+	}
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Printf("Cannot read hostname: %v", err)
+		return
+	}
+
+	if hostname != "(none)" && hostname != "" {
+		return
+	}
+
+	mac := read("/sys/class/net/eth0/address")
+	if mac == "" {
+		return
+	}
+
+	mac = strings.Replace(mac, ":", "", -1)
+	if err := unix.Sethostname([]byte("k3os-" + mac)); err != nil {
+		log.Printf("Setting hostname failed: %v", err)
+	}
 }
