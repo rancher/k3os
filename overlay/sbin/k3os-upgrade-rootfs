@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e
+
+if [ $(whoami) != "root" ]
+then
+	echo "This script must be run as root."
+	exit 1
+fi
+
+PROC=$(uname -m)
+
+# Take a parameter of the version number (i.e. v0.4.0) if it is given, otherwise use latest
+if [ -z $K3OS_VERSION ]
+then
+	K3OS_VERSION=$(curl -sL api.github.com/repos/rancher/k3os/releases/latest | jq .tag_name -r)
+fi
+
+if [ $PROC == "x86_64" ]
+then
+	ARCH="amd64"
+elif [ $PROC == "aarch64" ]
+then
+	ARCH="arm64"
+elif [[ $PROC == arm* ]] # catches armv7l and armhf
+then
+	ARCH="arm"
+else
+	echo "Unsupported CPU architecture."
+	exit 1
+fi
+
+echo "Upgrading k3os to ${K3OS_VERSION}"
+
+cd /k3os/system
+mount -o remount,rw .
+curl -fsSL "https://github.com/rancher/k3os/releases/download/${K3OS_VERSION}/k3os-rootfs-${ARCH}.tar.gz" | tar xz --strip-components=3
+sync
+
+echo "Upgrade complete! Please reboot."

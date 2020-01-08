@@ -1,4 +1,4 @@
-FROM golang:1.11-alpine
+FROM golang:1.13-alpine
 
 ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
@@ -19,11 +19,11 @@ RUN go get -d github.com/rancher/trash && \
 
 ENV DAPPER_ENV REPO TAG DRONE_TAG
 ENV DAPPER_SOURCE /go/src/github.com/rancher/k3os/
-ENV DAPPER_OUTPUT ./bin ./dist
+ENV DAPPER_OUTPUT ./build ./dist
 ENV DAPPER_DOCKER_SOCKET true
 ENV TRASH_CACHE ${DAPPER_SOURCE}/.trash-cache
 ENV HOME ${DAPPER_SOURCE}
 WORKDIR ${DAPPER_SOURCE}
-
+ENV GO111MODULE off
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]

@@ -1,0 +1,48 @@
+#!/bin/bash
+. $(dirname $0)/version
+: ${STATE_DIR:=$(dirname $0)/../build/state/k3os-$TAG} # unique value per vm instance
+
+set -e
+
+if [ "$ARCH" = "amd64" ]; then
+    QEMU_SYSTEM="qemu-system-x86_64"
+elif [ "$ARCH" = "arm64" ]; then
+    QEMU_SYSTEM="qemu-system-aarch64"
+else
+    QEMU_SYSTEM="qemu-system-$ARCH"
+fi
+
+if [ ! -d $STATE_DIR ]; then
+    mkdir -p $STATE_DIR
+fi
+if [ ! -e $STATE_DIR/${DISK_NAME:=vda.img} ]; then
+    qemu-img create -f qcow2 $STATE_DIR/${DISK_NAME} ${DISK_SIZE:=8g}
+fi
+
+# Example Usage
+## live cd boot
+# ./scripts/run-qemu k3os.mode=live
+
+## silent install
+# DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher k3os.mode=install k3os.install.silent k3os.install.device=/dev/vda
+
+## run installed vm
+# DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher
+
+## recover installed vm
+# DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher k3os.mode=live
+
+exec $QEMU_SYSTEM \
+    -m ${MEMORY:=2048} \
+    -machine accel=${ACCEL:="hax:kvm:hvf:tcg"} \
+    -nographic \
+    -serial mon:stdio \
+    -rtc base=utc,clock=rt \
+    -chardev socket,path=$STATE_DIR/qga.sock,server,nowait,id=qga0 \
+    -device virtio-serial \
+    -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0 \
+    -kernel $(dirname $0)/../dist/artifacts/k3os-vmlinuz-$ARCH \
+    -initrd $(dirname $0)/../dist/artifacts/k3os-initrd-$ARCH \
+    -drive if=ide,media=cdrom,file=$(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
+    -drive if=virtio,media=disk,file=$STATE_DIR/${DISK_NAME} \
+    -append "console=${CONSOLE:=ttyS0} loglevel=${LOGLEVEL:=4} printk.devkmsg=${PRINTK_DEVKMSG:=on} $*"

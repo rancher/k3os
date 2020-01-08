@@ -1,0 +1,69 @@
+{
+  "builders": [{
+    "type": "vsphere-iso",
+    "vcenter_server": "{{user `vcenter_server`}}",
+    "username": "{{user `vcenter_username`}}",
+    "password": "{{user `vcenter_password`}}",
+    "insecure_connection": "true",
+
+    "vm_name": "{{user `template_name`}}",
+    "datastore": "{{user `vcenter_datastore`}}",
+    "folder": "{{user `vcenter_folder`}}",
+    "host":     "{{user `vcenter_host`}}",
+    "network": "{{user `vcenter_network`}}",
+    "boot_order": "disk,cdrom",
+    "convert_to_template": "true",
+
+    "guest_os_type": "other4xLinux64Guest",
+
+    "CPUs":             2,
+    "RAM":              2048,
+    "RAM_reserve_all": true,
+
+    "disk_controller_type":  "pvscsi",
+    "disk_size":        10240,
+    "disk_thin_provisioned": true,
+
+    "network_card": "vmxnet3",
+
+    "iso_paths": [ "{{user `vcenter_iso_path`}}"],
+    "ssh_username": "{{user `ssh_username`}}",
+    "ssh_password": "{{user `rancher_password`}}",
+
+    "boot_wait": "30s",
+    "boot_command": [
+      "rancher",
+      "<enter>",
+      "sudo k3os install",
+      "<enter>",
+      "1",
+      "<enter>",
+      "N",
+      "<enter>",
+      "N",
+      "<enter>",
+      "{{user `rancher_password`}}",
+      "<enter>",
+      "{{user `rancher_password`}}",
+      "<enter>",
+      "N",
+      "<enter>",
+      "2",
+      "<enter>",
+      "{{user `server_url`}}",
+      "<enter>",
+      "{{user `server_token`}}",
+      "<enter>",
+      "Y",
+      "<enter>"
+    ],
+    "shutdown_command": "sudo poweroff"
+  }],
+  "provisioners":[
+    {
+      "type": "shell",
+      "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": ["echo hello world"]
+    }
+  ]
+}

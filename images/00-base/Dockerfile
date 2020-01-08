@@ -1,7 +1,8 @@
 ### BASE ###
-FROM alpine:3.9 as base
+FROM alpine:3.11 as base
 ARG ARCH
-RUN apk -U add \
+RUN apk --no-cache add \
+    $([ "$ARCH" == "amd64" ] && echo "open-vm-tools grub-bios") \
     bash \
     bash-completion \
     blkid \
@@ -15,14 +16,19 @@ RUN apk -U add \
     dosfstools \
     e2fsprogs \
     e2fsprogs-extra \
+    efibootmgr \
     findutils \
     grub-efi \
     haveged \
+    htop \
     iproute2 \
     iptables \
     jq \
     kbd-bkeymaps \
     logrotate \
+    mdadm \
+    mdadm-misc \
+    ncurses \
     nfs-utils \
     open-iscsi \
     openrc \
@@ -30,18 +36,15 @@ RUN apk -U add \
     openssh-server \
     parted \
     procps \
+    qemu-guest-agent \
+    rng-tools \
     rsync \
     strace \
     sudo \
     tar \
     util-linux \
     vim \
-    xz
-RUN if [ "$ARCH" == "amd64" ]; then \
-        apk add open-vm-tools grub-bios \
-    ;fi
-RUN cp /etc/apk/repositories /etc/apk/repositories.orig && \
-    echo 'http://dl-3.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
-    apk -U add efibootmgr && \
-    mv /etc/apk/repositories.orig /etc/apk/repositories && \
-    apk update
+    xz \
+ && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
+ && mv -vf /etc/conf.d/rngd             /etc/conf.d/rngd.orig \
+ && true

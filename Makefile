@@ -8,15 +8,8 @@ TARGETS := $(shell ls scripts)
 	@mv .dapper.tmp .dapper
 
 $(TARGETS): .dapper
+	@rm -rf ./dist ./build
 	./.dapper $@
-
-trash: .dapper
-	./.dapper -m bind trash
-
-trash-keep: .dapper
-	./.dapper -m bind trash -k
-
-deps: trash
 
 .DEFAULT_GOAL := default
 

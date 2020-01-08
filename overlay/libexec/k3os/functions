@@ -45,6 +45,8 @@ setup_kernel()
 
     mount --bind /run/k3os/kernel/lib/modules /lib/modules
     mount --bind /run/k3os/kernel/lib/firmware /lib/firmware
+    mount --bind /run/k3os/kernel/headers /usr/src
+
     umount /run/k3os/kernel
 }
 

@@ -240,7 +240,7 @@ func AskWifi(cfg *config.CloudConfig) error {
 	}
 
 	for {
-		ssid, err := questions.Prompt("WiFi SSID: ", "")
+		name, err := questions.Prompt("WiFi Name: ", "")
 		if err != nil {
 			return err
 		}
@@ -251,7 +251,7 @@ func AskWifi(cfg *config.CloudConfig) error {
 		}
 
 		cfg.K3OS.Wifi = append(cfg.K3OS.Wifi, config.Wifi{
-			SSID:       ssid,
+			Name:       name,
 			Passphrase: pass,
 		})
 

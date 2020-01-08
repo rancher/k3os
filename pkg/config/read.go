@@ -5,25 +5,30 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/ghodss/yaml"
+	"github.com/rancher/k3os/pkg/system"
 	"github.com/rancher/mapper"
 	"github.com/rancher/mapper/convert"
 	merge2 "github.com/rancher/mapper/convert/merge"
 	"github.com/rancher/mapper/values"
 )
 
-const (
-	SystemConfig = "/k3os/system/config.yaml"
-	LocalConfig  = "/var/lib/rancher/k3os/config.yaml"
-	localConfigs = "/var/lib/rancher/k3os/config.d"
+var (
+	// SystemConfig is the default system configuration
+	SystemConfig = system.RootPath("config.yaml")
+	// LocalConfig is the local system configuration
+	LocalConfig  = system.LocalPath("config.yaml")
+	localConfigs = system.LocalPath("config.d")
 )
 
 var (
 	schemas = mapper.NewSchemas().Init(func(s *mapper.Schemas) *mapper.Schemas {
 		s.DefaultMappers = func() []mapper.Mapper {
 			return []mapper.Mapper{
+				NewToMap(),
 				NewToSlice(),
 				NewToBool(),
 				&FuzzyNames{},
@@ -149,6 +154,12 @@ func readFile(path string) (map[string]interface{}, error) {
 }
 
 func readCmdline() (map[string]interface{}, error) {
+	//supporting regex https://regexr.com/4mq0s
+	parser, err := regexp.Compile(`(\"[^\"]+\")|([^\s]+=(\"[^\"]+\")|([^\s]+))`)
+	if err != nil {
+		return nil, nil
+	}
+
 	bytes, err := ioutil.ReadFile("/proc/cmdline")
 	if os.IsNotExist(err) {
 		return nil, nil
@@ -157,13 +168,13 @@ func readCmdline() (map[string]interface{}, error) {
 	}
 
 	data := map[string]interface{}{}
-	for _, item := range strings.Fields(string(bytes)) {
+	for _, item := range parser.FindAllString(string(bytes), -1) {
 		parts := strings.SplitN(item, "=", 2)
 		value := "true"
 		if len(parts) > 1 {
-			value = parts[1]
+			value = strings.Trim(parts[1], `"`)
 		}
-		keys := strings.Split(parts[0], ".")
+		keys := strings.Split(strings.Trim(parts[0], `"`), ".")
 		existing, ok := values.GetValue(data, keys...)
 		if ok {
 			switch v := existing.(type) {

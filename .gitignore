@@ -2,6 +2,14 @@
 /.dapper
 /.cache
 /.trash-cache
-/bin
-/dist
+/bin/
+/dist/
+/build/
 *.swp
+/.bash_history
+/.docker/
+
+# Packer and vagrant
+.vagrant/
+packer_cache/
+*.box

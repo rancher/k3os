@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -15,6 +16,7 @@ import (
 	"github.com/docker/docker/pkg/reexec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sys/unix"
 	"gopkg.in/freddierice/go-losetup.v1"
 )
 
@@ -27,19 +29,27 @@ var (
 	DebugCmdline = ""
 )
 
-func init() {
-	reexec.Register("enter-root", enter)
-}
-
-func enter() {
+// Enter the k3OS root
+func Enter() {
 	if os.Getenv("ENTER_DEBUG") == "true" {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
+
+	setResourceLimit(unix.RLIMIT_NOFILE, 1048576, 1048576)
+	setResourceLimit(unix.RLIMIT_NPROC, unix.RLIM_INFINITY, unix.RLIM_INFINITY)
 
 	logrus.Debug("Running bootstrap")
 	err := run(os.Getenv("ENTER_DATA"))
 	if err != nil {
 		logrus.Fatal(err)
+	}
+}
+
+func setResourceLimit(resource int, cur, max uint64) {
+	lim := unix.Rlimit{Cur: cur, Max: max}
+	err := unix.Setrlimit(resource, &lim)
+	if err != nil {
+		log.Printf("Failed to set rlimit %x: %v", resource, err)
 	}
 }
 

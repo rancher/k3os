@@ -45,7 +45,7 @@ usage()
 {
     echo "Usage: $PROG [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL"
     echo ""
-    echo "Example: $PROG /dev/vda https://github.com/rancher/k3os/releases/download/v0.2.0/k3os.iso"
+    echo "Example: $PROG /dev/vda https://github.com/rancher/k3os/releases/download/v0.8.0/k3os.iso"
     echo ""
     echo "DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)"
     echo ""
@@ -73,11 +73,11 @@ do_format()
         BOOT_NUM=1
         STATE_NUM=2
         parted -s ${DEVICE} mkpart primary fat32 0% 50MB
-        parted -s ${DEVICE} mkpart primary ext4 50MB 550MB
+        parted -s ${DEVICE} mkpart primary ext4 50MB 750MB
     else
         BOOT_NUM=
         STATE_NUM=1
-        parted -s ${DEVICE} mkpart primary ext4 0% 500MB
+        parted -s ${DEVICE} mkpart primary ext4 0% 700MB
     fi
     parted -s ${DEVICE} set 1 ${BOOTFLAG} on
     partprobe 2>/dev/null || true
@@ -259,6 +259,11 @@ validate_device()
     fi
 }
 
+create_opt()
+{
+    mkdir -p "${TARGET}/k3os/data/opt"
+}
+
 while [ "$#" -gt 0 ]; do
     case $1 in
         --no-format)
@@ -331,6 +336,7 @@ do_format
 do_mount
 do_copy
 install_grub
+create_opt
 
 if [ -n "$INTERACTIVE" ]; then
     exit 0

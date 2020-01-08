@@ -1,0 +1,23 @@
+# The interfaces setting controls which interfaces the net-online
+# service considers in deciding whether the network is active. The
+# default is all interfaces that support ethernet.
+#interfaces="eth0 wlan0"
+
+# The minimum_up setting controls how many interfaces the net-online
+# service expects to be "up" when deciding whether the network is active.
+# The default is the number of detected/specified interfaces.
+minimum_up=1
+
+# This setting controls whether a ping test is included in the test for
+# network connectivity after all interfaces are active.
+#include_ping_test=yes
+
+# This setting is the host to attempt to ping if the above is yes.
+# The default is google.com.
+#ping_test_host=get.k3s.io
+
+# The timeout setting controls how long the net-online service waits
+# for the network to be configured.
+# The default is 120 seconds.
+# if this is set to 0, the wait is infinite.
+timeout=30

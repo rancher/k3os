@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Licened under Apache 2.0
+# A simple way to bring your own tools to the K3OS Kubernetes Linux distribution
+# Inspired by https://github.com/containers/toolbox
+
+if [ $(whoami) != "root" ]
+then
+	echo "This script must be run as root."
+	exit 1
+fi
+
+if [ "$1" = "" ]; then
+	echo "toolbox: missing command" >&2
+	echo >&2
+	echo "These are some common commands:" >&2
+	echo "create	Create a new toolbox container" >&2
+	echo "enter	 Enter an existing toolbox container" >&2
+	echo "rm	 Remove an existing toolbox container" >&2
+	echo >&2
+	echo "Toolbox supports this environment variables:" >&2
+	echo "TOOLBOX_IMAGE	The image to use, such as docker.io/library/fedora:31" >&2
+	echo "TOOLBOX_SHELL	The shell to use, such as bash" >&2
+	echo >&2
+	exit 1
+fi
+
+op=$1
+shift
+
+: ${TOOLBOX_IMAGE:=docker.io/library/ubuntu:bionic}
+: ${TOOLBOX_SHELL:=sh}
+
+# Check if the toolbox exists
+ctr container info toolbox &> /dev/null
+if [ $? -eq 1 ]
+then
+	TOOLBOX_EXISTS=0
+else
+	TOOLBOX_EXISTS=1
+fi
+
+case $op in
+	create )
+		if [ ${TOOLBOX_EXISTS} == "1" ]
+		then
+			echo "The toolbox container already exists. To start over, you can use 'toolbox rm' first."
+			exit 1
+		else
+			ctr image pull ${TOOLBOX_IMAGE}
+			ctr run -d --net-host --privileged ${TOOLBOX_IMAGE} toolbox ${TOOLBOX_SHELL}
+		fi
+		;;
+	enter )
+		if [ ${TOOLBOX_EXISTS} == "1" ]
+		then
+			ctr task start -d toolbox &> /dev/null || true
+			ctr task exec -t --exec-id 100 toolbox ${TOOLBOX_SHELL}
+		else
+			echo "The toolbox container does not exist. Create a container with 'toolbox create' first."
+			exit 1
+		fi
+		;;
+	rm )
+		if [ ${TOOLBOX_EXISTS} == "1" ]
+		then
+			ctr task kill toolbox --signal 9
+			ctr container rm toolbox
+		else
+			echo "The toolbox container does not exist."
+			exit 1
+		fi
+		;;
+esac
+

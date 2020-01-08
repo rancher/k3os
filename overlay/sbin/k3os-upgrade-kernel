@@ -1,0 +1,58 @@
+#!/bin/bash
+
+set -e
+
+if [ $(whoami) != "root" ]
+then
+	echo "This script must be run as root."
+	exit 1
+fi
+
+PROC=$(uname -m)
+
+# Take a parameter of the version number (i.e. v0.4.0) if it is given, otherwise use latest
+if [ -z $K3OS_VERSION ]
+then
+	K3OS_VERSION=$(curl -sL api.github.com/repos/rancher/k3os/releases/latest | jq .tag_name -r)
+fi
+
+if [ ! -d /k3os/system/kernel ]
+then
+  echo "This system seems to be using a custom kernel, no kernel updates available."
+	exit 1
+elif [ $PROC == "x86_64" ]
+then
+	ARCH="amd64"
+elif [ $PROC == "aarch64" ]
+then
+	ARCH="arm64"
+elif [[ $PROC == arm* ]] # catches armv7l and armhf
+then
+	ARCH="arm"
+	echo "k3os for 32-bit ARM architecture only provides rootfs, no kernel updates available."
+	exit 1
+else
+	echo "Unsupported CPU architecture."
+	exit 1
+fi
+
+KERNEL_VERSION=$(curl -sL https://github.com/rancher/k3os/releases/download/${K3OS_VERSION}/k3os-kernel-version-${ARCH})
+if [ -z "$KERNEL_VERSION" ]
+then
+  echo "Unable to determine kernel version"
+  exit 1
+fi
+
+echo "Upgrading k3os kernel to ${KERNEL_VERSION}"
+
+cd /k3os/system/
+mount -o remount,rw .
+cd kernel
+mkdir -vp ${KERNEL_VERSION}
+curl -sL https://github.com/rancher/k3os/releases/download/${K3OS_VERSION}/k3os-initrd-${ARCH} --output ${KERNEL_VERSION}/initrd
+curl -sL https://github.com/rancher/k3os/releases/download/${K3OS_VERSION}/k3os-kernel-${ARCH}.squashfs --output ${KERNEL_VERSION}/kernel.squashfs
+ln -nsf $(readlink current) previous
+ln -nsf ${KERNEL_VERSION} current
+sync
+
+echo "Upgrade complete! Please reboot."

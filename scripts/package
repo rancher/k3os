@@ -8,8 +8,22 @@ cd $(dirname $0)/..
 
 DIST=$(pwd)/dist/artifacts
 
-cd images/output
-
+pushd images/output
 build_all "$@"
 mkdir -p ${DIST}
 copy_all ${DIST} "$@"
+popd
+
+mkdir -p ./build
+ID=$(docker create ${REPO}/k3os-package:${TAG})
+docker cp ${ID}:/output/k3os ./build/
+docker rm -fv $ID
+
+docker build \
+  --build-arg ARCH=${ARCH} \
+  --build-arg REPO=${REPO} \
+  --build-arg TAG=${TAG} \
+  --build-arg VERSION=${VERSION} \
+  --file package/Dockerfile \
+  --tag ${REPO}/k3os:${TAG} \
+.
