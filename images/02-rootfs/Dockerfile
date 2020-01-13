@@ -43,9 +43,16 @@ RUN chmod +s /usr/src/image/bin/sudo
 RUN mkdir -p /usr/src/image/lib/modules
 RUN mkdir -p /usr/src/image/src
 
+# setup /etc/ssl
+RUN rm -rf \
+    /usr/src/image/etc/ssl \
+ && mkdir -p /usr/src/image/etc/ssl/certs/ \
+ && cp -rf /etc/ssl/certs/ca-certificates.crt /usr/src/image/etc/ssl/certs \
+ && ln -s certs/ca-certificates.crt /usr/src/image/etc/ssl/cert.pem
+
 # setup /usr/local
-RUN rm -rf /usr/src/image/local && \
-    ln -s /var/local /usr/src/image/local
+RUN rm -rf /usr/src/image/local \
+ && ln -s /var/local /usr/src/image/local
 
 # cleanup files hostname/hosts
 RUN rm -rf \
@@ -55,10 +62,7 @@ RUN rm -rf \
     /usr/src/image/etc/apk \
     /usr/src/image/etc/ca-certificates* \
     /usr/src/image/etc/os-release \
-    /usr/src/image/etc/ssl/* \
-    && ln -s /usr/lib/os-release /usr/src/image/etc/os-release && \
-    mkdir -p /usr/src/image/etc/ssl/certs/ && \
-    cp -rf /etc/ssl/certs/ca-certificates.crt /usr/src/image/etc/ssl/certs
+ && ln -s /usr/lib/os-release /usr/src/image/etc/os-release
 
 RUN rm -rf \
     /usr/src/image/sbin/apk \
