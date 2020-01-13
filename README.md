@@ -467,7 +467,7 @@ k3os:
 
 ### `k3os.ntp_servers`
 
-Fallback ntp servers to use if NTP is not configured elsewhere in connman.
+**Fallback** ntp servers to use if NTP is not configured elsewhere in connman.
 
 Example
 ```yaml
@@ -479,7 +479,7 @@ k3os:
 
 ### `k3os.dns_nameservers`
 
-Fallback DNS name servers to use if DNS is not configured by DHCP or in a connman service config.
+**Fallback** DNS name servers to use if DNS is not configured by DHCP or in a connman service config.
 
 Example
 ```yaml
@@ -600,7 +600,7 @@ k3os:
   - "key1=value1:NoExecute"
 ```
 ## License
-Copyright (c) 2014-2019 [Rancher Labs, Inc.](http://rancher.com)
+Copyright (c) 2014-2020 [Rancher Labs, Inc.](http://rancher.com)
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
