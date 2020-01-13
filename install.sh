@@ -133,6 +133,10 @@ do_copy()
 
     if [ "$K3OS_INSTALL_TAKE_OVER" = "true" ]; then
         touch ${TARGET}/k3os/system/takeover
+
+        if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.install.power_off=true' /proc/cmdline; then
+            touch ${TARGET}/k3os/system/poweroff
+        fi
     fi
 }
 
