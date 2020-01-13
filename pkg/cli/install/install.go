@@ -5,11 +5,13 @@ import (
 	"os"
 
 	"github.com/rancher/k3os/pkg/cliinstall"
+	"github.com/rancher/k3os/pkg/mode"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
 func Command() cli.Command {
+	mode, _ := mode.Get()
 	return cli.Command{
 		Name:  "install",
 		Usage: "install k3OS",
@@ -25,5 +27,6 @@ func Command() cli.Command {
 				logrus.Error(err)
 			}
 		},
+		Hidden: mode == "local",
 	}
 }
