@@ -6,8 +6,8 @@ RUN apt-get update -y && \
     apt-get install -y kmod initramfs-tools curl rsync xz-utils
 
 ARG ARCH
-ENV KVERSION=5.0.0-36-generic
-ENV URL=https://github.com/rancher/k3os-kernel/releases/download/5.0.0-36.39-rancher1
+ENV KVERSION=5.0.0-37-generic
+ENV URL=https://github.com/rancher/k3os-kernel/releases/download/5.0.0-37.40-rancher2
 ENV KERNEL_XZ=${URL}/kernel-generic_${ARCH}.tar.xz
 ENV KERNEL_EXTRA_XZ=${URL}/kernel-extra-generic_${ARCH}.tar.xz
 ENV KERNEL_HEADERS_XZ=${URL}/kernel-headers-generic_${ARCH}.tar.xz
@@ -27,7 +27,7 @@ RUN mkdir -p /usr/src/root && \
 
 # Create initrd
 RUN mkdir /usr/src/initrd && \
-    rsync -av /usr/src/root/lib/ /lib/ && \
+    rsync -a /usr/src/root/lib/ /lib/ && \
     depmod $KVERSION && \
     mkinitramfs -k $KVERSION -o /usr/src/initrd.tmp
 
