@@ -14,7 +14,7 @@ get_url()
     FROM=$1
     TO=$2
     case $FROM in
-        http*)
+        ftp*|http*|tftp*)
             curl -o $TO -fL ${FROM}
             ;;
         *)
