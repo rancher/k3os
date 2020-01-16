@@ -31,9 +31,8 @@ RUN cd /usr/src/image && \
    ;done && \
    rmdir usr
 
-# Fix ldd and coreutils links
+# Fix coreutils links
 RUN cd /usr/src/image/bin \
- && ln -sf $(realpath $(which ldd)) ldd \
  && find -xtype l -ilname ../usr/bin/coreutils -exec ln -sf coreutils {} \;
 
 # Fix sudo
