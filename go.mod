@@ -8,6 +8,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-isatty v0.0.10
+	github.com/otiai10/copy v1.0.2
 	github.com/pkg/errors v0.8.1
 	github.com/rancher/mapper v0.0.0-20190814232720-058a8b7feb99
 	github.com/rancher/wrangler v0.3.1 // indirect
