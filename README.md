@@ -430,6 +430,7 @@ These are the data sources used for download config from cloud provider. The val
     packet
     scaleway
     vultr
+    hetzner
     cdrom
 
 More than one can be supported at a time, for example:
@@ -440,6 +441,8 @@ k3os:
   - openstack
   - cdrom
 ```
+
+When multiple data sources are specified they are probed in order and the first to provide `/run/config/userdata` will halt further processing.
 
 ### `k3os.modules`
 
