@@ -3,11 +3,12 @@ ARG TAG
 ARG VERSION
 FROM ${REPO}/k3os-gobuild:${TAG} as gobuild
 
-ENV LINUXKIT v0.7
+ENV LINUXKIT 3f56669576bac1a44cd61f5a9fa540976d33eeed
 
 FROM gobuild as linuxkit
-RUN git clone --branch $LINUXKIT https://github.com/linuxkit/linuxkit.git $GOPATH/src/github.com/linuxkit/linuxkit
+RUN git clone https://github.com/linuxkit/linuxkit.git $GOPATH/src/github.com/linuxkit/linuxkit
 WORKDIR $GOPATH/src/github.com/linuxkit/linuxkit/pkg/metadata
+RUN git checkout -b current $LINUXKIT
 RUN gobuild -o /output/metadata
 
 FROM gobuild as k3os
