@@ -1,0 +1,53 @@
+---
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  # This `name` should be short but descriptive.
+  name: k3os-latest
+  # The same `namespace` as is used for the system-upgrade-controller Deployment.
+  namespace: k3os-system
+spec:
+  # The maximum number of concurrent nodes to apply this update on.
+  concurrency: 1
+  # The value for `channel` is assumed to be a URL that returns HTTP 302 with the last path element of the value
+  # returned in the Location header assumed to be an image tag.
+  # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/upgrade/plan/plan.go#L177
+  channel: https://github.com/rancher/k3os/releases/latest
+  # Providing a value for `version` will prevent polling/resolution of the `channel` if specified.
+  # version: v0.9.0-dev
+  nodeSelector:
+    matchExpressions:
+      # This limits application of this upgrade only to nodes that have opted in by applying this label.
+      # Additionally, a value of `disabled` for this label on a node will cause the controller to skip over the node.
+      # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/upgrade/plan/plan.go#L216
+      # NOTICE THAT THE NAME PORTION OF THIS LABEL MATCHES THE PLAN NAME. This is related to the fact that the
+      # system-upgrade-controller will tag the node with this very label having the value of the applied version.
+      # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/upgrade/plan/plan.go#L112-L115
+      - {key: plan.upgrade.cattle.io/k3os-latest, operator: Exists}
+      # This label is set by k3OS, therefore a node without it should not apply this upgrade.
+      - {key: k3os.io/mode, operator: Exists}
+      # Additionally, do not attempt to upgrade nodes booted from "live" CDROM.
+      - {key: k3os.io/mode, operator: NotIn, values: ["live"]}
+  # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/apis/upgrade.cattle.io/v1/types.go#L58
+  drain:
+    # deleteLocalData: true
+    # ignoreDaemonSets: true
+    force: true
+  # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/apis/upgrade.cattle.io/v1/types.go#L51
+  upgrade:
+    # The tag portion of the image will be overridden with the value from `.status.latestVersion` a.k.a. the resolved version.
+    # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/apis/upgrade.cattle.io/v1/types.go#L47
+    image: rancher/k3os
+    command: [k3os, --debug]
+    # It is safe to specify `--kernel` on overlay installations as the destination path will not exist and so the
+    # upgrade of the kernel component will be skipped (with a warning in the log).
+    args:
+      - upgrade
+      - --kernel
+      - --rootfs
+      - --remount
+      - --sync
+      - --reboot
+      - --lock-file=/host/run/k3os/upgrade.lock
+      - --source=/k3os/system
+      - --destination=/host/k3os/system

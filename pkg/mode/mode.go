@@ -3,11 +3,14 @@ package mode
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/rancher/k3os/pkg/system"
 )
 
-func Get() (string, error) {
-	bytes, err := ioutil.ReadFile("/run/k3os/mode")
+func Get(prefix ...string) (string, error) {
+	bytes, err := ioutil.ReadFile(filepath.Join(filepath.Join(prefix...), system.StatePath("mode")))
 	if os.IsNotExist(err) {
 		return "", nil
 	} else if err != nil {

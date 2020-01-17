@@ -18,6 +18,7 @@ import (
 	"github.com/rancher/k3os/pkg/module"
 	"github.com/rancher/k3os/pkg/ssh"
 	"github.com/rancher/k3os/pkg/sysctl"
+	"github.com/rancher/k3os/pkg/version"
 	"github.com/rancher/k3os/pkg/writefile"
 	"github.com/sirupsen/logrus"
 )
@@ -140,10 +141,11 @@ func ApplyK3S(cfg *config.CloudConfig, restart, install bool) error {
 	if mode != "" {
 		labels = append(labels, fmt.Sprintf("k3os.io/mode=%s", mode))
 	}
+	labels = append(labels, fmt.Sprintf("k3os.io/version=%s", version.Version))
 	sort.Strings(labels)
 
 	for _, l := range labels {
-		args = append(args, "--kubelet-arg", "node-labels="+l)
+		args = append(args, "--node-label", l)
 	}
 
 	for _, taint := range cfg.K3OS.Taints {
