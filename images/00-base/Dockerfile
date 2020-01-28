@@ -23,11 +23,16 @@ RUN apk --no-cache add \
     htop \
     iproute2 \
     iptables \
+    iscsi-scst \
     jq \
     kbd-bkeymaps \
     logrotate \
+    lsscsi \
+    lvm2 \
+    lvm2-extra \
     mdadm \
     mdadm-misc \
+    multipath-tools \
     ncurses \
     nfs-utils \
     open-iscsi \
