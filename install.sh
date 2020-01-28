@@ -365,13 +365,13 @@ install_grub
 create_opt
 
 if [ -n "$INTERACTIVE" ]; then
-    exit 0
+	echo " * Rebooting system in 3 seconds (CTRL+C to cancel)"
+    reboot -f
 fi
 
 if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.install.power_off=true' /proc/cmdline; then
-    poweroff -f
+    reboot -f
 else
     echo " * Rebooting system in 5 seconds (CTRL+C to cancel)"
-    sleep 5
     reboot -f
 fi

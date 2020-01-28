@@ -7,7 +7,6 @@ RUN apk --no-cache add \
     blkid \
     busybox-initscripts \
     ca-certificates \
-    connman \
     conntrack-tools \
     coreutils \
     curl \

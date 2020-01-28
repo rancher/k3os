@@ -1,0 +1,10 @@
+#!/sbin/openrc-run
+
+depend() {
+    before ccapply
+}
+
+name="resolv"
+command="/sbin/fix_dns"
+command="ln"
+command_args="-sf /proc/net/pnp /etc/resolv.conf"
