@@ -33,7 +33,7 @@ setup_sudoers()
 
 setup_services()
 {
-    for i in hwdrivers mdev dmesg devfs loadkmap; do
+    for i in hwdrivers udev dmesg devfs loadkmap; do
         ln -s /etc/init.d/$i /etc/runlevels/sysinit
     done
 
