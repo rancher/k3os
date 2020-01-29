@@ -17,6 +17,7 @@ RUN apk --no-cache add \
     e2fsprogs \
     e2fsprogs-extra \
     efibootmgr \
+    eudev \
     findutils \
     grub-efi \
     haveged \
@@ -32,6 +33,7 @@ RUN apk --no-cache add \
     lvm2-extra \
     mdadm \
     mdadm-misc \
+    mdadm-udev \
     multipath-tools \
     ncurses \
     nfs-utils \
