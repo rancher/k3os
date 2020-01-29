@@ -1,11 +1,51 @@
-# k3OS
+# k3OS baremetal
 This fork of the upstream k3OS add as default
-- MetalLB as default load-balancer
-- OpenEBS.io with cStor as storage provider
+- [MetalLB layer 2](https://metallb.universe.tf/concepts/layer2/) as default load-balancer
+- [OpenEBS.io](https://github.com/openebs/openebs) with [cStor](https://github.com/openebs/cstor) as storage provider
 - Helm (and Tiller) with RBAC to support Helm-Chart package deployments
+- Preconfigure using response/config-file within the iso
 
-Please see [README.md] for installation 
+Please see [k3OS README](README.md) for installation 
 
+Readings
+- [Deploy k3os and openebs](https://medium.com/@fromprasath/deploy-k3s-cluster-on-k3os-and-use-openebs-as-persistent-storage-provisioner-3db229c0acf8)
+- [K3OS with MetalLB and Dashboad](https://mindmelt.nl/mindmelt.nl/2019/04/08/k3s-kubernetes-dashboard-load-balancer/)
+
+# Preconfigure config.yaml
+Ate runtime, the config can be changed by creating/modifying the /var/lib/rancher/k3os/config.yaml.
+
+## SSH Public-Key
+- Generate a public key fingerprint for you (SSH client on Windows: https://www.ssh.com/ssh/putty/windows/puttygen#running-puttygen)
+- Add your public-key to [K3OS configuration file baked into the iso](images/07-iso/config.yaml)
+```
+  ssh_authorized_keys:
+    - ssh-rsa YOURSSHPUBLICKEY rancher@myhostname
+  hostname: myhostname
+``` 
+
+# Deploy in Windows 10 Hyper-V for dry-run tests
+Create a V-2 virtual machine loading your iso file
+Take care to:
+- Don't use secure-boot.
+- Use Default-Network
+
+### Setup SSH access
+
+### Access from Host-OS:
+- In K3os-VM, run ```$ ifconfig```, and read under eth0 the ip-address
+- In K3os-VM, run ```$ hostname
+k3os-1962```
+- Generate a public key fingerprint for your client (https://www.ssh.com/ssh/putty/windows/puttygen#running-puttygen)
+  Output: 
+  
+  sudo vi /var/lib/rancher/k3os/config.yaml
+  
+  Add following ```
+  ssh_authorized_keys:
+  - ssh-rsa SHA256:d3Ykm9jBz1n/socoIZeFeL7c1PpnlOG7W7aR0CxagC8 rancher@k3os-1962
+  ``` 
+
+# Fork Maintainance
 ## Configure your fork of k3OS
 1. Configure your remote fork
 ```

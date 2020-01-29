@@ -1,3 +1,19 @@
 # See https://github.com/rancher/k3os/blob/master/README.md#configuration
 # and https://github.com/rancher/k3os/blob/master/README.md#remastering-iso
 # This file is a placeholder for custom configuration when building a custom ISO image.
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAgOMFDUvFey2IewYkisS6FnWlBv8nV7MfyKU/dXmnIPopgWynISfhldMkt5Bo7cBQGRb7nincC6MnXUS4tI4QrC68kWSo8fpsrUWgsglYowTYwOPyQX3oJRuy9k8tc2SQ6LZLmn44jc8Hnhlg4RPOHTJpWMP28hMjSuZRVW22r+GsUBN8EaOAoPrHJ28htKbX/aNv4M4SKeSHz73uHfqIVjj/JeHQXiiE6oJw0N9Xx209pEuQMMVl1hoEZ2cp9M44HOYoQDGQSI68srGXZCnRki9xIzXSQs+oduDcdQOu4dhROt6sHs+ltWrMzej46rbCqZfsrsq1hkAHImFPYYn+Vw== rancher@myhostname
+hostname: myhostname
+k3os:
+  modules:
+    - kvm
+    - nvme
+  dns_nameservers:
+    - 8.8.8.8
+    - 1.1.1.1
+  ntp_servers:
+    - 0.us.pool.ntp.org
+    - 1.us.pool.ntp.org
+  k3s_args:
+    - server
+    - "--disable-agent"
