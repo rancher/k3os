@@ -19,8 +19,9 @@ At runtime, the config can be changed by creating/modifying the ```/var/lib/ranc
 All Kubernetes configuration is done by configuring k3s. This is primarily done through environment and k3s_args keys in config.yaml.
 Default Environment variable can be added by modifying [environment variable](overlay/etc/environment).
 The write_files key can be used to populate the /var/lib/rancher/k3s/server/manifests folder with apps you'd like to deploy on boot.
-Any file found in /var/lib/rancher/k3s/server/manifests will automatically be deployed to Kubernetes in a manner similar to kubectl apply.
-It is also possible to deploy Helm charts. K3s supports a CRD controller for installing charts. A YAML file specification can look as following (example taken from /var/lib/rancher/k3s/server/manifests/traefik.yaml):
+Any file found in [k3s /var/lib/rancher/k3s/server/manifests](overlay/share/rancher/k3s/server/manifests) will automatically be deployed to Kubernetes in a manner similar to kubectl apply.
+It is also possible to deploy Helm charts. K3s supports a CRD controller for installing charts. 
+See [k3s yaml manifests](https://github.com/rancher/k3s/tree/master/manifests) as examples.
 
 see [k3s advanced options](https://rancher.com/docs/k3s/latest/en/advanced/) for configuring Helm, MetalLB, OpenEBS.
 

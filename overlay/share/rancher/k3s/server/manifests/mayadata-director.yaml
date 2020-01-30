@@ -1,0 +1,14 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: mayadata-director
+  namespace: kube-system
+  # https://github.com/mayadata-io/director-charts
+spec:
+  chart: https://github.com/mayadata-io/director-charts/blob/master/1.6.0/Chart.yaml
+  set:
+    rbac.enabled: "true"
+    ssl.enabled: "true"
+    metrics.prometheus.enabled: "true"
+    kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
+    targetNamespace: mayadata-director

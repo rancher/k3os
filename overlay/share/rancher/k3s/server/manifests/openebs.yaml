@@ -1,0 +1,14 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: openebs
+  namespace: kube-system
+  # https://github.com/openebs/openebs
+spec:
+  chart: https://openebs.github.io/charts/openebs-operator.yaml
+  set:
+    rbac.enabled: "true"
+    ssl.enabled: "true"
+    metrics.prometheus.enabled: "true"
+    kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
+    targetNamespace: openebs
