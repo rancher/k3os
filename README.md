@@ -154,6 +154,11 @@ cp /mnt/boot/grub/grub.cfg iso/boot/grub/
 grub-mkrescue -o k3os-new.iso iso/ -- -volid K3OS
 ```
 
+GRUB2 CAVEAT: Some non-Alpine installations of grub2 will create `${ISO}/boot/grub2` instead of `${ISO}/boot/grub`
+which will generally lead to broken installation media. Be mindful of this and modify the above commands
+(that work with this path) accordingly. *Systems that exhibit this behavior typically have `grub2-mkrescue`
+on the path instead of `grub-mkrescue`.*
+
 ### Takeover Installation
 
 A special mode of installation is designed to install to a current running Linux system.  This only works on ARM64 and x86_64.  Download [install.sh](https://raw.githubusercontent.com/rancher/k3os/master/install.sh)

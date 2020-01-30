@@ -17,17 +17,24 @@ RUN apk --no-cache add \
     e2fsprogs \
     e2fsprogs-extra \
     efibootmgr \
+    eudev \
     findutils \
     grub-efi \
     haveged \
     htop \
     iproute2 \
     iptables \
+    iscsi-scst \
     jq \
     kbd-bkeymaps \
     logrotate \
+    lsscsi \
+    lvm2 \
+    lvm2-extra \
     mdadm \
     mdadm-misc \
+    mdadm-udev \
+    multipath-tools \
     ncurses \
     nfs-utils \
     open-iscsi \
