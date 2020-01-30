@@ -1,0 +1,14 @@
+name: k3OS build
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the k3OS
+      run: make
