@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubernetes-dashboard
+  labels:
+    name: kubernetes-dashboard
+---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
@@ -5,8 +12,10 @@ metadata:
   namespace: kube-system
 spec:
   chart: https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-rc2/aio/deploy/recommended.yaml
+  helmVersion: v3.0+unreleased
   set:
     rbac.enabled: "true"
     ssl.enabled: "true"
     metrics.prometheus.enabled: "true"
     kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
+    targetNamespace: kubernetes-dashboard

@@ -17,6 +17,6 @@ jobs:
     - name: Upload iso
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: k30siso
-        path: ./dist/
+        name: k3os-amd64.iso
+        path: ./dist/artifacts/k3os-amd64.iso
       

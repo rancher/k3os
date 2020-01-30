@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openebs
+  labels:
+    name: openebs
+---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
@@ -5,7 +12,8 @@ metadata:
   namespace: kube-system
   # https://github.com/openebs/openebs
 spec:
-  chart: https://openebs.github.io/charts/openebs-operator.yaml
+  chart: stable/openebs
+  helmVersion: v3.0+unreleased
   set:
     rbac.enabled: "true"
     ssl.enabled: "true"

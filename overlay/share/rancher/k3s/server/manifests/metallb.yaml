@@ -1,15 +1,24 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metallb-system
+  labels:
+    name: metallb-system
+---
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
   name: metallb
   namespace: kube-system
 spec:
-  chart: https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml
+  chart: stable/metallb
+  helmVersion: v3.0+unreleased
   set:
     rbac.enabled: "true"
     ssl.enabled: "true"
     metrics.prometheus.enabled: "true"
     kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
+    targetNamespace: metallb-system
 --
 apiVersion: v1
 kind: ConfigMap
