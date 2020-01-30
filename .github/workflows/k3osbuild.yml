@@ -12,3 +12,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the k3OS
       run: make
+      id: build-iso
+      
+    - uses: actions/upload-artifact@v1.0.0
+    - name: Upload iso
+      with:
+        name: k30siso
+        path: ./output/
+      id: publish-iso
