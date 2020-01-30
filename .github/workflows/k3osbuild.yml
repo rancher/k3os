@@ -10,11 +10,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      
     - name: Build the k3OS
       run: make
-    - uses: actions/upload-artifact@v1.0.0
+    
     - name: Upload iso
+      uses: actions/upload-artifact@v1.0.0
       with:
         name: k30siso
         path: ./output/
-      id: publish-iso
+      
