@@ -12,13 +12,14 @@ metadata:
   namespace: kube-system
 spec:
   chart: stable/metallb
+  version: 0.8.3
+  targetNamespace: metallb-system
   helmVersion: v3.0+unreleased
   set:
     rbac.enabled: "true"
     ssl.enabled: "true"
     metrics.prometheus.enabled: "true"
     kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
-    targetNamespace: metallb-system
 --
 apiVersion: v1
 kind: ConfigMap

@@ -13,10 +13,11 @@ metadata:
   # https://github.com/openebs/openebs
 spec:
   chart: stable/openebs
+  version: 1.6.0
+  targetNamespace: openebs
   helmVersion: v3.0+unreleased
   set:
     rbac.enabled: "true"
     ssl.enabled: "true"
     metrics.prometheus.enabled: "true"
     kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
-    targetNamespace: openebs

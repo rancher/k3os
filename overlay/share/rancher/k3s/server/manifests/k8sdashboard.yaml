@@ -12,10 +12,10 @@ metadata:
   namespace: kube-system
 spec:
   chart: https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-rc2/aio/deploy/recommended.yaml
+  targetNamespace: kubernetes-dashboard
   helmVersion: v3.0+unreleased
   set:
     rbac.enabled: "true"
     ssl.enabled: "true"
     metrics.prometheus.enabled: "true"
     kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
-    targetNamespace: kubernetes-dashboard
