@@ -2,7 +2,7 @@
 This fork of the upstream k3OS add as default
 - [MetalLB layer 2](https://metallb.universe.tf/concepts/layer2/) as default load-balancer
 - [OpenEBS.io](https://github.com/openebs/openebs) with [cStor](https://github.com/openebs/cstor) as storage provider
-- Helm (and Tiller) with RBAC to support Helm-Chart package deployments
+- Helm 3 (without Tiller) with RBAC to support Helm-Chart package deployments
 - Preconfigure using response/config-file within the iso
 
 Please see [k3OS README](README.md) for installation 
@@ -11,8 +11,18 @@ Readings
 - [Deploy k3os and openebs](https://medium.com/@fromprasath/deploy-k3s-cluster-on-k3os-and-use-openebs-as-persistent-storage-provisioner-3db229c0acf8)
 - [K3OS with MetalLB and Dashboad](https://mindmelt.nl/mindmelt.nl/2019/04/08/k3s-kubernetes-dashboard-load-balancer/)
 
-# Preconfigure config.yaml
-Ate runtime, the config can be changed by creating/modifying the /var/lib/rancher/k3os/config.yaml.
+# Preconfigure k3OS config.yaml
+The ```/k3os/system/config.yaml``` file is reserved for the system installation and should not be modified on a running system.
+At runtime, the config can be changed by creating/modifying the ```/var/lib/rancher/k3os/config.yaml``` and ```/var/lib/rancher/k3os/config.d/*```
+
+## Configure k3s (Kubernetes) within k3OS
+All Kubernetes configuration is done by configuring k3s. This is primarily done through environment and k3s_args keys in config.yaml.
+Default Environment variable can be added by modifying [environment variable](overlay/etc/environment).
+The write_files key can be used to populate the /var/lib/rancher/k3s/server/manifests folder with apps you'd like to deploy on boot.
+Any file found in /var/lib/rancher/k3s/server/manifests will automatically be deployed to Kubernetes in a manner similar to kubectl apply.
+It is also possible to deploy Helm charts. K3s supports a CRD controller for installing charts. A YAML file specification can look as following (example taken from /var/lib/rancher/k3s/server/manifests/traefik.yaml):
+
+see [k3s advanced options](https://rancher.com/docs/k3s/latest/en/advanced/) for configuring Helm, MetalLB, OpenEBS.
 
 ## SSH Public-Key
 - Generate a public key fingerprint for you (SSH client on Windows: https://www.ssh.com/ssh/putty/windows/puttygen#running-puttygen)
