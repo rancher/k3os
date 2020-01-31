@@ -33,8 +33,10 @@ data:
   SYSTEM_UPGRADE_CONTROLLER_THREADS: "2"
   SYSTEM_UPGRADE_JOB_ACTIVE_DEADLINE_SECONDS: "900"
   SYSTEM_UPGRADE_JOB_BACKOFF_LIMIT: "2"
+  SYSTEM_UPGRADE_JOB_IMAGE_PULL_POLICY: "IfNotPresent"
   SYSTEM_UPGRADE_JOB_KUBECTL_IMAGE: "rancher/kubectl:v1.17.0"
   SYSTEM_UPGRADE_JOB_PRIVILEGED: "true"
+  SYSTEM_UPGRADE_PLAN_POLLING_INTERVAL: "15m"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -50,6 +52,12 @@ spec:
       labels:
         upgrade.cattle.io/controller: system-upgrade-controller # necessary to avoid drain
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - {key: "node-role.kubernetes.io/master", operator: In, values: ["true"]}
       serviceAccountName: k3os-upgrade
       tolerations:
         - key: "node.kubernetes.io/unschedulable" # necessary to avoid cordon/drain
@@ -57,7 +65,8 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: system-upgrade-controller
-          image: rancher/system-upgrade-controller:v0.1.0
+          image: rancher/system-upgrade-controller:v0.2.0
+          imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
                 name: default-controller-env

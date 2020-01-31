@@ -9,12 +9,16 @@ metadata:
 spec:
   # The maximum number of concurrent nodes to apply this update on.
   concurrency: 1
+
   # The value for `channel` is assumed to be a URL that returns HTTP 302 with the last path element of the value
   # returned in the Location header assumed to be an image tag.
   # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/upgrade/plan/plan.go#L177
   channel: https://github.com/rancher/k3os/releases/latest
+
   # Providing a value for `version` will prevent polling/resolution of the `channel` if specified.
   # version: v0.9.0-dev
+
+  # Select which nodes this plan can be applied to.
   nodeSelector:
     matchExpressions:
       # This limits application of this upgrade only to nodes that have opted in by applying this label.
@@ -28,11 +32,25 @@ spec:
       - {key: k3os.io/mode, operator: Exists}
       # Additionally, do not attempt to upgrade nodes booted from "live" CDROM.
       - {key: k3os.io/mode, operator: NotIn, values: ["live"]}
+
+  # The service account for the pod to use. As with normal pods, if not specified the `default` service account from the namespace will be assigned.
+  # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  serviceAccountName: k3os-upgrade
+
+  # The prepare init container is run before cordon/drain which is run before the upgrade container.
+  # Shares the same format as the `upgrade` container
+  # prepare:
+  #   image: alpine:3.11
+  #   command: [sh, -c]
+  #   args: [" echo '### ENV ###'; env | sort; echo '### RUN ###'; find /run/system-upgrade | sort"]
   # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/apis/upgrade.cattle.io/v1/types.go#L58
+
+  # See https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#use-kubectl-drain-to-remove-a-node-from-service
   drain:
     # deleteLocalData: true
     # ignoreDaemonSets: true
     force: true
+
   # SEE https://github.com/rancher/system-upgrade-controller/blob/v0.1.0/pkg/apis/upgrade.cattle.io/v1/types.go#L51
   upgrade:
     # The tag portion of the image will be overridden with the value from `.status.latestVersion` a.k.a. the resolved version.

@@ -26,4 +26,10 @@ docker build \
   --build-arg VERSION=${VERSION} \
   --file package/Dockerfile \
   --tag ${REPO}/k3os:${TAG} \
+  --tag ${REPO}/k3os:latest \
 .
+docker image save --output ./dist/images.tar \
+  ${REPO}/k3os:${TAG} \
+  ${REPO}/k3os:latest
+echo ${REPO}/k3os:${TAG} > ./dist/images.txt
+echo Built ${REPO}/k3os:${TAG}
