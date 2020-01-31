@@ -10,7 +10,7 @@ GIT_TAG=${DRONE_TAG:-$(git tag -l --contains HEAD | head -n 1)}
 if [[ -z "$DIRTY" && -n "$GIT_TAG" ]]; then
     VERSION=$GIT_TAG
 else
-    VERSION="${COMMIT}${DIRTY}"
+    VERSION="$(git describe --always --tags)${DIRTY}"
 fi
 
 if [ -z "$ARCH" ]; then
@@ -18,8 +18,7 @@ if [ -z "$ARCH" ]; then
 fi
 
 ARCH=${ARCH:-"amd64"}
-SUFFIX="-${ARCH}"
-TAG=${TAG:-${VERSION}${SUFFIX}}
+TAG=${TAG:-"${VERSION}-${ARCH}"}
 REPO=${REPO:-rancher}
 
 if echo $TAG | grep -q dirty; then
