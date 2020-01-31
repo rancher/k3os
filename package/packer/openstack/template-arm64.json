@@ -12,8 +12,8 @@
     "os_source_image_id": "{{env `OS_SOURCE_IMAGE`}}",
     "os_networks_id": "{{env `OS_NETWORKS_ID`}}",
     "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
-    "k3os_version": "v0.5.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.5.0/k3os-arm64.iso"
+    "k3os_version": "v0.9.0-rc4",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.9.0-rc4/k3os-arm64.iso"
   },
   "builders": [
     {
