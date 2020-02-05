@@ -573,14 +573,20 @@ k3os:
 ### `k3os.k3s_args`
 
 Arguments to be passed to the k3s process.  The arguments should start with `server` or `agent`
-to be valid.
+to be valid. `k3s_args` is an exec-style (aka uninterpreted) argument array, this means that k3os is invoking k3s like so:
 
-Example
+```bash
+#!/bin/sh
+exec "k3s" "server" "--cluster-cidr 10.107.0.0/23" "--service-cidr 10.107.1.0/23"
+```
+
+Example:
 ```yaml
 k3os:
-  k3s_args:
+   k3s_args:
   - server
-  - "--disable-agent"
+  - "--cluster-cidr" "10.107.0.0/23"
+  - "--service-cidr" "10.107.1.0/23"
 ```
 
 ### `k3os.environment`
