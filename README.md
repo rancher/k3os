@@ -573,7 +573,7 @@ k3os:
 ### `k3os.k3s_args`
 
 Arguments to be passed to the k3s process.  The arguments should start with `server` or `agent`
-to be valid. `k3s_args` is an exec-style (aka uninterpreted) argument array, this means that k3os is invoking k3s like so:
+to be valid. `k3s_args` is an exec-style (aka uninterpreted) argument array, this means that k3os is invoking k3s in two seperate arguments like so:
 
 ```bash
 #!/bin/sh
