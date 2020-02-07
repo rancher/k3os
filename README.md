@@ -577,7 +577,7 @@ to be valid. `k3s_args` is an exec-style (aka uninterpreted) argument array, thi
 
 ```bash
 #!/bin/sh
-exec "k3s" "server" "--cluster-cidr 10.107.0.0/23" "--service-cidr 10.107.1.0/23"
+exec "k3s" "server" "--cluster-cidr=10.107.0.0/23" "--service-cidr=10.107.1.0/23"
 ```
 
 Example:
