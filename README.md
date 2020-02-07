@@ -583,7 +583,7 @@ exec "k3s" "server" "--cluster-cidr=10.107.0.0/23" "--service-cidr=10.107.1.0/23
 Example:
 ```yaml
 k3os:
-   k3s_args:
+  k3s_args:
   - server
   - "--cluster-cidr" "10.107.0.0/23"
   - "--service-cidr" "10.107.1.0/23"
