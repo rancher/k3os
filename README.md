@@ -129,7 +129,7 @@ This script will run the same installation as the ISO but is a bit more raw and 
 ```
 Usage: ./install.sh [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL
 
-Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.9.0-rc4/k3os.iso
+Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.9.0/k3os.iso
 
 DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)
 
@@ -167,7 +167,7 @@ and run with the `--takeover` flag.  This will install k3OS to the current root 
 In order for this to work a couple of assumptions are made.  First the root (/) is assumed to be a ext4 partition.  Also it is assumed that grub2 is installed and looking for the configuration at `/boot/grub/grub.cfg`.  When running `--takeover` ensure that you also set `--no-format` and DEVICE must be set to the partition of `/`.  Refer to the AWS packer template to see this mode in action, below is any example of how to run a takeover installation.
 
 ```
-./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.9.0-rc4/k3os.iso
+./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.9.0/k3os.iso
 ```
 
 ### ARM Overlay Installation
@@ -175,7 +175,7 @@ In order for this to work a couple of assumptions are made.  First the root (/) 
 If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `k3os-rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
 
 ```
-curl -sfL https://github.com/rancher/k3os/releases/download/v0.9.0-rc4/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
+curl -sfL https://github.com/rancher/k3os/releases/download/v0.9.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
 cp myconfig.yaml /k3os/system/config.yaml
 sync
 reboot -f
@@ -338,6 +338,27 @@ is still in development.  More details to follow.  The basic design is that one 
 desired k3s and k3OS versions, plus their configuration and the operator will roll that out to
 the cluster.
 
+### Automatic Upgrades
+
+Integration with [rancher/system-upgrade-controller](https://github.com/rancher/system-upgrade-controller) has been implemented as of [v0.9.0](https://github.com/rancher/k3os/releases/tag/v0.9.0).
+To enable a k3OS node to automatically upgrade from the [latest GitHub release](https://github.com/rancher/k3os/releases/latest) you will need to make sure it has the label 
+`plan.upgrade.cattle.io/k3os-latest` with a value anything other than `disabled`. The upgrade controller will then spawn an upgrade job
+that will drain most pods, upgrade the k3OS content under `/k3os/system`, and then reboot. The system should come back up running the latest
+kernel and k3s version bundled with k3OS and ready to schedule pods.
+
+#### Pre v0.9.0
+
+If your k3OS installation is running a version prior to the v0.9.0 release or one of it's release candidates you can setup
+the system upgrade controller to upgrade your k3OS by following these steps:
+```shell script
+# apply the system-upgrade-controller manifest (once per cluster)
+kubectl apply -f https://raw.githubusercontent.com/rancher/k3os/v0.9.0/overlay/share/rancher/k3s/server/manifests/system-upgrade-controller.yaml
+# after the system-upgrade-controller pod is Ready, apply the plan manifest (once per cluster)
+kubectl apply -f https://raw.githubusercontent.com/rancher/k3os/v0.9.0/overlay/share/rancher/k3s/server/manifests/system-upgrade-plans/k3os-latest.yaml
+# apply the `plan.upgrade.cattle.io/k3os-latest` label as described above (for every k3OS node), e.g.
+kubectl label nodes -l k3os.io/mode plan.upgrade.cattle.io/k3os-latest=enabled # this should work on any cluster with k3OS installations at v0.7.0 or greater
+```
+
 ### Manual Upgrades
 
 For single-node or development use cases where the operator is not being used, you can upgrade the rootfs and kernel with the following commands. If you do not specify K3OS_VERSION, it will default to the latest release.
@@ -345,12 +366,16 @@ For single-node or development use cases where the operator is not being used, y
 When using an overlay install such as on Raspberry Pi (see [ARM Overlay Installation](#arm-overlay-installation)) the original distro kernel (such as Raspbian) will continue to be used. On these systems the k3os-upgrade-kernel script will exit with a warning and perform no action.
 
 ```
-export K3OS_VERSION=v0.9.0-rc4
+export K3OS_VERSION=v0.9.0
 /sbin/k3os-upgrade-rootfs
 /sbin/k3os-upgrade-kernel
 ```
 
 You should always remember to backup your data first, and reboot after upgrading.
+
+#### Manual Upgrade Scripts Have Been DEPRECATED
+
+These scripts have been deprecated as of v0.9.0 are still on the system at `/usr/share/rancher/k3os/scripts`.
 
 ## Building
 
@@ -585,8 +610,19 @@ Example:
 k3os:
   k3s_args:
   - server
-  - "--cluster-cidr" "10.107.0.0/23"
-  - "--service-cidr" "10.107.1.0/23"
+  - "--cluster-cidr=10.107.0.0/23"
+  - "--service-cidr=10.107.1.0/23"
+```
+
+... alternatively:
+```yaml
+k3os:
+  k3s_args:
+  - server
+  - "--cluster-cidr"
+  - "10.107.0.0/23"
+  - "--service-cidr"
+  - "10.107.1.0/23"
 ```
 
 ### `k3os.environment`
