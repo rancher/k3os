@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
+	"github.com/paultag/go-modprobe"
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/sirupsen/logrus"
 )
@@ -33,10 +33,7 @@ func LoadModules(cfg *config.CloudConfig) error {
 		}
 		params := strings.SplitN(m, " ", -1)
 		logrus.Debugf("module %s with parameters [%s] is loading", m, params)
-		cmd := exec.Command("modprobe", params...)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
+		if err := modprobe.Load(params[0], strings.Join(params[1:], " ")); err != nil {
 			return fmt.Errorf("could not load module %s with parameters [%s], err %v", m, params, err)
 		}
 		logrus.Debugf("module %s is loaded", m)

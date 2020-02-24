@@ -15,6 +15,8 @@ github.com/mattn/go-isatty
 github.com/mattn/go-shellwords
 # github.com/otiai10/copy v1.0.2
 github.com/otiai10/copy
+# github.com/paultag/go-modprobe v0.0.0-20180523225901-7ccf6a1b5271
+github.com/paultag/go-modprobe
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/rancher/mapper v0.0.0-20190814232720-058a8b7feb99
@@ -43,3 +45,5 @@ golang.org/x/sys/windows
 gopkg.in/freddierice/go-losetup.v1
 # gopkg.in/yaml.v2 v2.2.4
 gopkg.in/yaml.v2
+# pault.ag/go/topsort v0.0.0-20160530003732-f98d2ad46e1a
+pault.ag/go/topsort
