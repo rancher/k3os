@@ -16,6 +16,7 @@ source /etc/kolla/admin-openrc.sh
 export OS_SOURCE_IMAGE="abcdefgh-1234-5678-abcd-efghijklmnop"
 export OS_NETWORKS_ID="12345678-abcd-efgh-ijkl-123456789abc"
 export OS_FLOATING_IP_POOL="public1"
+export OS_FLAVOR="2"
 packer validate template-arm64.json
 packer build template-arm64.json
 ```
