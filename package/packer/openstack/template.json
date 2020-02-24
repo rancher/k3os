@@ -1,9 +1,4 @@
 {
-  "_comment:": "OS_SOURCE_IMAGE_ID is the OpenStack Glance Image Id of the Ubuntu 18.04 image that has been already uploaded into glance",
-  "_comment:": "OS_NETWORKS_ID is the ID under the name of the nework located under Networks in the Horizion WebUI ",
-  "_comment:": "OS_FLOATING_IP_POOL is the name of the OpenStack floating ip network to use",
-  "_comment:": "OS_FLAVOR is the name of the OpenStack flavor to use",
-  "_comment:": "Packer needed to be rebuiled from source during the making of this due the the following issue: https://github.com/hashicorp/packer/issues/8258",
   "variables": {
     "os_auth_url": "{{env `OS_AUTH_URL`}}",
     "os_username": "{{env `OS_USERNAME`}}",
@@ -14,8 +9,8 @@
     "os_networks_id": "{{env `OS_NETWORKS_ID`}}",
     "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
     "os_flavor": "{{env `OS_FLAVOR`}}",
-    "k3os_version": "v0.9.0-rc4",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.9.0-rc4/k3os-amd64.iso"
+    "k3os_version": "v0.9.0",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.9.0/k3os-amd64.iso"
   },
   "builders": [
     {
