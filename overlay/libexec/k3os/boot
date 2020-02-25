@@ -117,6 +117,23 @@ setup_hostname()
 
 setup_mounts()
 {
+
+    for x in $(cat /proc/cmdline); do
+         case $x in
+            k3os.install.iso_url=*)
+                INSTALL_ISO_URL=${x#k3os.install.iso_url=}
+                ;;
+         esac
+    done
+
+    if [ -v INSTALL_ISO_URL ]; then
+        pinfo NETBOOT Activating eth0 to download ${INSTALL_ISO_URL}
+        dhclient eth0
+        K3OS_LOCAL_ISO_PATH="/tmp/k3os-install-iso.iso" 
+        pinfo NETBOOT Downloading K3OS ISO from ${INSTALL_ISO_URL}
+        wget ${INSTALL_ISO_URL} -O ${K3OS_LOCAL_ISO_PATH} && mount ${K3OS_LOCAL_ISO_PATH} /.base
+    fi
+        
     if [ -d /.base/boot ]; then
         mkdir -p /boot
         mount --bind /.base/boot /boot
