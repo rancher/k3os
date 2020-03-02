@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+
+depend() {
+    after network-online
+}
+
+start_pre() {
+    rm -f /tmp/k3c.*
+}
+
+supervisor=supervise-daemon
+name=k3c-service
+command="/usr/bin/k3c"
+command_args="daemon \
+    >>/var/log/k3c-service.log 2>&1"
+
+output_log=/var/log/k3c-service.log
+error_log=/var/log/k3c-service.log
+
+pidfile="/var/run/k3c-service.pid"
+respawn_delay=5
+
+set -o allexport
+if [ -f /etc/environment ]; then source /etc/environment; fi
+if [ -f /etc/rancher/k3c/k3c-service.env ]; then source /etc/rancher/k3c/k3c-service.env; fi
+set +o allexport

@@ -20,9 +20,18 @@ COPY /vendor/ $GOPATH/src/github.com/rancher/k3os/vendor/
 WORKDIR $GOPATH/src/github.com/rancher/k3os
 RUN gobuild -o /output/k3os
 
+FROM alpine as k3c
+COPY --from=linuxkit /output/ /output/
+COPY --from=k3os /output/ /output/
+WORKDIR /output
+RUN apk update && apk add curl
+RUN curl -OL https://github.com/rancher/k3c/releases/download/v0.0.1/k3c \
+  && chmod +x k3c
+
 FROM gobuild
 COPY --from=linuxkit /output/ /output/
 COPY --from=k3os /output/ /output/
+COPY --from=k3c /output/ /output/
 WORKDIR /output
 RUN git clone --branch v0.7.0 https://github.com/ahmetb/kubectx.git \
  && chmod -v +x kubectx/kubectx kubectx/kubens
