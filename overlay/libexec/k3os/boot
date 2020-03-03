@@ -45,7 +45,7 @@ setup_services()
         ln -s /etc/init.d/$i /etc/runlevels/default
     done
 
-    for i in savecache killproces mount-ro; do
+    for i in savecache killprocs mount-ro; do
         ln -s /etc/init.d/$i /etc/runlevels/shutdown
     done
 }
