@@ -28,6 +28,7 @@ func RunApply(cfg *config.CloudConfig) error {
 	return runApplies(cfg,
 		ApplySSHKeysWithNet,
 		ApplyWriteFiles,
+		ApplyBootManifests,
 		ApplyEnvironment,
 		ApplyRuncmd,
 		ApplyInstall,

@@ -41,13 +41,14 @@ type Install struct {
 }
 
 type CloudConfig struct {
-	SSHAuthorizedKeys []string `json:"sshAuthorizedKeys,omitempty"`
-	WriteFiles        []File   `json:"writeFiles,omitempty"`
-	Hostname          string   `json:"hostname,omitempty"`
-	K3OS              K3OS     `json:"k3os,omitempty"`
-	Runcmd            []string `json:"runCmd,omitempty"`
-	Bootcmd           []string `json:"bootCmd,omitempty"`
-	Initcmd           []string `json:"initCmd,omitempty"`
+	SSHAuthorizedKeys []string   `json:"sshAuthorizedKeys,omitempty"`
+	BootManifests     []Manifest `json:"bootManifests,omitempty"`
+	WriteFiles        []File     `json:"writeFiles,omitempty"`
+	Hostname          string     `json:"hostname,omitempty"`
+	K3OS              K3OS       `json:"k3os,omitempty"`
+	Runcmd            []string   `json:"runCmd,omitempty"`
+	Bootcmd           []string   `json:"bootCmd,omitempty"`
+	Initcmd           []string   `json:"initCmd,omitempty"`
 }
 
 type File struct {
@@ -68,4 +69,9 @@ func (f *File) Permissions() (os.FileMode, error) {
 		return 0, fmt.Errorf("unable to parse file permissions %q as integer", f.RawFilePermissions)
 	}
 	return os.FileMode(perm), nil
+}
+
+type Manifest struct {
+	URL    string `json:"url"`
+	SHA256 string `json:"sha256,omitempty"`
 }

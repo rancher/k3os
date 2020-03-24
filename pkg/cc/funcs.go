@@ -14,6 +14,7 @@ import (
 	"github.com/rancher/k3os/pkg/command"
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/rancher/k3os/pkg/hostname"
+	"github.com/rancher/k3os/pkg/manifests"
 	"github.com/rancher/k3os/pkg/mode"
 	"github.com/rancher/k3os/pkg/module"
 	"github.com/rancher/k3os/pkg/ssh"
@@ -53,6 +54,11 @@ func ApplyInitcmd(cfg *config.CloudConfig) error {
 
 func ApplyWriteFiles(cfg *config.CloudConfig) error {
 	writefile.WriteFiles(cfg)
+	return nil
+}
+
+func ApplyBootManifests(cfg *config.CloudConfig) error {
+	manifests.ApplyBootManifests(cfg)
 	return nil
 }
 

@@ -219,6 +219,9 @@ write_files:
   owner: root
   path: /etc/rc.local
   permissions: '0755'
+boot_manifests:
+- url: "https://manifest.at.blob.or.git.provider.example/manifest.yaml"
+  sha256: "edeaaff3f1774ad2888673770c6d64097e391bc362d7d6fb34982ddf0efd18cb"
 hostname: myhost
 run_cmd:
 - "echo hi && echo bye"
@@ -272,7 +275,7 @@ configuration key.
 
 Since k3OS is built on k3s all Kubernetes configuration is done by configuring
 k3s. This is primarily done through `environment` and `k3s_args` keys in `config.yaml`.
-The `write_files` key can be used to populate the `/var/lib/rancher/k3s/server/manifests`
+The `boot_manifests` key can be used to populate the `/var/lib/rancher/k3s/server/manifests`
 folder with apps you'd like to deploy on boot.
 
 Refer to [k3s docs](https://github.com/rancher/k3s/blob/master/README.md) for more
@@ -303,6 +306,7 @@ are supported in each phase.
 |----------------------|--------|------|---------|
 | ssh_authorized_keys  |        |  x   |    x    |
 | write_files          |    x   |  x   |    x    |
+| boot_manifests       |        |      |    x    |
 | hostname             |    x   |  x   |    x    |
 | run_cmd              |        |      |    x    |
 | boot_cmd             |        |  x   |         |
@@ -442,6 +446,24 @@ the system.
 Example
 ```yaml
 hostname: myhostname
+```
+
+### `boot_manifests`
+
+A list of URLs (and optionally SHA256 sums) of manifests to download and apply at boot. This is similar
+to using `write_files` to write to `/var/rancher/k3s/server/manifests`, but enables the "bootstrap" 
+yaml files to live outside of the config file.
+
+These files will be re-downloaded and saved on every boot. If a SHA256 is provided and it does not match
+the file download, the file will not be saved to disk. Two files may not have the same name - don't download
+two "demo.yaml" files at different URLs and expect them both to persist to disk.
+
+Example
+```yaml
+boot_manifests:
+- url: "https://manifests.my.s3.example/bootstrap.yaml"
+- url: "https://manifests.with.sha.example/demo.yaml"
+  sha256: "cba52c6d5a71c04d7e517ced1328ec310f76e07d3727810da2a2d97c7196ede3"
 ```
 
 ### `init_cmd`, `boot_cmd`, `run_cmd`
