@@ -81,6 +81,7 @@ do_format()
     fi
     parted -s ${DEVICE} set 1 ${BOOTFLAG} on
     partprobe 2>/dev/null || true
+    sleep 2
 
     PREFIX=${DEVICE}
     if [ ! -e ${PREFIX}${STATE_NUM} ]; then
