@@ -22,6 +22,7 @@ RUN apk --no-cache add \
     grub-efi \
     haveged \
     htop \
+    hvtools \
     iproute2 \
     iptables \
     iscsi-scst \
