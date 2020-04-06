@@ -18,16 +18,17 @@ const (
 	VersionPrevious VersionName = "previous"
 )
 
+// StatComponentVersion will de-reference the version symlink for the component.
 func StatComponentVersion(root, key string, alias VersionName) (os.FileInfo, error) {
-	currentPath := filepath.Join(root, key, string(alias))
-	currentInfo, err := os.Stat(currentPath)
+	aliasPath := filepath.Join(root, key, string(alias))
+	aliasInfo, err := os.Stat(aliasPath)
 	if err != nil {
 		return nil, err
 	}
-	if !currentInfo.IsDir() {
-		return nil, fmt.Errorf("stat %s: not a directory", currentPath)
+	if !aliasInfo.IsDir() {
+		return nil, fmt.Errorf("stat %s: not a directory", aliasPath)
 	}
-	version, err := os.Readlink(currentPath)
+	version, err := os.Readlink(aliasPath)
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +43,8 @@ func StatComponentVersion(root, key string, alias VersionName) (os.FileInfo, err
 	return versionInfo, nil
 }
 
+// CopyComponent will copy the component identified by `key` from `src` to `dst`, moving the `current` symlink to the
+// version from `src` (after renaming `current` to `previous`).
 func CopyComponent(src, dst string, remount bool, key string) (bool, error) {
 	srcInfo, err := StatComponentVersion(src, key, VersionCurrent)
 	if err != nil {
@@ -80,6 +83,19 @@ func CopyComponent(src, dst string, remount bool, key string) (bool, error) {
 	logrus.Debugf("copying: %v -> %v", srcPath, dstTemp)
 	if err := copy.Copy(srcPath, dstTemp); err != nil {
 		return false, err
+	}
+
+	// if the destination already exists, attempt to move it out of the way
+	if dstInfo, err := os.Stat(dstPath); err == nil {
+		if dstInfo.IsDir() {
+			dstExist := dstPath + `.old`
+			if err = os.Rename(dstPath, dstExist); err != nil {
+				return false, err
+			}
+			defer os.Rename(dstExist, dstPath) // if this fails then the destination was replaced, all good
+		} else {
+			os.Remove(dstPath) // if this fails then the rename below will fail which is the desired behavior
+		}
 	}
 
 	logrus.Debugf("renaming: %v -> %v", dstTemp, dstPath)
