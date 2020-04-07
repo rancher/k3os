@@ -37,7 +37,7 @@ setup_services()
         ln -s /etc/init.d/$i /etc/runlevels/sysinit
     done
 
-    for i in acpid hwclock syslog bootmisc hostname sysctl modules connman dbus haveged open-vm-tools hv_kvp_daemon issue; do
+    for i in acpid hwclock syslog bootmisc hostname sysctl modules connman dbus haveged issue; do
         ln -s /etc/init.d/$i /etc/runlevels/boot
     done
 
@@ -47,6 +47,22 @@ setup_services()
 
     for i in savecache killprocs mount-ro; do
         ln -s /etc/init.d/$i /etc/runlevels/shutdown
+    done
+
+    for what in unknown $(virt-what || true); do
+        case $what in
+            kvm|qemu)
+                ln -s /etc/init.d/qemu-guest-agent /etc/runlevels/boot/
+                ;;
+            microsoft|hyperv)
+                ln -s /etc/init.d/hv_kvp_daemon /etc/runlevels/boot/
+                ln -s /etc/init.d/hv_fcopy_daemon /etc/runlevels/boot/
+                ln -s /etc/init.d/hv_vss_daemon /etc/runlevels/boot/
+                ;;
+            vmw|vmware)
+                ln -s /etc/init.d/open-vm-tools /etc/runlevels/boot/
+                ;;
+        esac
     done
 }
 
@@ -61,9 +77,6 @@ setup_config()
     fi
     if [ -e /etc/conf.d/cloud-config ]; then
         ln -s /etc/init.d/cloud-config /etc/runlevels/boot/
-    fi
-    if [ -e /etc/conf.d/qemu-guest-agent ]; then
-        ln -s /etc/init.d/qemu-guest-agent /etc/runlevels/boot/
     fi
     if [ -e /etc/conf.d/rngd ]; then
         ln -s /etc/init.d/rngd /etc/runlevels/boot/
