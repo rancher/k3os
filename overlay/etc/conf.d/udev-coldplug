@@ -1,0 +1,23 @@
+# /etc/conf.d/udev-coldplug: config file for udev-coldplug
+
+# udev can trigger coldplug events which cause services to start and
+# kernel modules to be loaded.
+# Services are deferred to start in the boot runlevel.
+# Set rc_coldplug="NO" if you don't want this.
+# If you want module coldplugging but not coldplugging of services then you
+# can disable service coldplugging in baselayout/openrc config files.
+# The setting is named different in different versions.
+# in /etc/rc.conf: rc_hotplug="!*" or
+# in /etc/conf.d/rc: rc_plug_services="!*"
+#rc_coldplug="yes"
+
+# Run udevadmin monitor to get a log of all events
+# in /run/udevmonitor.log
+#udev_monitor="yes"
+
+# Keep udevmonitor running after populating /dev.
+#udev_monitor_keep_running="no"
+
+# Set cmdline options for udevmonitor.
+# could be some of --env --kernel --udev
+#udev_monitor_opts="--env"

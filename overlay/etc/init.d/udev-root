@@ -1,0 +1,39 @@
+#!/sbin/openrc-run
+# Copyright 2014 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+description="udev root symlink"
+
+depend()
+{
+	need udev hwdrivers modules
+	provide dev-root
+	before udev-coldplug
+	keyword -lxc -systemd-nspawn -vserver
+}
+
+# This is here because some software expects /dev/root to exist.
+# For more information, see this bug:
+# https://bugs.gentoo.org/show_bug.cgi?id=438380
+dev_root_link()
+{
+	local RULESDIR=/run/udev/rules.d
+	[ -d $RULESDIR ] || mkdir -p $RULESDIR
+	eval $(udevadm info --export --export-prefix=ROOT_ --device-id-of-file=/ || true)
+	[ "$ROOT_MAJOR" -a "$ROOT_MINOR" ] || return 0
+
+	# btrfs filesystems have bogus major/minor numbers
+	[ "$ROOT_MAJOR" != 0 ] || return 0
+
+	echo 'ACTION=="add|change", SUBSYSTEM=="block", ENV{MAJOR}=="'$ROOT_MAJOR'", ENV{MINOR}=="'$ROOT_MINOR'", SYMLINK+="root"' > $RULESDIR/61-dev-root-link.rules
+	return 0
+}
+
+start()
+{
+	if yesno ${rc_dev_root_symlink:-yes}; then
+		ebegin "Generating a rule to create a /dev/root symlink"
+		dev_root_link
+		eend $?
+	fi
+}
