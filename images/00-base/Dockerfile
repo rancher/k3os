@@ -37,6 +37,7 @@ RUN apk --no-cache add \
     mdadm-udev \
     multipath-tools \
     ncurses \
+    ncurses-terminfo \
     nfs-utils \
     open-iscsi \
     openrc \
@@ -50,6 +51,7 @@ RUN apk --no-cache add \
     strace \
     sudo \
     tar \
+    tzdata \
     util-linux \
     vim \
     xz \
