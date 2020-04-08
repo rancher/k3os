@@ -2,7 +2,6 @@
 FROM alpine:3.11 as base
 ARG ARCH
 RUN apk --no-cache add \
-    $([ "$ARCH" == "amd64" ] && echo "open-vm-tools grub-bios") \
     bash \
     bash-completion \
     blkid \
@@ -13,6 +12,7 @@ RUN apk --no-cache add \
     coreutils \
     curl \
     dbus \
+    dmidecode \
     dosfstools \
     e2fsprogs \
     e2fsprogs-extra \
@@ -56,4 +56,6 @@ RUN apk --no-cache add \
  && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
  && mv -vf /etc/conf.d/rngd             /etc/conf.d/rngd.orig \
  && mv -vf /etc/conf.d/udev-settle      /etc/conf.d/udev-settle.orig \
- && true
+# replicate the default "no idea, friend" behavior of virt-what
+ && touch /usr/sbin/virt-what \
+ && chmod +x /usr/sbin/virt-what
