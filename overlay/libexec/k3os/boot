@@ -33,7 +33,7 @@ setup_sudoers()
 
 setup_services()
 {
-    for i in hwdrivers dmesg devfs loadkmap udev udev-trigger; do
+    for i in hwdrivers dmesg devfs loadkmap udev udev-root udev-coldplug; do
         ln -s /etc/init.d/$i /etc/runlevels/sysinit
     done
 
