@@ -1,9 +1,19 @@
 ARG REPO
 ARG TAG
-FROM ubuntu:disco
+FROM ubuntu:focal
 
-RUN apt-get update -y && \
-    apt-get install -y kmod initramfs-tools curl rsync xz-utils
+RUN apt-get --assume-yes update \
+ && apt-get --assume-yes install \
+    curl \
+    initramfs-tools \
+    kmod \
+    lz4 \
+    rsync \
+    xz-utils \
+ && echo 'hfs' >> /etc/initramfs-tools/modules \
+ && echo 'hfsplus' >> /etc/initramfs-tools/modules \
+ && echo 'nls_utf8' >> /etc/initramfs-tools/modules \
+ && echo 'nls_iso8859_1' >> /etc/initramfs-tools/modules
 
 ARG ARCH
 ENV KVERSION=5.0.0-43-generic
@@ -29,13 +39,13 @@ RUN mkdir -p /usr/src/root && \
 RUN mkdir /usr/src/initrd && \
     rsync -a /usr/src/root/lib/ /lib/ && \
     depmod $KVERSION && \
-    mkinitramfs -k $KVERSION -o /usr/src/initrd.tmp
+    mkinitramfs -k $KVERSION -c lz4 -o /usr/src/initrd.tmp
 
 # Generate initrd firmware and module lists
 RUN mkdir -p /output/lib && \
     mkdir -p /output/headers && \
     cd /usr/src/initrd && \
-    gzip -dc /usr/src/initrd.tmp | cpio -idmv && \
+    lz4cat /usr/src/initrd.tmp | cpio -idmv && \
     find lib/modules -name \*.ko > /output/initrd-modules && \
     echo lib/modules/${KVERSION}/modules.order >> /output/initrd-modules && \
     echo lib/modules/${KVERSION}/modules.builtin >> /output/initrd-modules && \
