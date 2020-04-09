@@ -10,12 +10,12 @@ setup_base()
 {
     K3OS_ISO=$(blkid -L K3OS || true)
     if [ -n "$K3OS_ISO" ]; then
-        mount -t iso9660 -o ro $(blkid -L K3OS) /.base
+        mount -o ro $(blkid -L K3OS) /.base
     else
         success=false
         for (( j=0; j < 5 ; j++ )); do
             for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
-                if mount -t iso9660 /dev/$i /.base; then
+                if mount /dev/$i /.base; then
                     success=true
                     break
                 fi

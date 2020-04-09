@@ -80,7 +80,7 @@ do_format()
         parted -s ${DEVICE} mkpart primary ext4 0% 700MB
     fi
     parted -s ${DEVICE} set 1 ${BOOTFLAG} on
-    partprobe 2>/dev/null || true
+    partprobe ${DEVICE} 2>/dev/null || true
     sleep 2
 
     PREFIX=${DEVICE}
@@ -117,7 +117,7 @@ do_mount()
     fi
 
     mkdir -p $DISTRO
-    mount -t iso9660 -o ro $ISO_DEVICE $DISTRO
+    mount -o ro $ISO_DEVICE $DISTRO
 }
 
 do_copy()
@@ -206,7 +206,7 @@ get_iso()
     if [ -z "${ISO_DEVICE}" ]; then
         for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
             mkdir -p ${DISTRO}
-            if mount -t iso9660 -o ro /dev/$i ${DISTRO}; then
+            if mount -o ro /dev/$i ${DISTRO}; then
                 ISO_DEVICE="/dev/$i"
                 umount ${DISTRO}
                 break

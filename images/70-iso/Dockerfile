@@ -20,11 +20,9 @@ COPY grub.cfg /usr/src/iso/boot/grub/grub.cfg
 
 COPY --from=package /output/ /usr/src/iso/
 
-COPY wrapper /usr/bin/
 COPY config.yaml /usr/src/iso/k3os/system/
 RUN mkdir -p /output && \
-    cd /usr/src/iso && \
-    grub-mkrescue --xorriso=/usr/bin/wrapper -o /output/k3os.iso . -V K3OS && \
+    grub-mkrescue -o /output/k3os.iso /usr/src/iso/. -- -volid K3OS -joliet on && \
     [ -e /output/k3os.iso ] # grub-mkrescue doesn't exit non-zero on failure
 
 CMD ["run-kvm.sh"]
