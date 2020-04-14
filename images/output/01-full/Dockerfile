@@ -12,6 +12,10 @@ FROM ${REPO}/k3os-kernel:${TAG} as kernel
 
 ARG REPO
 ARG TAG
+FROM ${REPO}/k3os-qemu:${TAG} as qemu
+
+ARG REPO
+ARG TAG
 FROM ${REPO}/k3os-base:${TAG}
 ARG ARCH
 
@@ -21,4 +25,6 @@ COPY --from=kernel /output/kernel.squashfs /output/k3os-kernel-${ARCH}.squashfs
 COPY --from=kernel /output/version /output/k3os-kernel-version-${ARCH}
 COPY --from=iso /output/k3os.iso /output/k3os-${ARCH}.iso
 COPY --from=tar /output/userspace.tar /output/k3os-rootfs-${ARCH}.tar
+COPY --from=qemu /output/k3os-qemu.qcow2 /output/k3os-qemu-${ARCH}.qcow2
+
 RUN gzip /output/k3os-rootfs-${ARCH}.tar

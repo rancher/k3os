@@ -269,6 +269,8 @@ create_opt()
     mkdir -p "${TARGET}/k3os/data/opt"
 }
 
+return 0 || true
+
 while [ "$#" -gt 0 ]; do
     case $1 in
         --no-format)
