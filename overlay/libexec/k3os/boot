@@ -156,6 +156,7 @@ do_grow_live()
 {
     parted $1 resizepart $2 yes 100%
     partprobe $1
+    sleep 2
     resize2fs $3
 }
 
