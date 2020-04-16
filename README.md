@@ -143,7 +143,9 @@ To remaster the ISO all you need to do is copy `/k3os` and `/boot` from the ISO 
 To build a new ISO just use the utility `grub-mkrescue` as follows:
 
 ```
-# apt-get install grub-efi mtools xorriso
+# Ubuntu: apt install grub-efi grub-pc-bin mtools xorriso
+# CentOS: dnf install grub2-efi grub2-pc mtools xorriso
+# Alpine: apk add grub-bios grub-efi mtools xorriso
 mount -o loop k3os.iso /mnt
 mkdir -p iso/boot/grub
 cp -rf /mnt/k3os iso/
