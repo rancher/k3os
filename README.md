@@ -129,7 +129,7 @@ This script will run the same installation as the ISO but is a bit more raw and 
 ```
 Usage: ./install.sh [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL
 
-Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.9.0/k3os.iso
+Example: ./install.sh /dev/vda https://github.com/rancher/k3os/releases/download/v0.10.0/k3os.iso
 
 DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)
 
@@ -169,7 +169,7 @@ and run with the `--takeover` flag.  This will install k3OS to the current root 
 In order for this to work a couple of assumptions are made.  First the root (/) is assumed to be a ext4 partition.  Also it is assumed that grub2 is installed and looking for the configuration at `/boot/grub/grub.cfg`.  When running `--takeover` ensure that you also set `--no-format` and DEVICE must be set to the partition of `/`.  Refer to the AWS packer template to see this mode in action, below is any example of how to run a takeover installation.
 
 ```
-./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.9.0/k3os.iso
+./install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format /dev/vda1 https://github.com/rancher/k3os/releases/download/v0.10.0/k3os.iso
 ```
 
 ### ARM Overlay Installation
@@ -177,7 +177,7 @@ In order for this to work a couple of assumptions are made.  First the root (/) 
 If you have a custom ARMv7 or ARM64 device you can easily use an existing bootable ARM image to create an k3OS setup.  All you must do is boot the ARM system and then extract `k3os-rootfs-arm.tar.gz` to the root (stripping one path, look at the example below) and then place your cloud-config at `/k3os/system/config.yaml`.  For example:
 
 ```
-curl -sfL https://github.com/rancher/k3os/releases/download/v0.9.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
+curl -sfL https://github.com/rancher/k3os/releases/download/v0.10.0/k3os-rootfs-arm.tar.gz | tar zxvf - --strip-components=1 -C /
 cp myconfig.yaml /k3os/system/config.yaml
 sync
 reboot -f
@@ -211,23 +211,23 @@ A full example of the k3OS configuration file is as below.
 
 ```yaml
 ssh_authorized_keys:
-- ssh-rsa AAAAB3NzaC1yc2EAAAADAQAB
+- ssh-rsa AAAAB3NzaC1yc2EAAAADAQAB...
 - github:ibuildthecloud
 write_files:
 - encoding: ""
   content: |-
     #!/bin/bash
-    echo hi
+    echo hello, local service start
   owner: root
-  path: /etc/rc.local
+  path: /etc/local.d/example.start
   permissions: '0755'
 hostname: myhost
-run_cmd:
-- "echo hi && echo bye"
-boot_cmd:
-- "echo hi && echo bye"
 init_cmd:
-- "echo hi && echo bye"
+- "echo hello, init command"
+boot_cmd:
+- "echo hello, boot command"
+run_cmd:
+- "echo hello, run command"
 
 k3os:
   data_sources:
@@ -237,8 +237,8 @@ k3os:
   - kvm
   - nvme
   sysctl:
-    kernel.printk: 4 4 1 7
-    kernel.kptr_restrict: 1
+    kernel.printk: "4 4 1 7"
+    kernel.kptr_restrict: "1"
   dns_nameservers:
   - 8.8.8.8
   - 1.1.1.1
@@ -350,13 +350,13 @@ kernel and k3s version bundled with k3OS and ready to schedule pods.
 
 #### Pre v0.9.0
 
-If your k3OS installation is running a version prior to the v0.9.0 release or one of it's release candidates you can setup
+If your k3OS installation is running a version prior toq the v0.9.0 release or one of it's release candidates you can setup
 the system upgrade controller to upgrade your k3OS by following these steps:
 ```shell script
 # apply the system-upgrade-controller manifest (once per cluster)
-kubectl apply -f https://raw.githubusercontent.com/rancher/k3os/v0.9.0/overlay/share/rancher/k3s/server/manifests/system-upgrade-controller.yaml
+kubectl apply -f https://raw.githubusercontent.com/rancher/k3os/v0.10.0/overlay/share/rancher/k3s/server/manifests/system-upgrade-controller.yaml
 # after the system-upgrade-controller pod is Ready, apply the plan manifest (once per cluster)
-kubectl apply -f https://raw.githubusercontent.com/rancher/k3os/v0.9.0/overlay/share/rancher/k3s/server/manifests/system-upgrade-plans/k3os-latest.yaml
+kubectl apply -f https://raw.githubusercontent.com/rancher/k3os/v0.10.0/overlay/share/rancher/k3s/server/manifests/system-upgrade-plans/k3os-latest.yaml
 # apply the `plan.upgrade.cattle.io/k3os-latest` label as described above (for every k3OS node), e.g.
 kubectl label nodes -l k3os.io/mode plan.upgrade.cattle.io/k3os-latest=enabled # this should work on any cluster with k3OS installations at v0.7.0 or greater
 ```
@@ -368,7 +368,7 @@ For single-node or development use cases where the operator is not being used, y
 When using an overlay install such as on Raspberry Pi (see [ARM Overlay Installation](#arm-overlay-installation)) the original distro kernel (such as Raspbian) will continue to be used. On these systems the k3os-upgrade-kernel script will exit with a warning and perform no action.
 
 ```
-export K3OS_VERSION=v0.9.0
+export K3OS_VERSION=v0.10.0
 /sbin/k3os-upgrade-rootfs
 /sbin/k3os-upgrade-kernel
 ```
@@ -490,14 +490,14 @@ k3os:
 
 ### `k3os.sysctls`
 
-Kernel sysctl to setup on start.  These are the same configuration you'd typically find
-in /etc/sysctl.conf.
+Kernel sysctl to setup on start.  These are the same configuration you'd typically find in `/etc/sysctl.conf`.
+Must be specified as string values.
 
 ```
 k3os:
   sysctl:
-    kernel.printk: 4 4 1 7
-    kernel.kptr_restrict: 1
+    kernel.printk: 4 4 1 7      # the YAML parser will read as a string
+    kernel.kptr_restrict: "1"   # force the YAML parser to read as a string
 ```
 
 ### `k3os.ntp_servers`
@@ -599,25 +599,25 @@ k3os:
 
 ### `k3os.k3s_args`
 
-Arguments to be passed to the k3s process.  The arguments should start with `server` or `agent`
-to be valid. `k3s_args` is an exec-style (aka uninterpreted) argument array, this means that k3os is invoking k3s in two seperate arguments like so:
+Arguments to be passed to the k3s process.  The arguments should start with `server` or `agent` to be valid.
+`k3s_args` is an exec-style (aka uninterpreted) argument array which means that when specifying a flag with a value one
+must either join the flag to the value with an `=` in the same array entry or specify the flag in an entry by itself
+immediately followed the value in another entry, e.g.:
 
-```bash
-#!/bin/sh
-exec "k3s" "server" "--cluster-cidr=10.107.0.0/23" "--service-cidr=10.107.1.0/23"
-```
-
-Example:
 ```yaml
+# K3s flags with values joined with `=` in single entry
 k3os:
   k3s_args:
   - server
   - "--cluster-cidr=10.107.0.0/23"
   - "--service-cidr=10.107.1.0/23"
+
+# Effectively invokes k3s as:
+# exec "k3s" "server" "--cluster-cidr=10.107.0.0/23" "--service-cidr=10.107.1.0/23" 
 ```
 
-... alternatively:
 ```yaml
+# K3s flags with values in following entry
 k3os:
   k3s_args:
   - server
@@ -625,6 +625,9 @@ k3os:
   - "10.107.0.0/23"
   - "--service-cidr"
   - "10.107.1.0/23"
+
+# Effectively invokes k3s as:
+# exec "k3s" "server" "--cluster-cidr" "10.107.0.0/23" "--service-cidr" "10.107.1.0/23" 
 ```
 
 ### `k3os.environment`
@@ -651,6 +654,7 @@ k3os:
   - "key1=value1:NoSchedule"
   - "key1=value1:NoExecute"
 ```
+
 ## License
 Copyright (c) 2014-2020 [Rancher Labs, Inc.](http://rancher.com)
 
