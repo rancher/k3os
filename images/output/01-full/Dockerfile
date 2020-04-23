@@ -26,5 +26,6 @@ COPY --from=kernel /output/version /output/k3os-kernel-version-${ARCH}
 COPY --from=iso /output/k3os.iso /output/k3os-${ARCH}.iso
 COPY --from=tar /output/userspace.tar /output/k3os-rootfs-${ARCH}.tar
 COPY --from=qemu /output/k3os-qemu.qcow2 /output/k3os-qemu-${ARCH}.qcow2
+COPY --from=qemu /output/k3os-qemu-uefi_VARS.raw /output/k3os-qemu-uefi_VARS-${ARCH}.raw
 
 RUN gzip /output/k3os-rootfs-${ARCH}.tar

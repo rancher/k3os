@@ -69,17 +69,29 @@ do_format()
 
     dd if=/dev/zero of=${DEVICE} bs=1M count=1
     parted -s ${DEVICE} mklabel ${PARTTABLE}
-    if [ "$PARTTABLE" = "gpt" ]; then
+    if [ "$UEFI" = "hybrid" ]; then
+        BOOTFLAG_NUM=2
+        BOOT_NUM=2
+        STATE_NUM=3
+        sgdisk --clear \
+            --new  1::+1M --typecode=1:ef02 \
+            --new 2::+50M --typecode=2:ef00 \
+            --new 3:: --typecode=3:8300 \
+            --hybrid 2:3 \
+            ${DEVICE}
+    elif [ "$UEFI" = "true" ]; then
+        BOOTFLAG_NUM=1
         BOOT_NUM=1
         STATE_NUM=2
         parted -s ${DEVICE} mkpart primary fat32 0% 50MB
         parted -s ${DEVICE} mkpart primary ext4 50MB 750MB
     else
+        BOOTFLAG_NUM=1
         BOOT_NUM=
         STATE_NUM=1
         parted -s ${DEVICE} mkpart primary ext4 0% 700MB
     fi
-    parted -s ${DEVICE} set 1 ${BOOTFLAG} on
+    parted -s ${DEVICE} set ${BOOTFLAG_NUM} ${BOOTFLAG} on
     partprobe ${DEVICE} 2>/dev/null || true
     sleep 2
 
@@ -185,7 +197,7 @@ EOF
     else
         TTY=$K3OS_INSTALL_TTY
     fi
-    if [ -e "/dev/$TTY" ] && [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
+    if [ -e "/dev/$TTY" ] && [ "$TTY" != tty1 ] && [ "$TTY" != console ] && [ -n "$TTY" ]; then
         sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/grub/grub.cfg
     fi
 
@@ -197,7 +209,26 @@ EOF
         GRUB_TARGET="--target=x86_64-efi"
     fi
 
+    case $(uname -m) in
+        x86_64)
+            if [ -n "$UEFI" ]; then
+                GRUB_ARCH=x64
+            fi
+            ;;
+        aarch64)
+            GRUB_ARCH=aa64
+            ;;
+    esac
+
     grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot ${DEVICE}
+    if [ -n "$GRUB_ARCH" ]; then
+        mkdir -p ${TARGET}/boot/efi/EFI/BOOT/
+        cp ${TARGET}/boot/efi/EFI/alpine/grub${GRUB_ARCH}.efi ${TARGET}/boot/efi/EFI/BOOT/BOOT${GRUB_ARCH}.efi
+    fi
+
+    if [ "$UEFI" = "hybrid" ]; then
+        grub-install --target=i386-pc --boot-directory=${TARGET}/boot ${DEVICE}
+    fi
 }
 
 get_iso()
@@ -229,8 +260,13 @@ get_iso()
 
 setup_style()
 {
-    if [ "$K3OS_INSTALL_FORCE_EFI" = "true" ] || [ -e /sys/firmware/efi ]; then
+    if grep -q 'k3os.install.efi_hybrid=true' /proc/cmdline ; then
         PARTTABLE=gpt
+        UEFI=hybrid
+        BOOTFLAG=boot
+    elif [ "$K3OS_INSTALL_FORCE_EFI" = "true" ] || [ -e /sys/firmware/efi ]; then
+        PARTTABLE=gpt
+        UEFI=true
         BOOTFLAG=esp
         if [ ! -e /sys/firmware/efi ]; then
             echo WARNING: installing EFI on to a system that does not support EFI
@@ -268,8 +304,6 @@ create_opt()
 {
     mkdir -p "${TARGET}/k3os/data/opt"
 }
-
-return 0 2>/dev/null || true
 
 while [ "$#" -gt 0 ]; do
     case $1 in
@@ -348,6 +382,8 @@ create_opt
 if [ -n "$INTERACTIVE" ]; then
     exit 0
 fi
+
+cleanup2
 
 if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.install.power_off=true' /proc/cmdline; then
     poweroff -f
