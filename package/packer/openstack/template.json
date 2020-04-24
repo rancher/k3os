@@ -10,7 +10,7 @@
     "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
     "os_flavor": "{{env `OS_FLAVOR`}}",
     "k3os_version": "v0.10.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.9.0/k3os-amd64.iso"
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.0/k3os-amd64.iso"
   },
   "builders": [
     {
