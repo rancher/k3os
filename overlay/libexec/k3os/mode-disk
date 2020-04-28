@@ -8,6 +8,7 @@ grow()
 {
     parted $1 resizepart $2 100%
     partprobe $1
+    sleep 2
     e2fsck -f $3
     resize2fs $3
 }
@@ -15,7 +16,7 @@ grow()
 setup_mounts()
 {
     mkdir -p $TARGET
-    mount -L K3OS_STATE /run/k3os/target
+    mount -L K3OS_STATE $TARGET
 
     if [ -e $TARGET/k3os/system/growpart ]; then
         read DEV NUM < $TARGET/k3os/system/growpart
@@ -33,9 +34,9 @@ setup_mounts()
             NUM=$(echo "$PART" | sed 's!.*[^0-9]!!')
         fi
         if [ -e "${PART:=${DEV}${NUM}}" ]; then
-            umount /run/k3os/target
+            umount $TARGET
             grow $DEV $NUM $PART || true
-            mount -L K3OS_STATE /run/k3os/target
+            mount -L K3OS_STATE $TARGET
         fi
         rm -f $TARGET/k3os/system/growpart
     fi
