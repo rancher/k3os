@@ -6,6 +6,7 @@ source /usr/lib/os-release
 
 grow()
 {
+    sgdisk -e $1
     parted $1 resizepart $2 100%
     partprobe $1
     e2fsck -f $3

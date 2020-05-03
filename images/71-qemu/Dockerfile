@@ -12,7 +12,7 @@ RUN case $(uname -m) in \
             ;; \
         aarch64) \
             EFI_HYBRID="" && \
-            DEVICE="/dev/sda" && \
+            DEVICE="/dev/vda" && \
             CONSOLE="ttyAMA0" \
             ;; \
     esac && \
@@ -38,6 +38,7 @@ RUN set -o pipefail && \
     qemu-img create -f qcow2 /output/k3os-qemu.qcow2 750M && \
     timeout 7200 qemu-system-$(uname -m) \
         -drive file=/output/k3os-qemu-uefi_VARS.raw,if=pflash,format=raw,unit=1 \
+        -smp $(nproc) \
         ${QEMU_OPTIONS} \
         -hda /output/k3os-qemu.qcow2 \
         -cdrom /usr/src/qemu/k3os-autoinstall.iso \
