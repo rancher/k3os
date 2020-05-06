@@ -61,7 +61,7 @@ spec:
       serviceAccountName: k3os-upgrade
       containers:
         - name: system-upgrade-controller
-          image: rancher/system-upgrade-controller:v0.4.0
+          image: rancher/system-upgrade-controller:v0.5.0
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
