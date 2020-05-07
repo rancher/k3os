@@ -21,6 +21,7 @@ type K3OS struct {
 	Environment    map[string]string `json:"environment,omitempty"`
 	Taints         []string          `json:"taints,omitempty"`
 	Install        *Install          `json:"install,omitempty"`
+	Etcd           Etcd              `json:"etcd,omitempty"`
 }
 
 type Wifi struct {
@@ -38,6 +39,12 @@ type Install struct {
 	NoFormat  bool   `json:"noFormat,omitempty"`
 	Debug     bool   `json:"debug,omitempty"`
 	TTY       string `json:"tty,omitempty"`
+}
+
+type Etcd struct {
+	Iface string   `json:"iface,omitempty"`
+	Token string   `json:"token,omitempty"`
+	Args  []string `json:"args,omitempty"`
 }
 
 type CloudConfig struct {

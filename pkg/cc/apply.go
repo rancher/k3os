@@ -32,6 +32,7 @@ func RunApply(cfg *config.CloudConfig) error {
 		ApplyRuncmd,
 		ApplyInstall,
 		ApplyK3SInstall,
+		ApplyEtcd,
 	)
 }
 

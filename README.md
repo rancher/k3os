@@ -343,7 +343,7 @@ the cluster.
 ### Automatic Upgrades
 
 Integration with [rancher/system-upgrade-controller](https://github.com/rancher/system-upgrade-controller) has been implemented as of [v0.9.0](https://github.com/rancher/k3os/releases/tag/v0.9.0).
-To enable a k3OS node to automatically upgrade from the [latest GitHub release](https://github.com/rancher/k3os/releases/latest) you will need to make sure it has the label 
+To enable a k3OS node to automatically upgrade from the [latest GitHub release](https://github.com/rancher/k3os/releases/latest) you will need to make sure it has the label
 `plan.upgrade.cattle.io/k3os-latest` with a value anything other than `disabled`. The upgrade controller will then spawn an upgrade job
 that will drain most pods, upgrade the k3OS content under `/k3os/system`, and then reboot. The system should come back up running the latest
 kernel and k3s version bundled with k3OS and ready to schedule pods.
@@ -613,7 +613,7 @@ k3os:
   - "--service-cidr=10.107.1.0/23"
 
 # Effectively invokes k3s as:
-# exec "k3s" "server" "--cluster-cidr=10.107.0.0/23" "--service-cidr=10.107.1.0/23" 
+# exec "k3s" "server" "--cluster-cidr=10.107.0.0/23" "--service-cidr=10.107.1.0/23"
 ```
 
 ```yaml
@@ -627,7 +627,7 @@ k3os:
   - "10.107.1.0/23"
 
 # Effectively invokes k3s as:
-# exec "k3s" "server" "--cluster-cidr" "10.107.0.0/23" "--service-cidr" "10.107.1.0/23" 
+# exec "k3s" "server" "--cluster-cidr" "10.107.0.0/23" "--service-cidr" "10.107.1.0/23"
 ```
 
 ### `k3os.environment`
@@ -654,6 +654,36 @@ k3os:
   - "key1=value1:NoSchedule"
   - "key1=value1:NoExecute"
 ```
+
+### `k3os.etcd`
+
+Available for AMD64 and ARM64.
+
+Add the etcd service to the node which k3s can then use as a storage backend.
+
+The following variables can be used in the etcd args:
+
+ - ETCD_HOST_IP is the ip address of the etcd iface.
+ - ETCD_TOKEN is the etcd token.
+ - ETCD_NAME is the server short hostname.
+
+Logs are available at /var/log/etcd-service.log
+
+```yaml
+k3os:
+  etcd:
+     iface: eth1
+     token: "etcdsecret"
+     args:
+      - "--name=${ETCD_NAME}"
+      - "--data-dir=/var/lib/etcd-data"
+      - "--initial-advertise-peer-urls=http://${ETCD_HOST_IP}:2380"
+      - "--listen-peer-urls=http://${ETCD_HOST_IP}:2380"
+      - "--listen-client-urls=http://${ETCD_HOST_IP}:2379,http://127.0.0.1:2379"
+      - "--advertise-client-urls=http://${ETCD_HOST_IP}:2379"
+      - "--initial-cluster-token=${ETCD_TOKEN}"
+      - "--initial-cluster=${ETCD_NAME}=http://${ETCD_HOST_IP}:2380"
+      - "--initial-cluster-state=new"
 
 ## License
 Copyright (c) 2014-2020 [Rancher Labs, Inc.](http://rancher.com)

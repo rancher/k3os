@@ -26,3 +26,17 @@ COPY --from=k3os /output/ /output/
 WORKDIR /output
 RUN git clone --branch v0.7.0 https://github.com/ahmetb/kubectx.git \
  && chmod -v +x kubectx/kubectx kubectx/kubens
+# ETCD
+# AMD64 and ARM64 is supported, otherwise etcd is disabled
+ARG ARCH
+ENV ETCD_VER v3.4.7
+ENV ETCD_DOWNLOAD_URL https://github.com/etcd-io/etcd/releases/download
+RUN mkdir etcd
+RUN if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "arm64" ]; then \
+      apk -U add curl; \
+      curl -L ${ETCD_DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-${ARCH}.tar.gz -o ${ETCD_VER}-linux-${ARCH}.tar.gz; \
+      tar xzvf ${ETCD_VER}-linux-${ARCH}.tar.gz --strip-components=1 -C etcd; \
+      rm -f ${ETCD_VER}-linux-${ARCH}.tar.gz; \
+    else \
+      touch etcd/etcd.disabled; \
+    fi

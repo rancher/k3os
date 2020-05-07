@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+
+depend() {
+    after network-online
+    want cgroups
+}
+
+start_pre() {
+    mkdir -p /var/lib/etcd-data/
+}
+
+supervisor=supervise-daemon
+name=etcd-service
+command="/sbin/etcd"
+command_args=" $ETCD_ARGS
+    >>/var/log/etcd-service.log 2>&1"
+
+output_log=/var/log/etcd-service.log
+error_log=/var/log/etcd-service.log
+
+pidfile="/var/run/etcd-service.pid"
+respawn_delay=5
+
+set -o allexport
+if [ -f /etc/environment ]; then source /etc/environment; fi
+set +o allexport

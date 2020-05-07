@@ -83,6 +83,8 @@ COPY --from=k3s /output/install.sh /usr/src/image/libexec/k3os/k3s-install.sh
 COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
 COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
 
+COPY --from=progs /output/etcd/* /usr/src/image/sbin
+
 COPY overlay/ /usr/src/image/
 
 RUN ln -s /k3os/system/k3os/current/k3os /usr/src/image/sbin/k3os

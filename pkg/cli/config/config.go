@@ -61,6 +61,7 @@ func Command() cli.Command {
 			}
 			return nil
 		},
+
 		Action: func(*cli.Context) {
 			if err := Main(); err != nil {
 				logrus.Error(err)
