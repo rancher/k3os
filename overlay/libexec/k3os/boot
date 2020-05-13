@@ -152,6 +152,11 @@ setup_manifests()
     rsync -a --exclude='*.example' /usr/share/rancher/k3s/server/manifests/ /var/lib/rancher/k3s/server/manifests/
 }
 
+setup_agent_libexec()
+{
+    mkdir -p /var/lib/rancher/k3s/agent/libexec/kubernetes
+}
+
 do_grow_live()
 {
     parted $1 resizepart $2 yes 100%
@@ -197,4 +202,5 @@ setup_sudoers
 setup_services
 setup_config
 setup_manifests
+setup_agent_libexec
 cleanup

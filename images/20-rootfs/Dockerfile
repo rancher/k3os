@@ -53,6 +53,10 @@ RUN rm -rf \
 RUN rm -rf /usr/src/image/local \
  && ln -s /var/local /usr/src/image/local
 
+# setup /usr/libexec/kubernetes
+RUN rm -rf /usr/libexec/kubernetes \
+ && ln -s /var/lib/rancher/k3s/agent/libexec/kubernetes /usr/src/image/libexec/kubernetes
+
 # cleanup files hostname/hosts
 RUN rm -rf \
     /usr/src/image/etc/hosts \
