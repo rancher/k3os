@@ -53,8 +53,8 @@ RUN apk --no-cache add \
     tar \
     tzdata \
     util-linux \
-    wireguard-tools \
     vim \
+    wireguard-tools \
     xz \
  && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
  && mv -vf /etc/conf.d/rngd             /etc/conf.d/rngd.orig \
