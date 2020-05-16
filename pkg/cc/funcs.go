@@ -182,6 +182,7 @@ func ApplyDNS(cfg *config.CloudConfig) error {
 	buf := &bytes.Buffer{}
 	buf.WriteString("[General]\n")
 	buf.WriteString("NetworkInterfaceBlacklist=veth\n")
+	buf.WriteString("PreferredTechnologies=ethernet,wifi\n")
 	if len(cfg.K3OS.DNSNameservers) > 0 {
 		dns := strings.Join(cfg.K3OS.DNSNameservers, ",")
 		buf.WriteString("FallbackNameservers=")
@@ -243,10 +244,6 @@ func ApplyWifi(cfg *config.CloudConfig) error {
 		buf.WriteString("\n")
 		buf.WriteString("Name=")
 		buf.WriteString(w.Name)
-		buf.WriteString("\n")
-		buf.WriteString("AutoConnect=true")
-		buf.WriteString("\n")
-		buf.WriteString("Favorite=true")
 		buf.WriteString("\n")
 	}
 
