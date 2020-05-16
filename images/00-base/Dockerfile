@@ -28,6 +28,7 @@ RUN apk --no-cache add \
     iscsi-scst \
     jq \
     kbd-bkeymaps \
+    lm-sensors \
     logrotate \
     lsscsi \
     lvm2 \
