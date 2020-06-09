@@ -10,7 +10,7 @@
         "<enter>",
         "y",
         "<enter>",
-        "http://{{ .HTTPIP }}:{{ .HTTPPort }}/cloud-config.yml",
+        "http://{{ .HTTPIP }}:{{ .HTTPPort }}/config.yml",
         "<enter>",
         "y",
         "<enter>"
