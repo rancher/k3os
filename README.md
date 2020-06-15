@@ -369,8 +369,8 @@ When using an overlay install such as on Raspberry Pi (see [ARM Overlay Installa
 
 ```
 export K3OS_VERSION=v0.10.0
-/sbin/k3os-upgrade-rootfs
-/sbin/k3os-upgrade-kernel
+/usr/share/rancher/k3os/scripts/k3os-upgrade-rootfs
+/usr/share/rancher/k3os/scripts/k3os-upgrade-kernel
 ```
 
 You should always remember to backup your data first, and reboot after upgrading.

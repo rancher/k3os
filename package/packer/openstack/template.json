@@ -1,56 +1,57 @@
 {
-  "variables": {
-    "os_auth_url": "{{env `OS_AUTH_URL`}}",
-    "os_username": "{{env `OS_USERNAME`}}",
-    "os_password": "{{env `OS_PASSWORD`}}",
-    "os_domain_name": "{{env `OS_DOMAIN_NAME`}}",
-    "os_tenant_name": "{{env `OS_TENANT_NAME`}}",
-    "os_source_image_id": "{{env `OS_SOURCE_IMAGE`}}",
-    "os_networks_id": "{{env `OS_NETWORKS_ID`}}",
-    "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
-    "os_flavor": "{{env `OS_FLAVOR`}}",
-    "k3os_version": "v0.10.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.0/k3os-amd64.iso"
-  },
   "builders": [
     {
-      "type": "openstack",
       "flavor": "{{user `os_flavor`}}",
-      "ssh_username": "ubuntu",
-      "image_name": "k3OS-{{user `k3os_version`}}-amd64",
-      "source_image": "{{user `os_source_image_id`}}",
-      "networks": "{{user `os_networks_id`}}",
       "floating_ip_pool": "{{user `os_floating_ip_pool`}}",
-      "use_floating_ip": true,
+      "image_name": "k3OS-{{user `k3os_version`}}-amd64",
+      "networks": "{{user `os_networks_id`}}",
       "security_groups": [
         "default"
-      ]
+      ],
+      "source_image": "{{user `os_source_image_id`}}",
+      "ssh_username": "ubuntu",
+      "type": "openstack",
+      "use_floating_ip": true
     }
   ],
   "provisioners": [
     {
-      "type": "file",
-      "source": "./openstack.yaml",
-      "destination": "/tmp/config.yaml"
+      "destination": "/tmp/config.yaml",
+      "source": "./config.yaml",
+      "type": "file"
     },
     {
-      "type": "file",
+      "destination": "/tmp/",
       "source": "../../../install.sh",
-      "destination": "/tmp/"
+      "type": "file"
     },
     {
-      "type": "shell",
       "inline": [
         "sudo apt-get update -y",
         "sudo apt-get install -y dosfstools parted",
-        "sudo bash -x /tmp/install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format $(findmnt / -o SOURCE -n) \"{{user `iso_url`}}\" && sync"
-      ]
+        "sudo bash -x /tmp/install.sh --takeover --debug --tty ttyS0 --config /tmp/config.yaml --no-format $(findmnt / -o SOURCE -n) \"{{user `iso_url`}}\" \u0026\u0026 sync"
+      ],
+      "type": "shell"
     },
     {
-      "type": "shell",
       "inline": [
         "set -x; sudo systemd-run --on-active=3 --timer-property=AccuracySec=100ms sudo systemctl reboot --force --force; sync; echo Rebooting"
-      ]
+      ],
+      "type": "shell"
     }
-  ]
+  ],
+  "variables": {
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.2/k3os-amd64.iso",
+    "k3os_version": "v0.10.2",
+    "os_auth_url": "{{env `OS_AUTH_URL`}}",
+    "os_domain_name": "{{env `OS_DOMAIN_NAME`}}",
+    "os_flavor": "{{env `OS_FLAVOR`}}",
+    "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
+    "os_networks_id": "{{env `OS_NETWORKS_ID`}}",
+    "os_password": "{{env `OS_PASSWORD`}}",
+    "os_source_image_id": "{{env `OS_SOURCE_IMAGE`}}",
+    "os_tenant_name": "{{env `OS_TENANT_NAME`}}",
+    "os_username": "{{env `OS_USERNAME`}}"
+  }
 }
+
