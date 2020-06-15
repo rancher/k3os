@@ -9,8 +9,8 @@
     "os_networks_id": "{{env `OS_NETWORKS_ID`}}",
     "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
     "os_flavor": "{{env `OS_FLAVOR`}}",
-    "k3os_version": "v0.10.0",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.0/k3os-arm64.iso"
+    "k3os_version": "v0.10.2",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.2/k3os-arm64.iso"
   },
   "builders": [
     {
@@ -28,7 +28,7 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "./openstack.yaml",
+      "source": "./config.yaml",
       "destination": "/tmp/config.yaml"
     },
     {
