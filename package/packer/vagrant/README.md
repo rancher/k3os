@@ -5,7 +5,7 @@
 1. Build vagrant box image using [Packer](https://www.packer.io/): 
 
 ```
-packer build vagrant.json
+packer build template.json
 ```
 
 4. Run the Vagrant box:

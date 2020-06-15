@@ -1,0 +1,44 @@
+{
+  "builders": [
+    {
+      "boot_command": [
+        "rancher",
+        "<enter>",
+        "sudo k3os install",
+        "<enter>",
+        "1",
+        "<enter>",
+        "y",
+        "<enter>",
+        "http://{{ .HTTPIP }}:{{ .HTTPPort }}/config.yml",
+        "<enter>",
+        "y",
+        "<enter>"
+      ],
+      "boot_wait": "40s",
+      "disk_size": "8000",
+      "format": "ova",
+      "guest_os_type": "Linux_64",
+      "http_directory": ".",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "sha256",
+      "iso_url": "{{user `iso_url`}}",
+      "post_shutdown_delay": "10s",
+      "shutdown_command": "sudo poweroff",
+      "ssh_keypair_name": "",
+      "ssh_private_key_file": "packer_rsa",
+      "ssh_timeout": "1000s",
+      "ssh_username": "rancher",
+      "type": "virtualbox-iso"
+    }
+  ],
+  "post-processors": [
+    "vagrant"
+  ],
+  "variables": {
+    "iso_checksum": "e4263102018f855babc0cf0fed855f6b9d5b1a1f1dfc287922215f1e99e8a846",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.2/k3os-amd64.iso",
+    "password": "rancher"
+  }
+}
+
