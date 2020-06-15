@@ -1,54 +1,63 @@
 {
+  "builders": [
+    {
+      "access_key": "{{user `aws_access_key`}}",
+      "ami_name": "rancher-k3os-{{user `k3os_version`}}-arm64-{{isotime `200601020304`}}",
+      "instance_type": "a1.large",
+      "region": "{{user `region`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "source_ami_filter": {
+        "filters": {
+          "name": "ubuntu/images/hvm-ssd/ubuntu-focal-*-arm64-server-*",
+          "root-device-type": "ebs",
+          "virtualization-type": "hvm"
+        },
+        "most_recent": true,
+        "owners": [
+          "099720109477"
+        ]
+      },
+      "ssh_username": "ubuntu",
+      "tags": {
+        "Name": "k3OS",
+        "Version": "{{user `k3os_version`}}"
+      },
+      "type": "amazon-ebs"
+    }
+  ],
+  "provisioners": [
+    {
+      "destination": "/tmp/config.yaml",
+      "source": "./config.yaml",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/",
+      "source": "../../../install.sh",
+      "type": "file"
+    },
+    {
+      "inline": [
+        "sudo apt-get update -y",
+        "sudo apt-get install -y dosfstools parted",
+        "sudo bash -x /tmp/install.sh --takeover --poweroff --debug --tty ttyS0 --config /tmp/config.yaml --no-format $(findmnt / -o SOURCE -n) \"{{user `iso_url`}}\""
+      ],
+      "type": "shell"
+    },
+    {
+      "inline": [
+        "set -x; sudo systemd-run --on-active=3 --timer-property=AccuracySec=100ms sudo systemctl reboot --force --force; sync; echo Rebooting"
+      ],
+      "pause_after": "3m",
+      "type": "shell"
+    }
+  ],
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
-    "region": "us-east-1",
-    "k3os_version": "v0.9.0-rc4",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.9.0-rc4/k3os-arm64.iso"
-  },
-  "builders": [{
-    "type": "amazon-ebs",
-    "access_key": "{{user `aws_access_key`}}",
-    "secret_key": "{{user `aws_secret_key`}}",
-    "region": "{{user `region`}}",
-    "source_ami_filter": {
-      "filters": {
-        "virtualization-type": "hvm",
-        "name": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-arm64-server-*",
-        "root-device-type": "ebs"
-      },
-      "owners": ["099720109477"],
-      "most_recent": true
-    },
-    "instance_type": "a1.large",
-    "ssh_username": "ubuntu",
-    "ami_name": "Rancher k3OS {{user `k3os_version`}}"
-  }],
-  "provisioners": [
-        {
-            "type": "file",
-            "source": "./aws.yaml",
-            "destination": "/tmp/config.yaml"
-        },
-        {
-            "type": "file",
-            "source": "../../../install.sh",
-            "destination": "/tmp/"
-        },
-        {
-            "type": "shell",
-            "inline":[
-                "sudo apt-get update -y",
-                "sudo apt-get install -y dosfstools parted",
-                "sudo bash -x /tmp/install.sh --takeover --poweroff --debug --tty ttyS0 --config /tmp/config.yaml --no-format $(findmnt / -o SOURCE -n) \"{{user `iso_url`}}\""
-            ]
-        },
-        {
-            "type": "shell",
-            "inline":[
-                "set -x; sudo systemd-run --on-active=3 --timer-property=AccuracySec=100ms sudo systemctl reboot --force --force; sync; echo Rebooting"
-            ],
-            "pause_after":"3m"
-        }
-    ]
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.2/k3os-arm64.iso",
+    "k3os_version": "v0.10.2",
+    "region": "us-east-1"
+  }
 }
+
