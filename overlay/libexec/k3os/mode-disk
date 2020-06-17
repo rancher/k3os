@@ -139,6 +139,7 @@ takeover()
     
     if [ -e k3os/system/poweroff ]; then
         rm -f k3os/system/poweroff
+        sync
         poweroff -f
     else
         reboot -f
