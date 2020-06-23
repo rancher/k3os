@@ -214,6 +214,12 @@ get_iso()
                 break
             fi
         done
+    else
+        # Device found but label may be wrong
+        # Remove last sign of device if it is a sd device
+        if [[ "$ISO_DEVICE" = *sd* ]]; then
+            ISO_DEVICE=${ISO_DEVICE%?};
+        fi
     fi
 
     if [ -z "${ISO_DEVICE}" ] && [ -n "$K3OS_INSTALL_ISO_URL" ]; then
