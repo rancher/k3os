@@ -272,7 +272,7 @@ func AskGithub(cfg *config.CloudConfig) error {
 		return err
 	}
 
-	str, err := questions.Prompt("Comma seperated list of GitHub users to authorize: ", "")
+	str, err := questions.Prompt("Comma separated list of GitHub users to authorize: ", "")
 	if err != nil {
 		return err
 	}
