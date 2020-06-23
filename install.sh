@@ -175,8 +175,10 @@ menuentry "k3OS Previous" {
 
 menuentry "k3OS Rescue Shell" {
   search.fs_label K3OS_STATE root
+  set sqfile=/k3os/system/kernel/current/kernel.squashfs
+  loopback loop0 /\$sqfile
   set root=(\$root)
-  linux /k3os/system/kernel/current/vmlinuz printk.devkmsg=on rescue console=tty1
+  linux (loop0)/vmlinuz printk.devkmsg=on rescue console=tty1
   initrd /k3os/system/kernel/current/initrd
 }
 EOF
