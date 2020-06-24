@@ -29,5 +29,5 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: K3OS
-        path: ist/artifacts/*
+        path: dist/artifacts/*
         
