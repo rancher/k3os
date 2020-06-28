@@ -210,7 +210,7 @@ EOF
         GRUB_TARGET="--target=x86_64-efi"
     fi
 
-    grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot ${DEVICE}
+    grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot --removable ${DEVICE}
 }
 
 get_iso()
