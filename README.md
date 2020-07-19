@@ -388,8 +388,6 @@ the instance type `CTRL+a c` to get the qemu console and then `q` for quit.
 The source for the kernel is in `https://github.com/rancher/k3os-kernel` and similarly you
 just need to have Docker and run `make` to compile the kernel.
 
-Install the package qemu-user and qemu-user-static before.
-
 ## Configuration Reference
 
 Below is a reference of all keys available in the `config.yaml`
