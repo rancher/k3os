@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -50,7 +51,13 @@ func SetAuthorizedKeys(cfg *config.CloudConfig, withNet bool) error {
 }
 
 func getKey(key string, withNet bool) (string, error) {
-	if !strings.HasPrefix(key, "github:") {
+	providers := map[string]string{
+		"github": "https://github.com/%s.keys",
+		"gitlab": "https://gitlab.com/%s.keys",
+	}
+
+	url, err := url.Parse(key)
+	if err != nil || url.Scheme == "" {
 		return key, nil
 	}
 
@@ -58,14 +65,15 @@ func getKey(key string, withNet bool) (string, error) {
 		return "", nil
 	}
 
-	var (
-		resp *http.Response
-		err  error
-	)
+	if providerURL, ok := providers[url.Scheme]; ok {
+		key = fmt.Sprintf(providerURL, url.Opaque)
+	}
+
+	var resp *http.Response
 	for i := 0; i < 10; time.Sleep(time.Second) {
 		// network interface(s) can be up before DNS is ready, so let's try up to 10 times
-		resp, err = http.Get(fmt.Sprintf("https://github.com/%s.keys", strings.TrimPrefix(key, "github:")))
-		if err == nil {
+		resp, err = http.Get(key)
+		if err == nil || strings.Contains(err.Error(), "unsupported protocol scheme") {
 			break
 		}
 		i++

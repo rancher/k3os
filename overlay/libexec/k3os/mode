@@ -16,6 +16,10 @@ for x in $(cat /proc/cmdline); do
     esac
 done
 
+MODE_WAIT_SECONDS=30
+
+while [ -z "$MODE" ] && (( MODE_WAIT_SECONDS > 0 )); do
+
 if [ -z "$MODE" ] && [ -n "$(blkid -L K3OS_STATE)" ]; then
     MODE=disk
 fi
@@ -33,7 +37,14 @@ if [ -z "$MODE" ] && [ "$(stat -f -c '%T' /)" != "tmpfs" ]; then
 fi
 
 if [ -z "$MODE" ]; then
-    pfatal Failed to determine boot mode
+  echo "Couldn't determine boot mode, waiting $MODE_WAIT_SECONDS seconds..."
+  sleep 1
+  MODE_WAIT_SECONDS=$((MODE_WAIT_SECONDS - 1))
+fi
+done
+
+if [ -z "$MODE" ]; then
+    pfatal "Failed to determine boot mode (did you forget to set k3os.mode?)"
 elif [ ! -e $SCRIPTS/mode-${MODE} ]; then
     pfatal "Mode script does not exist for ${MODE}"
 else

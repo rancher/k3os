@@ -168,16 +168,29 @@ menuentry "k3OS Current" {
 
 menuentry "k3OS Previous" {
   search.fs_label K3OS_STATE root
+  set sqfile=/k3os/system/kernel/previous/kernel.squashfs
+  loopback loop0 /\$sqfile
   set root=(\$root)
-  linux /k3os/system/kernel/previous/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
+  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
   initrd /k3os/system/kernel/previous/initrd
 }
 
-menuentry "k3OS Rescue Shell" {
+menuentry "k3OS Rescue (current)" {
   search.fs_label K3OS_STATE root
+  set sqfile=/k3os/system/kernel/current/kernel.squashfs
+  loopback loop0 /\$sqfile
   set root=(\$root)
-  linux /k3os/system/kernel/current/vmlinuz printk.devkmsg=on rescue console=tty1
+  linux (loop0)/vmlinuz printk.devkmsg=on rescue console=tty1
   initrd /k3os/system/kernel/current/initrd
+}
+
+menuentry "k3OS Rescue (previous)" {
+  search.fs_label K3OS_STATE root
+  set sqfile=/k3os/system/kernel/previous/kernel.squashfs
+  loopback loop0 /\$sqfile
+  set root=(\$root)
+  linux (loop0)/vmlinuz printk.devkmsg=on rescue console=tty1
+  initrd /k3os/system/kernel/previous/initrd
 }
 EOF
     if [ -z "${K3OS_INSTALL_TTY}" ]; then
@@ -185,7 +198,7 @@ EOF
     else
         TTY=$K3OS_INSTALL_TTY
     fi
-    if [ -e "/dev/$TTY" ] && [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
+    if [ -e "/dev/${TTY%,*}" ] && [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
         sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/grub/grub.cfg
     fi
 

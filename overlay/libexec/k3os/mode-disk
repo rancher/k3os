@@ -111,6 +111,10 @@ takeover()
 
     touch k3os/system/factory-reset
 
+    if [ -L sbin ]; then
+      rm -f sbin
+    fi
+
     for i in *; do
         case $i in
             boot|k3os|sbin)
