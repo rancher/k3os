@@ -350,7 +350,7 @@ kernel and k3s version bundled with k3OS and ready to schedule pods.
 
 #### Pre v0.9.0
 
-If your k3OS installation is running a version prior toq the v0.9.0 release or one of it's release candidates you can setup
+If your k3OS installation is running a version prior to the v0.9.0 release or one of its release candidates you can setup
 the system upgrade controller to upgrade your k3OS by following these steps:
 ```shell script
 # apply the system-upgrade-controller manifest (once per cluster)
