@@ -198,7 +198,7 @@ EOF
     else
         TTY=$K3OS_INSTALL_TTY
     fi
-    if [ -e "/dev/${TTY%,*}" ] && [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
+    if [ -e "/dev/${TTY%,*}" ] && [ "$TTY" != tty1 ] && [ "$TTY" != console ] && [ -n "$TTY" ]; then
         sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/grub/grub.cfg
     fi
 
