@@ -30,7 +30,7 @@ cleanup2()
         umount ${TARGET} || true
     fi
 
-    losetup -d ${ISO_DEVICE} || true
+    losetup -d ${ISO_DEVICE} || losetup -d ${ISO_DEVICE%?} || true
     umount $DISTRO || true
 }
 
@@ -116,8 +116,8 @@ do_mount()
         mount ${BOOT} ${TARGET}/boot/efi
     fi
 
-    mkdir -p $DISTRO
-    mount -o ro $ISO_DEVICE $DISTRO
+    mkdir -p ${DISTRO}
+    mount -o ro ${ISO_DEVICE} ${DISTRO} || mount -o ro ${ISO_DEVICE%?} ${DISTRO}
 }
 
 do_copy()
