@@ -1,0 +1,31 @@
+#!/sbin/openrc-run
+
+description="Delays until the system time is set to a plausible time"
+
+depend()
+{
+	provide clock-sane
+	keyword -timeout -shutdown
+}
+
+start()
+{
+	local infinite now rc
+	
+	min_timestamp=${min_timestamp:-315532800}
+	timeout=${timeout:-120}
+	
+	ebegin "Checking to see if the system clock is plausibly set"
+	rc=0
+	[ $timeout -eq 0 ] && infinite=true || infinite=false
+	
+	while $infinite || [ $timeout -gt 0 ]; do
+		now=$(date '+%s')
+		[ "${now}" -gt ${min_timestamp} ] || [ "${now}" -eq ${min_timestamp} ] && break
+		sleep 1
+		: $((timeout -= 1))
+	done
+	! $infinite && [ $timeout -eq 0 ] && rc=1
+	
+	eend $rc "The system clock is not plausibly set"
+}

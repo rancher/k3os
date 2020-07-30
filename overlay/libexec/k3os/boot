@@ -38,11 +38,11 @@ setup_services()
         ln -s /etc/init.d/$i /etc/runlevels/sysinit
     done
 
-    for i in acpid hwclock syslog bootmisc hostname sysctl modules connman dbus haveged issue; do
+    for i in acpid hwclock syslog bootmisc hostname sysctl modules connman dbus haveged issue sshd; do
         ln -s /etc/init.d/$i /etc/runlevels/boot
     done
 
-    for i in sshd "local" ccapply iscsid; do
+    for i in "local" ccapply iscsid; do
         ln -s /etc/init.d/$i /etc/runlevels/default
     done
 

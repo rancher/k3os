@@ -1,0 +1,10 @@
+# The minimum acceptable UNIX timestamp to presume the clock is set to
+# a sane value. The default is the UNIX timestamp for the first second
+# of the year 1980 UTC (matching the validation by k3s)
+#min_timestamp=315532800
+
+# The timeout setting controls how long the clock-sane service waits
+# for the system clock to be set to the minimum acceptable date.
+# The default is 120 seconds.
+# if this is set to 0, the wait is infinite.
+timeout=0
