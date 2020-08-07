@@ -15,7 +15,15 @@ get_url()
     TO=$2
     case $FROM in
         ftp*|http*|tftp*)
-            curl -o $TO -fL ${FROM}
+            n=0
+            attempts=5
+            until [ "$n" -ge "$attempts" ]
+            do
+                curl -o $TO -fL ${FROM} && break
+                n=$((n+1))
+                echo "Failed to download, retry attempt ${n} out of ${attempts}"
+                sleep 2
+            done
             ;;
         *)
             cp -f $FROM $TO
