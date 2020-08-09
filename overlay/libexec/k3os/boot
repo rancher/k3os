@@ -153,8 +153,9 @@ setup_manifests()
     rsync -a --exclude='*.example' /usr/share/rancher/k3s/server/manifests/ /var/lib/rancher/k3s/server/manifests/
 }
 
-setup_agent_libexec()
+setup_state_dirs()
 {
+    mkdir -p /var/lib/nfs
     mkdir -p /var/lib/rancher/k3s/agent/libexec/kubernetes
 }
 
@@ -203,5 +204,5 @@ setup_sudoers
 setup_services
 setup_config
 setup_manifests
-setup_agent_libexec
+setup_state_dirs
 cleanup

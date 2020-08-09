@@ -30,7 +30,7 @@ cleanup2()
         umount ${TARGET} || true
     fi
 
-    losetup -d ${ISO_DEVICE} || true
+    losetup -d ${ISO_DEVICE} || losetup -d ${ISO_DEVICE%?} || true
     umount $DISTRO || true
 }
 
@@ -116,8 +116,8 @@ do_mount()
         mount ${BOOT} ${TARGET}/boot/efi
     fi
 
-    mkdir -p $DISTRO
-    mount -o ro $ISO_DEVICE $DISTRO
+    mkdir -p ${DISTRO}
+    mount -o ro ${ISO_DEVICE} ${DISTRO} || mount -o ro ${ISO_DEVICE%?} ${DISTRO}
 }
 
 do_copy()
@@ -198,7 +198,7 @@ EOF
     else
         TTY=$K3OS_INSTALL_TTY
     fi
-    if [ -e "/dev/${TTY%,*}" ] && [ "$TTY" != tty1 ] && [ -n "$TTY" ]; then
+    if [ -e "/dev/${TTY%,*}" ] && [ "$TTY" != tty1 ] && [ "$TTY" != console ] && [ -n "$TTY" ]; then
         sed -i "s!console=tty1!console=tty1 console=${TTY}!g" ${TARGET}/boot/grub/grub.cfg
     fi
 
@@ -210,7 +210,7 @@ EOF
         GRUB_TARGET="--target=x86_64-efi"
     fi
 
-    grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot ${DEVICE}
+    grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot --removable ${DEVICE}
 }
 
 get_iso()
