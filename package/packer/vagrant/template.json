@@ -33,11 +33,14 @@
     }
   ],
   "post-processors": [
-    "vagrant"
+    {
+      "type": "vagrant",
+      "output": "k3os_{{.Provider}}.box"
+    }
   ],
   "variables": {
-    "iso_checksum": "e4263102018f855babc0cf0fed855f6b9d5b1a1f1dfc287922215f1e99e8a846",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.10.2/k3os-amd64.iso",
+    "iso_checksum": "39542f9c0c597c139f0ad4bb7fe24b0a0b53f72b6602094155d1aa7730c87c10",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.0/k3os-amd64.iso",
     "password": "rancher"
   }
 }
