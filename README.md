@@ -21,7 +21,7 @@ from Kubernetes. Both k3OS and k3s upgrades are handled by the k3OS operator.
 ## Quick Start
 
 Download the ISO from the latest [release](https://github.com/rancher/k3os/releases) and run
-in VMware, VirtualBox, or KVM.  The server will automatically start a single node Kubernetes cluster.
+in VMware, VirtualBox, KVM, or bhyve.  The server will automatically start a single node Kubernetes cluster.
 Log in with the user `rancher` and run `kubectl`.  This is a "live install" running from the ISO media
 and changes will not persist after reboot.
 
