@@ -1,0 +1,18 @@
+stages:
+  - validate
+  - build
+
+check:
+  tags:
+    - shell
+  stage: validate
+  script:
+    - packer validate -var-file=variables.json k3os-cloud.json
+
+template:
+  tags:
+    - shell
+  stage: build
+  allow_failure: true
+  script:
+    - packer build -var-file=variables.json k3os-cloud.json
