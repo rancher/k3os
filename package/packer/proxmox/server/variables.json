@@ -1,0 +1,22 @@
+{
+  "template_name":"k3os-cloud",
+  "pve_server":"{{env `pve_server`}}",
+  "pve_username":"{{env `pve_username`}}",
+  "pve_password":"{{env `pve_password`}}",
+  "pve_node":"{{env `pve_node`}}",
+
+  "network-vlan": "{{env `network_vlan`}}",
+
+  "vm-cpu-num": "1",
+  "vm-mem-size": "2048",
+  "vm-disk-size": "8G",
+  "vm-disk-pool": "{{env `vm_disk_pool`}}",
+
+  "ssh_username": "{{env `ssh_username`}}",
+  "ssh_password": "{{env `ssh_password`}}",
+
+  "iso-url": "{{env `iso_url`}}",
+  "iso-storage-pool": "{{env `iso_storage_pool`}}",
+  "iso-checksum": "{{env `iso_checksum`}}",
+  "iso-checksum-type": "{{env `iso_checksum_type`}}"
+}
