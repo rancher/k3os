@@ -454,16 +454,17 @@ disk and run it from these commands.  That often makes it easier to do longer fo
 
 ### `k3os.data_sources`
 
-These are the data sources used for download config from cloud provider. The valid options are
+These are the data sources used for download config from cloud provider. The valid options are:
 
     aws
+    cdrom
+    digitalocean
     gcp
+    hetzner
     openstack
     packet
     scaleway
     vultr
-    hetzner
-    cdrom
 
 More than one can be supported at a time, for example:
 
