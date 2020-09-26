@@ -1,5 +1,4 @@
-ssh_authorized_keys:
-  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0+aEfYuzc58n32hMoXdcBu2VcCkoKl3vc2CQy4PmWygG1DFNdODRh8//H9Rizu14vfUKkv+oo+td9wIKiQZFQpm8TUQB5V4Et3/8YNsrb06CSPEyMw2xKOW+7szWJu0yoeQQpvX4hgiE4y2pYhxFkVkmAH8IXHlvUSGCov46zpyMb0/5RZzll8So87PEOVUM74v2aWhBQsdlskanRPIp6DLs88OxHbVn81QZ7GfNJqQ7zzbNHZuZ1/zXtojB0CyH4Qs/fH5lmS37T5N9h92D2k8EewEY/0hxRDtq/6LQ56JZqL+IWN0muMIMaFhDWDieMMvvd119k7dTNE0LrTNFz jwalker@zion
+ssh_pwauth: yes
 
 write_files:
   - path: /etc/ssh/sshd_config
