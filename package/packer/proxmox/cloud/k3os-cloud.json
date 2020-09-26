@@ -27,7 +27,7 @@
         "<enter>"
       ],
       "boot_wait": "50s",
-      "cloud_init": "true",
+      "cloud_init": "false",
       "disks": [
         {
           "type": "virtio",
