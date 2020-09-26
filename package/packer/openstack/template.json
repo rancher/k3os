@@ -4,7 +4,7 @@
       "flavor": "{{user `os_flavor`}}",
       "floating_ip_pool": "{{user `os_floating_ip_pool`}}",
       "image_name": "k3OS-{{user `k3os_version`}}-amd64",
-      "networks": "{{user `os_networks_id`}}",
+      "networks": "{{user `os_network_id`}}",
       "security_groups": [
         "default"
       ],
@@ -43,15 +43,10 @@
   "variables": {
     "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.0/k3os-amd64.iso",
     "k3os_version": "v0.11.0",
-    "os_auth_url": "{{env `OS_AUTH_URL`}}",
-    "os_domain_name": "{{env `OS_DOMAIN_NAME`}}",
     "os_flavor": "{{env `OS_FLAVOR`}}",
     "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",
-    "os_networks_id": "{{env `OS_NETWORKS_ID`}}",
-    "os_password": "{{env `OS_PASSWORD`}}",
-    "os_source_image_id": "{{env `OS_SOURCE_IMAGE`}}",
-    "os_tenant_name": "{{env `OS_TENANT_NAME`}}",
-    "os_username": "{{env `OS_USERNAME`}}"
+    "os_network_id": "{{env `OS_NETWORK_ID`}}",
+    "os_source_image_id": "{{env `OS_SOURCE_IMAGE`}}"
   }
 }
 
