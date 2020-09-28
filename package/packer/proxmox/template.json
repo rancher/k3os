@@ -1,0 +1,74 @@
+{
+  "builders": [
+    {
+
+      "insecure_skip_tls_verify": "true",
+      "node": "{{user `pve_node`}}",
+      "proxmox_url": "https://{{user `pve_server`}}:8006/api2/json",
+      "password": "{{user `pve_password`}}",
+      "username": "{{user `pve_username`}}",
+
+      "cores": 2,
+      "memory": 2048,
+      "boot_command": [
+        "rancher",
+        "<enter>",
+        "sudo k3os install",
+        "<enter>",
+        "1",
+        "<enter>",
+        "2",
+        "<enter>",
+        "Y",
+        "<enter>",
+        "http://{{ .HTTPIP }}:{{ .HTTPPort }}/cloud.yml",
+        "<enter>",
+        "Y",
+        "<enter>"
+      ],
+      "boot_wait": "50s",
+      "cloud_init": "false",
+      "disks": [
+        {
+          "type": "virtio",
+          "disk_size": "8G",
+          "storage_pool": "{{user `vm-disk-pool`}}",
+          "storage_pool_type": "rbd"
+        }
+      ],
+      "http_directory": "config",
+      "iso_url": "{{user `iso-url`}}",
+      "iso_checksum": "{{user `iso-checksum-type`}}:{{user `iso-checksum`}}",
+      "iso_storage_pool": "{{user `iso-storage-pool`}}",
+      "network_adapters": [
+        {
+          "model": "virtio",
+          "bridge": "{{user `network-vlan`}}",
+          "firewall": true
+        }
+      ],
+      "os": "l26",
+      "qemu_agent": "true",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_username": "{{user `ssh_username`}}",
+      "template_name": "{{user `template_name`}}",
+      "template_description": "Template Server K3Os v011",
+      "type": "proxmox",
+      "unmount_iso": true,
+      "vga": {
+          "type": "qxl"
+      },
+      "vm_name": "{{user `template_name`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "echo hello world"
+      ],
+      "type": "shell"
+    }
+  ]
+}
+

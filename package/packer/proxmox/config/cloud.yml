@@ -1,0 +1,19 @@
+write_files:
+  - path: /etc/ssh/sshd_config
+    content: |
+      AllowTcpForwarding      no
+      GatewayPorts            no
+      PasswordAuthentication  yes # necessary for access from packer build
+      X11Forwarding           no
+      PermitRootLogin         no
+      LoginGraceTime          30s
+      MaxAuthTries            5
+
+      Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+      MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
+      KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+      Subsystem   sftp    internal-sftp
+
+k3os:
+  datasource: cdrom
+  password: YourSSHPasswordReplaceIt
