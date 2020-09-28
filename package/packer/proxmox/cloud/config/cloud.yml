@@ -1,5 +1,3 @@
-ssh_pwauth: yes
-
 write_files:
   - path: /etc/ssh/sshd_config
     content: |
@@ -17,5 +15,4 @@ write_files:
       Subsystem   sftp    internal-sftp
 
 k3os:
-  password: YourSSHPassword 
   datasource: cdrom
