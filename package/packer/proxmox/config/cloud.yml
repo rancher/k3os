@@ -16,3 +16,4 @@ write_files:
 
 k3os:
   datasource: cdrom
+  password: YourSSHPasswordReplaceIt
