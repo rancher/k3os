@@ -57,6 +57,7 @@ RUN apk --no-cache add \
     vim \
     wireguard-tools \
     wpa_supplicant \
+    xfsprogs \
     xz \
  && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
  && mv -vf /etc/conf.d/rngd             /etc/conf.d/rngd.orig \
