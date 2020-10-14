@@ -78,7 +78,7 @@ Persistent changes should be kept in `/var`, `/usr/local`, `/home`, or `/opt`.
 ### Upstream Distros
 
 Most of the user-space binaries comes from Alpine and are repackaged for k3OS.  Currently the
-kernel source is coming from Ubuntu 18.04 LTS. Some code and a lot of inspiration came from
+kernel source is coming from Ubuntu 20.04 LTS. Some code and a lot of inspiration came from
 [LinuxKit](https://github.com/linuxkit/linuxkit)
 
 ## Installation
