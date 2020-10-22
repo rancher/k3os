@@ -25,6 +25,7 @@ RUN apk --no-cache add \
     hvtools \
     iproute2 \
     iptables \
+    irqbalance \
     iscsi-scst \
     jq \
     kbd-bkeymaps \
