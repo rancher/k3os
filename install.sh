@@ -215,7 +215,11 @@ EOF
     fi
 
     if [ "$K3OS_INSTALL_FORCE_EFI" = "true" ]; then
-        GRUB_TARGET="--target=x86_64-efi"
+        if [ $(uname -m) = "aarch64" ]; then
+            GRUB_TARGET="--target=arm64-efi"
+        else
+            GRUB_TARGET="--target=x86_64-efi"
+        fi
     fi
 
     grub-install ${GRUB_TARGET} --boot-directory=${TARGET}/boot --removable ${DEVICE}
