@@ -284,7 +284,7 @@ validate_progs()
     done
 
     if [[ -n "${MISSING}" ]]; then
-        printf "The following required program is missing for installation: %s\\n" "${MISSING[*]}"
+        printf "The following required program is missing for installation: %s\\n" "${MISSING[@]}"
         exit 1
     fi
 }
