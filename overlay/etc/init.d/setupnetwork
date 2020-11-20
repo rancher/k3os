@@ -1,0 +1,12 @@
+
+#!/sbin/openrc-run
+
+depend() {
+    provide net
+}
+
+name="setupnetwork"
+
+start(){
+	/sbin/setupnetwork
+}

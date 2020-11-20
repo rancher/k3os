@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# happy path and flawless cmdline only
+
+declare -a eth0 eth1 dns
+net_eth0=""
+net_eth1=""
+net_dns=""
+start(){
+	cmdline=($(cat /proc/cmdline))
+	for entry in ${cmdline[@]} ; do
+	    case $entry in
+	    net_*)
+	    	eval $entry
+		;;
+	    esac
+	done
+}
+
+start
+
+eth0=(${net_eth0//,/ })
+eth1=(${net_eth1//,/ })
+dns=(${net_dns//,/ })
+
+if [ ${#eth0[@]} -eq 6 ] ; then
+	is_priv=${eth0[$((${#eth0[@]}-1))]}
+	if [ "${is_priv}" = "priv" ] ; then
+		eth0_ip=${eth0[0]}
+		eth0_gw=${eth0[1]}
+		eth0_net=${eth0[2]}
+		eth0_ypv6=${eth0[3]}
+		eth0_ygw6=${eth0[4]}
+	elif [ "${is_priv}" = "pub" ] ; then
+		:
+	fi
+
+fi
+
+if [ ${#eth1[@]} -eq 4 ] ; then
+	is_priv=${eth1[$((${#eth1[@]}-1))]}
+	if [ "${is_priv}" = "public" ] ; then
+		eth1_ip=${eth1[0]}
+		eth1_gw=${eth1[1]}
+		eth1_ipv6="slaac"
+	elif [ "${is_priv}" = "priv" ] ; then
+		:
+	fi
+
+fi
+ex "ip link set eth0 up"
+ex "ip addr add ${eth0_ip} dev eth0"
+ex "ip r add ${eth0_net} via ${eth0_gw}"
+ex "ip addr add ${eth0_ypv6} dev eth0"
+ex "ip r add 201::/7 via ${eth0_ygw6}"
+
+if [ "$eth1_ipv6" = "slaac" ] ; then
+	ex "ip link set eth1 up"
+	ex "ip addr add ${eth1_ip} dev eth1"
+	ex "ip route add default via ${eth1_gw}"
+	ex "sysctl -w net.ipv6.conf.eth1.enable_ipv6=1"
+fi
+
+rm /etc/resolf.conf
+echo "" > resolv.conf
+for i in ${dns[@]} ; do
+	echo "nameserver ${i}" >> resolv.conf
+done
+
