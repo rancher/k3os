@@ -1,4 +1,3 @@
-
 #!/sbin/openrc-run
 
 depend() {
