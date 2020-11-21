@@ -39,7 +39,7 @@ fi
 
 if [ ${#eth1[@]} -eq 4 ] ; then
 	is_priv=${eth1[$((${#eth1[@]}-1))]}
-	if [ "${is_priv}" = "public" ] ; then
+	if [ "${is_priv}" = "pub" ] ; then
 		eth1_ip=${eth1[0]}
 		eth1_gw=${eth1[1]}
 		eth1_ipv6="slaac"
@@ -48,22 +48,22 @@ if [ ${#eth1[@]} -eq 4 ] ; then
 	fi
 
 fi
-ex "ip link set eth0 up"
-ex "ip addr add ${eth0_ip} dev eth0"
-ex "ip r add ${eth0_net} via ${eth0_gw}"
-ex "ip addr add ${eth0_ypv6} dev eth0"
-ex "ip r add 201::/7 via ${eth0_ygw6}"
+ip link set eth0 up
+ip addr add ${eth0_ip} dev eth0
+ip r add ${eth0_net} via ${eth0_gw}
+ip addr add ${eth0_ypv6} dev eth0
+ip r add 201::/7 via ${eth0_ygw6}
 
 if [ "$eth1_ipv6" = "slaac" ] ; then
-	ex "ip link set eth1 up"
-	ex "ip addr add ${eth1_ip} dev eth1"
-	ex "ip route add default via ${eth1_gw}"
-	ex "sysctl -w net.ipv6.conf.eth1.enable_ipv6=1"
+	ip link set eth1 up
+	ip addr add ${eth1_ip} dev eth1
+	ip route add default via ${eth1_gw}
+	sysctl -w net.ipv6.conf.eth1.enable_ipv6=1
 fi
 
 rm /etc/resolf.conf
 echo "" > resolv.conf
 for i in ${dns[@]} ; do
-	echo "nameserver ${i}" >> resolv.conf
+	echo "nameserver ${i}" >> /etc/resolv.conf
 done
 
