@@ -19,50 +19,125 @@ start(){
 
 start
 
+sysctl -w net.ipv6.conf.all.accept_ra=2
+sysctl -w net.ipv6.conf.all.accept_ra_defrtr=2
+
+
+sysctl -w net.ipv6.conf.eth1.accept_ra=2
+sysctl -w net.ipv6.conf.eth1.accept_ra_defrtr=2
+
+# if there is no eth1, unset these parameters
+if ! ip link show dev eth1 2> /dev/null ; then unset net_eth1 ; fi
+
 eth0=(${net_eth0//,/ })
 eth1=(${net_eth1//,/ })
 dns=(${net_dns//,/ })
 
-if [ ${#eth0[@]} -eq 6 ] ; then
-	is_priv=${eth0[$((${#eth0[@]}-1))]}
-	if [ "${is_priv}" = "priv" ] ; then
+
+declare eth0_default
+declare eth1_default
+
+# no phys eth1? remove the parameter
+if ! ip link show dev eth1 > /dev/null 2>&1 ; then 
+	unset net_eth1
+	eth0_default=1
+fi
+
+
+echo ${eth0[@]}
+echo ${eth1[@]}
+echo ${dns[@]}
+
+
+# eth0 receives an rfc1918 addr through the cmdline
+# if it has 7 parms, ipv4/msk,gw,netroute,ipv6/msk,gw,priv
+# OR                 ipv4/msk,gw,netroute,priv
+
+is_priv=${eth0[$((${#eth0[@]}-1))]}
+
+# verify if "priv" __and__ no net_eth1 or even no phys eth1
+if [ "${is_priv}" = "priv" -o -z "${net_eth1}" ] ; then
+	if [ ${#eth0[@]} -eq 6  ] ; then
 		eth0_ip=${eth0[0]}
 		eth0_gw=${eth0[1]}
 		eth0_net=${eth0[2]}
-		eth0_ypv6=${eth0[3]}
-		eth0_ygw6=${eth0[4]}
-	elif [ "${is_priv}" = "pub" ] ; then
-		:
-	fi
+		eth0_ip6=${eth0[3]}
+		eth0_gw6=${eth0[4]}
+	# no ipv6?
+	elif [ ${#eth0[@]} -eq 4 ] ; then
+		eth0_ip=${eth0[0]}
+		eth0_gw=${eth0[1]}
+		eth0_net=${eth0[2]}
+	else
+		echo "[-] incorrect number of parameters"
+		exit 1
 
+	fi
+	eth0_default=1
 fi
 
-if [ ${#eth1[@]} -eq 4 ] ; then
-	is_priv=${eth1[$((${#eth1[@]}-1))]}
-	if [ "${is_priv}" = "pub" ] ; then
+# eth1 has **always** the public ip (for now), where
+# it has the public ipv4, it's gateway and the eventual ygg config 
+# so : ipv4/msk,gw,yggipv6/msk,gw6,slaac,pub
+# OR:  ipv4/msk,gw,slaac,pub
+
+# that means that there can be 2 sets of pawametews:
+
+
+is_priv=${eth1[$((${#eth1[@]}-1))]}
+if [ "${is_priv}" = "public" ] ; then
+	if [ ${#eth1[@]} -eq 6 ] ; then
 		eth1_ip=${eth1[0]}
 		eth1_gw=${eth1[1]}
-		eth1_ipv6="slaac"
-	elif [ "${is_priv}" = "priv" ] ; then
-		:
-	fi
+		eth1_ypv6=${eth1[2]}
+		eth1_ygw6=${eth1[3]}
+		# thus eth0_default is no more
+	else
+		eth1_ip=${eth1[0]}
+		eth1_gw=${eth1[1]}
 
+	fi
+	eth1_ipv6="slaac"
+	eth0_default=0
 fi
+
+# OK, on with it
+
+# eth0 is always there.
+
 ip link set eth0 up
 ip addr add ${eth0_ip} dev eth0
-ip r add ${eth0_net} via ${eth0_gw}
-ip addr add ${eth0_ypv6} dev eth0
-ip r add 201::/7 via ${eth0_ygw6}
 
-if [ "$eth1_ipv6" = "slaac" ] ; then
+if [ ${eth0_default} = 1 ] ; then 
+	ip r add default via ${eth0_gw}
+else
+	ip r add ${eth0_net} via ${eth0_gw}
+fi
+
+if [ ! -z ${eth0_ip6} ] ; then
+	# eth0_ipv6 would typically be an fd00/8 address
+	ip addr add ${eth0_ip6} dev eth0
+	if [ ${eth0_default} -eq 1 ] ; then 
+		ip -6 r add default via ${eth0_gw6}
+	else
+		ip -6 r add fd00::/7 via ${eth0_gw6}
+	fi
+fi
+
+# eth1 exists and has config
+if [ ! -z ${net_eth1} -a "$eth1_ipv6" = "slaac" ] ; then
 	ip link set eth1 up
 	ip addr add ${eth1_ip} dev eth1
 	ip route add default via ${eth1_gw}
-	sysctl -w net.ipv6.conf.eth1.enable_ipv6=1
+	if [ ! -z ${eth1_ypv6} ]; then
+		ip addr add ${eth1_ypv6} dev eth1
+		ip route add 200::/7 via ${eth1_ygw6}
+	fi
 fi
 
-rm /etc/resolf.conf
-echo "" > resolv.conf
+# formality
+rm /etc/resolv.conf
+echo "" > /etc/resolv.conf
 for i in ${dns[@]} ; do
 	echo "nameserver ${i}" >> /etc/resolv.conf
 done
