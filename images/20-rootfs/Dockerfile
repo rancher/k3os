@@ -68,7 +68,6 @@ RUN rm -rf \
  && ln -s /usr/lib/os-release /usr/src/image/etc/os-release
 
 RUN rm -rf \
-    /usr/src/image/sbin/apk \
     /usr/src/image/usr/include \
     /usr/src/image/usr/lib/apk \
     /usr/src/image/usr/lib/pkgconfig \
