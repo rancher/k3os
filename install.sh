@@ -223,7 +223,7 @@ EOF
 
 get_iso()
 {
-    ISO_DEVICE=$(blkid -L K3OS || true)
+    ISO_DEVICE=$(blkid -t LABEL="K3OS" -l | cut -d : -f 1 || true) # patch udev cruft
     if [ -z "${ISO_DEVICE}" ]; then
         for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
             mkdir -p ${DISTRO}
