@@ -111,6 +111,7 @@ if [ ${eth0_default} = 1 ] ; then
 	ip r add default via ${eth0_gw}
 else
 	ip r add ${eth0_net} via ${eth0_gw}
+	ip r add 100.64.0.0/10 via ${eth0_gw}
 fi
 
 if [ ! -z ${eth0_ip6} ] ; then
