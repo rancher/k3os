@@ -22,15 +22,18 @@ start
 sysctl -w net.ipv6.conf.all.accept_ra=2
 sysctl -w net.ipv6.conf.all.accept_ra_defrtr=2
 
-
-sysctl -w net.ipv6.conf.eth1.accept_ra=2
-sysctl -w net.ipv6.conf.eth1.accept_ra_defrtr=2
+if [ -d "/sys/class/net/eth1" ] ; then
+	sysctl -w net.ipv6.conf.eth1.accept_ra=2
+	sysctl -w net.ipv6.conf.eth1.accept_ra_defrtr=2
+	eth1=(${net_eth1//,/ })
+else
+	unset net_eth1
+fi
 
 # if there is no eth1, unset these parameters
 if ! ip link show dev eth1 2> /dev/null ; then unset net_eth1 ; fi
 
 eth0=(${net_eth0//,/ })
-eth1=(${net_eth1//,/ })
 dns=(${net_dns//,/ })
 
 
@@ -44,11 +47,6 @@ if ! ip link show dev eth1 > /dev/null 2>&1 ; then
 fi
 
 
-echo ${eth0[@]}
-echo ${eth1[@]}
-echo ${dns[@]}
-
-
 # eth0 receives an rfc1918 addr through the cmdline
 # if it has 7 parms, ipv4/msk,gw,netroute,ipv6/msk,gw,priv
 # OR                 ipv4/msk,gw,netroute,priv
@@ -56,7 +54,7 @@ echo ${dns[@]}
 is_priv=${eth0[$((${#eth0[@]}-1))]}
 
 # verify if "priv" __and__ no net_eth1 or even no phys eth1
-if [[ "${is_priv}" ~= "priv" -o -z "${net_eth1}" ]] ; then
+if [[ "${is_priv}" == *"priv"* ]] ; then
 	if [ ${#eth0[@]} -eq 6  ] ; then
 		eth0_ip=${eth0[0]}
 		eth0_gw=${eth0[1]}
@@ -83,22 +81,23 @@ fi
 
 # that means that there can be 2 sets of pawametews:
 
+if [ ! -z "${net_eth1}" ] ; then
+	is_priv=${eth1[$((${#eth1[@]}-1))]}
+	if [[ "${is_priv}" == *"pub"* ]] ; then
+		if [ ${#eth1[@]} -eq 6 ] ; then
+			eth1_ip=${eth1[0]}
+			eth1_gw=${eth1[1]}
+			eth1_ypv6=${eth1[2]}
+			eth1_ygw6=${eth1[3]}
+			# thus eth0_default is no more
+		else
+			eth1_ip=${eth1[0]}
+			eth1_gw=${eth1[1]}
 
-is_priv=${eth1[$((${#eth1[@]}-1))]}
-if [[ "${is_priv}" ~= "public" ]] ; then
-	if [ ${#eth1[@]} -eq 6 ] ; then
-		eth1_ip=${eth1[0]}
-		eth1_gw=${eth1[1]}
-		eth1_ypv6=${eth1[2]}
-		eth1_ygw6=${eth1[3]}
-		# thus eth0_default is no more
-	else
-		eth1_ip=${eth1[0]}
-		eth1_gw=${eth1[1]}
-
+		fi
+		eth1_ipv6="slaac"
+		eth0_default=0
 	fi
-	eth1_ipv6="slaac"
-	eth0_default=0
 fi
 
 # OK, on with it
