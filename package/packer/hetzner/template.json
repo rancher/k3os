@@ -1,0 +1,49 @@
+{
+  "builders": [
+      {
+          "type": "hcloud",
+          "location": "hel1",
+          "image": "ubuntu-20.04",
+          "server_type": "cx11",
+          "ssh_username": "root",
+          "snapshot_name": "rancher-k3os-{{user `k3os_version`}}-amd64-{{isotime `200601020304`}}",
+          "snapshot_labels":[
+            {
+              "name": "k3OS",
+              "version": "{{user `k3os_version`}}"
+            }]
+      }],
+  "provisioners": [
+    {
+      "destination": "/tmp/config.yaml",
+      "source": "./config.yaml",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/",
+      "source": "../../../install.sh",
+      "type": "file"
+    },
+    {
+      "inline": [
+        "sudo apt-get update -y",
+        "sudo apt-get install -y dosfstools parted",
+        "sudo bash -x /tmp/install.sh --takeover --poweroff --debug --tty ttyS0 --config /tmp/config.yaml --no-format $(findmnt / -o SOURCE -n) \"{{user `iso_url`}}\""
+      ],
+      "type": "shell"
+    },
+    {
+      "inline": [
+        "set -x; sudo systemd-run --on-active=3 --timer-property=AccuracySec=100ms sudo systemctl reboot --force --force; sync; echo Rebooting"
+      ],
+      "pause_after": "3m",
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.0/k3os-amd64.iso",
+    "k3os_version": "v0.11.0",
+    "region": "hel1-dc2"
+  }
+}
+
