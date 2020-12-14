@@ -51,6 +51,7 @@ RUN apk --no-cache add \
     rng-tools \
     rsync \
     strace \
+    smartmontools \
     sudo \
     tar \
     tzdata \
