@@ -41,7 +41,7 @@
     }
   ],
   "variables": {
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.1/k3os-amd64.iso",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.1/k3os-vm-amd64.iso",
     "k3os_version": "v0.11.1",
     "os_flavor": "{{env `OS_FLAVOR`}}",
     "os_floating_ip_pool": "{{env `OS_FLOATING_IP_POOL`}}",

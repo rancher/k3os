@@ -19,6 +19,11 @@ RUN mkdir -p /output && \
     depmod -b . $(cat /usr/src/kernel/version) && \
     mksquashfs . /output/kernel.squashfs
 
+RUN cd /usr/src/kernel && \
+    rm -rf headers/* && \
+    rm -rf lib/firmware/* && \
+    mksquashfs . /output/kernel.vm.squashfs
+
 RUN cp /usr/src/kernel/version /output/ && \
     cp /usr/src/kernel/vmlinuz /output/
 

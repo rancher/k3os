@@ -14,3 +14,6 @@ RUN mkdir -vp $(cat version)
 RUN ln -sf $(cat version) current
 RUN mv -vf initrd kernel.squashfs current/
 RUN rm -vf version vmlinuz
+
+RUN mkdir /output-vm/ && \
+    mv -vf kernel.vm.squashfs /output-vm/

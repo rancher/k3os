@@ -55,7 +55,7 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.0/k3os-arm64.iso",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.0/k3os-vm-arm64.iso",
     "k3os_version": "v0.11.0",
     "region": "us-east-1"
   }

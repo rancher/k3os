@@ -25,7 +25,7 @@ Example agent-variable.json
     "vcenter_folder": "Packer_Images",
     "vcenter_host": "esxi.example.com",
     "vcenter_network": "10.0.0.x-24",
-    "vcenter_iso_path": "[datastore0] ISOs/k3os-amd64.iso",
+    "vcenter_iso_path": "[datastore0] ISOs/k3os-vm-amd64.iso",
     "hostname": "k3os-agent-template",
     "ssh_username": "rancher",
     "rancher_password": "P@$$w0rd1",
