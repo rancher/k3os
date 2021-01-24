@@ -152,6 +152,12 @@ func ApplyK3S(cfg *config.CloudConfig, restart, install bool) error {
 		args = append(args, "--kubelet-arg", "register-with-taints="+taint)
 	}
 
+	for _, arg := range args {
+		if arg == "--rootless" {
+			vars = append(vars, fmt.Sprintf("INSTALL_K3S_EXEC_USER=%s", "rancher"))
+		}
+	}
+
 	cmd := exec.Command("/usr/libexec/k3os/k3s-install.sh", args...)
 	cmd.Env = append(os.Environ(), vars...)
 	cmd.Stderr = os.Stderr

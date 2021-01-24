@@ -50,6 +50,7 @@ RUN apk --no-cache add \
     qemu-guest-agent \
     rng-tools \
     rsync \
+    shadow-uidmap \
     strace \
     sudo \
     tar \

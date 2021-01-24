@@ -28,6 +28,8 @@ setup_users()
     addgroup -g 1000 rancher
     adduser -s /bin/bash -u 1000 -D -G rancher rancher
     echo 'rancher:*' | chpasswd -e
+    echo "rancher:231072:65536" > /etc/subuid
+    echo "rancher:231072:65536" > /etc/subgid
 }
 
 setup_dirs()
