@@ -10,6 +10,10 @@ ARG REPO
 ARG TAG
 FROM ${REPO}/k3os-k3s:${TAG} as k3s
 
+ARG REPO
+ARG TAG
+FROM ${REPO}/k3os-zosbin:${TAG} as zosbin
+
 FROM base as k3os-build
 ARG VERSION
 ARG ARCH
@@ -19,6 +23,9 @@ COPY --from=base /lib /usr/src/image/lib/
 COPY --from=base /sbin /usr/src/image/sbin/
 COPY --from=base /etc /usr/src/image/etc/
 COPY --from=base /usr /usr/src/image/usr/
+
+COPY --from=zosbin /0-db/zdbd/zdb /usr/src/image/usr/bin/zdb
+COPY --from=zosbin /0-db-fs/zdbfs /usr/src/image/usr/bin/zdbfs
 
 # Fix up more stuff to move everything to /usr
 RUN cd /usr/src/image && \

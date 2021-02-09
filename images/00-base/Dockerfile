@@ -18,8 +18,10 @@ RUN apk --no-cache add \
     efibootmgr \
     eudev \
     findutils \
+    fuse3 \
     grub-efi \
     haveged \
+    hiredis \
     htop \
     hvtools \
     iproute2 \
