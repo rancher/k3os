@@ -1,25 +1,34 @@
 # github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d
 github.com/cpuguy83/go-md2man/v2/md2man
 # github.com/docker/docker v1.13.1
+## explicit
 github.com/docker/docker/pkg/mount
 github.com/docker/docker/pkg/reexec
 # github.com/docker/go-units v0.4.0
+## explicit
 github.com/docker/go-units
 # github.com/ghodss/yaml v1.0.0
+## explicit
 github.com/ghodss/yaml
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
+## explicit
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/mattn/go-isatty v0.0.10
+## explicit
 github.com/mattn/go-isatty
 # github.com/mattn/go-shellwords v1.0.5
 github.com/mattn/go-shellwords
 # github.com/otiai10/copy v1.0.2
+## explicit
 github.com/otiai10/copy
 # github.com/paultag/go-modprobe v0.0.0-20180523225901-7ccf6a1b5271
+## explicit
 github.com/paultag/go-modprobe
 # github.com/pkg/errors v0.8.1
+## explicit
 github.com/pkg/errors
 # github.com/rancher/mapper v0.0.0-20190814232720-058a8b7feb99
+## explicit
 github.com/rancher/mapper
 github.com/rancher/mapper/convert
 github.com/rancher/mapper/convert/merge
@@ -27,23 +36,41 @@ github.com/rancher/mapper/definition
 github.com/rancher/mapper/mappers
 github.com/rancher/mapper/values
 # github.com/rancher/wrangler v0.3.1
+## explicit
 github.com/rancher/wrangler/pkg/name
 # github.com/russross/blackfriday/v2 v2.0.1
 github.com/russross/blackfriday/v2
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
 # github.com/sirupsen/logrus v1.4.2
+## explicit
 github.com/sirupsen/logrus
+# github.com/stretchr/testify v1.4.0
+## explicit
 # github.com/urfave/cli v1.22.2
+## explicit
 github.com/urfave/cli
 # golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
+## explicit
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/sys v0.0.0-20191127021746-63cb32ae39b2
+## explicit
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # gopkg.in/freddierice/go-losetup.v1 v1.0.0-20170407175016-fc9adea44124
+## explicit
 gopkg.in/freddierice/go-losetup.v1
 # gopkg.in/yaml.v2 v2.2.4
 gopkg.in/yaml.v2
 # pault.ag/go/topsort v0.0.0-20160530003732-f98d2ad46e1a
+## explicit
 pault.ag/go/topsort
+# k8s.io/api => github.com/rancher/kubernetes/staging/src/k8s.io/api v1.16.3-k3s.2
+# k8s.io/apiextensions-apiserver => github.com/rancher/kubernetes/staging/src/k8s.io/apiextensions-apiserver v1.16.3-k3s.2
+# k8s.io/apimachinery => github.com/rancher/kubernetes/staging/src/k8s.io/apimachinery v1.16.3-k3s.2
+# k8s.io/apiserver => github.com/rancher/kubernetes/staging/src/k8s.io/apiserver v1.16.3-k3s.2
+# k8s.io/client-go => github.com/rancher/kubernetes/staging/src/k8s.io/client-go v1.16.3-k3s.2
+# k8s.io/code-generator => github.com/rancher/kubernetes/staging/src/k8s.io/code-generator v1.16.3-k3s.2
+# k8s.io/component-base => github.com/rancher/kubernetes/staging/src/k8s.io/component-base v1.16.3-k3s.2
+# k8s.io/kube-aggregator => github.com/rancher/kubernetes/staging/src/k8s.io/kube-aggregator v1.16.3-k3s.2
+# k8s.io/metrics => github.com/rancher/kubernetes/staging/src/k8s.io/metrics v1.16.3-k3s.2
