@@ -1,5 +1,5 @@
 {
-  "template_name":"k3os-cloud",
+  "template_name":"k3os-v020-template",
   "pve_server":"{{env `pve_server`}}",
   "pve_username":"{{env `pve_username`}}",
   "pve_password":"{{env `pve_password`}}",
@@ -15,8 +15,8 @@
   "ssh_username": "{{env `ssh_username`}}",
   "ssh_password": "{{env `ssh_password`}}",
 
-  "iso-url": "{{env `iso_url`}}",
+  "iso-url": "https://github.com/rancher/k3os/releases/download/v0.20.4-k3s1r0/k3os-amd64.iso",
   "iso-storage-pool": "{{env `iso_storage_pool`}}",
-  "iso-checksum": "{{env `iso_checksum`}}",
-  "iso-checksum-type": "{{env `iso_checksum_type`}}"
+  "iso-checksum": "d4733f747e95c4f07130bd10e27a14fc37d0584364ae5966e6564aa91c237e27cadcd5617e6130583629e963eb7d52f5a4f4fbd009e5fa3fc658ffff16bf2675",
+  "iso-checksum-type": "sha512"
 }

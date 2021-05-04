@@ -17,8 +17,6 @@
         "<enter>",
         "1",
         "<enter>",
-        "2",
-        "<enter>",
         "Y",
         "<enter>",
         "http://{{ .HTTPIP }}:{{ .HTTPPort }}/cloud.yml",
@@ -26,7 +24,7 @@
         "Y",
         "<enter>"
       ],
-      "boot_wait": "50s",
+      "boot_wait": "90s",
       "cloud_init": "false",
       "disks": [
         {
@@ -52,9 +50,10 @@
       "ssh_password": "{{user `ssh_password`}}",
       "ssh_username": "{{user `ssh_username`}}",
       "template_name": "{{user `template_name`}}",
-      "template_description": "Template Server K3Os v011",
+      "template_description": "Template Server K3Os v020",
       "type": "proxmox",
       "unmount_iso": true,
+      "boot": "order=virtio0;ide2",
       "vga": {
           "type": "qxl"
       },
