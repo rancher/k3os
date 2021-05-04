@@ -4,13 +4,22 @@
 
 1. Build vagrant box image using [Packer](https://www.packer.io/): 
 
-```
+```bash
+# JSON syntax
 packer build template.json
+# HCL syntax
+packer build template.pkr.hcl
 ```
 
-4. Run the Vagrant box:
+2. Import vagrant box
 
+```bash
+vagrant box add --provider virtualbox k3os k3os_virtualbox.box
 ```
+
+3. Run the Vagrant box:
+
+```bash
 vagrant up
 ```
 

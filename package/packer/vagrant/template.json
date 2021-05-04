@@ -15,13 +15,19 @@
         "y",
         "<enter>"
       ],
+      "export_opts":
+      [
+        "--manifest",
+        "--vsys", "0",
+        "--description", "{{user `box_description`}}",
+        "--version", "{{user `box_version`}}"
+      ],
       "boot_wait": "40s",
       "disk_size": "8000",
       "format": "ova",
       "guest_os_type": "Linux_64",
       "http_directory": ".",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "iso_checksum_type": "sha256",
+      "iso_checksum": "sha256:{{user `iso_checksum`}}",
       "iso_url": "{{user `iso_url`}}",
       "post_shutdown_delay": "10s",
       "shutdown_command": "sudo poweroff",
@@ -39,9 +45,11 @@
     }
   ],
   "variables": {
-    "iso_checksum": "39542f9c0c597c139f0ad4bb7fe24b0a0b53f72b6602094155d1aa7730c87c10",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.0/k3os-amd64.iso",
-    "password": "rancher"
+    "iso_checksum": "4DF22D4AEAFEEFD061BB0E33BF9E250E4991DD1853F3751B27B6792773EC1A2D",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.20.4-k3s1r0/k3os-amd64.iso",
+    "password": "rancher",
+    "box_version": "v0.20.4-k3s1r0",
+    "box_description": "k3OS is a Linux distribution designed to remove as much OS maintenance as possible in a Kubernetes cluster"
   }
 }
 
