@@ -24,7 +24,7 @@ fi
 # ./scripts/run-qemu k3os.mode=live
 
 ## silent install
-# DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher k3os.mode=install k3os.install.silent k3os.install.device=/dev/vda
+# DISK_NAME=test.img ./scripts/run-qemu k3os.mode=install k3os.install.silent k3os.install.device=/dev/vda k3os.install.power_off=true
 
 ## run installed vm
 # DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher
