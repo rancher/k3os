@@ -45,4 +45,4 @@ exec $QEMU_SYSTEM \
     -initrd $(dirname $0)/../dist/artifacts/k3os-initrd-$ARCH \
     -drive if=ide,media=cdrom,file=$(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
     -drive if=virtio,media=disk,file=$STATE_DIR/${DISK_NAME} \
-    -append "console=${CONSOLE:=ttyS0} loglevel=${LOGLEVEL:=4} printk.devkmsg=${PRINTK_DEVKMSG:=on} $*"
+    -append "console=${CONSOLE:=ttyS0} loglevel=${LOGLEVEL:=4} printk.devkmsg=${PRINTK_DEVKMSG:=on} apparmor=0 $*"
