@@ -170,7 +170,7 @@ menuentry "k3OS Current" {
   set sqfile=/k3os/system/kernel/current/kernel.squashfs
   loopback loop0 /\$sqfile
   set root=(\$root)
-  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
+  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 apparmor=0 $GRUB_DEBUG
   initrd /k3os/system/kernel/current/initrd
 }
 
@@ -179,7 +179,7 @@ menuentry "k3OS Previous" {
   set sqfile=/k3os/system/kernel/previous/kernel.squashfs
   loopback loop0 /\$sqfile
   set root=(\$root)
-  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
+  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 apparmor=0 $GRUB_DEBUG
   initrd /k3os/system/kernel/previous/initrd
 }
 
@@ -188,7 +188,7 @@ menuentry "k3OS Rescue (current)" {
   set sqfile=/k3os/system/kernel/current/kernel.squashfs
   loopback loop0 /\$sqfile
   set root=(\$root)
-  linux (loop0)/vmlinuz printk.devkmsg=on rescue console=tty1
+  linux (loop0)/vmlinuz printk.devkmsg=on rescue console=tty1 apparmor=0
   initrd /k3os/system/kernel/current/initrd
 }
 
@@ -197,7 +197,7 @@ menuentry "k3OS Rescue (previous)" {
   set sqfile=/k3os/system/kernel/previous/kernel.squashfs
   loopback loop0 /\$sqfile
   set root=(\$root)
-  linux (loop0)/vmlinuz printk.devkmsg=on rescue console=tty1
+  linux (loop0)/vmlinuz printk.devkmsg=on rescue console=tty1 apparmor=0
   initrd /k3os/system/kernel/previous/initrd
 }
 EOF
