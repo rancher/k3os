@@ -45,10 +45,10 @@
     }
   ],
   "variables": {
-    "iso_checksum": "4DF22D4AEAFEEFD061BB0E33BF9E250E4991DD1853F3751B27B6792773EC1A2D",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.20.4-k3s1r0/k3os-amd64.iso",
+    "iso_checksum": "61a25b59a338447aa5fdca3aa2a4abd8c703b210b482be0ba50efe615cc8ab1d",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.20.6-k3s1r0/k3os-amd64.iso",
     "password": "rancher",
-    "box_version": "v0.20.4-k3s1r0",
+    "box_version": "v0.20.6-k3s1r0",
     "box_description": "k3OS is a Linux distribution designed to remove as much OS maintenance as possible in a Kubernetes cluster"
   }
 }
