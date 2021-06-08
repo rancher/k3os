@@ -1,6 +1,6 @@
 #!/bin/bash
-. $(dirname $0)/version
-: ${STATE_DIR:=$(dirname $0)/../build/state/k3os-$TAG} # unique value per vm instance
+. $(dirname "$0")/version
+: ${STATE_DIR:=$(dirname "$0")/../build/state/k3os-$TAG} # unique value per vm instance
 
 set -e
 
@@ -41,8 +41,8 @@ exec $QEMU_SYSTEM \
     -chardev socket,path=$STATE_DIR/qga.sock,server,nowait,id=qga0 \
     -device virtio-serial \
     -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0 \
-    -kernel $(dirname $0)/../dist/artifacts/k3os-vmlinuz-$ARCH \
-    -initrd $(dirname $0)/../dist/artifacts/k3os-initrd-$ARCH \
-    -drive if=ide,media=cdrom,file=$(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
+    -kernel $(dirname "$0")/../dist/artifacts/k3os-vmlinuz-$ARCH \
+    -initrd $(dirname "$0")/../dist/artifacts/k3os-initrd-$ARCH \
+    -drive if=ide,media=cdrom,file=$(dirname "$0")/../dist/artifacts/k3os-$ARCH.iso \
     -drive if=virtio,media=disk,file=$STATE_DIR/${DISK_NAME} \
     -append "console=${CONSOLE:=ttyS0} loglevel=${LOGLEVEL:=4} printk.devkmsg=${PRINTK_DEVKMSG:=on} $*"
