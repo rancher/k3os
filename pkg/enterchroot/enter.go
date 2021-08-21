@@ -37,6 +37,9 @@ func Enter() {
 
 	setResourceLimit(unix.RLIMIT_NOFILE, 1048576, 1048576)
 	setResourceLimit(unix.RLIMIT_NPROC, unix.RLIM_INFINITY, unix.RLIM_INFINITY)
+	// Increase mlocks to avoid Go crashes
+	// https://github.com/golang/go/wiki/LinuxKernelSignalVectorBug
+	setResourceLimit(unix.RLIMIT_MEMLOCK, 67108864, 67108864)
 
 	logrus.Debug("Running bootstrap")
 	err := run(os.Getenv("ENTER_DATA"))
