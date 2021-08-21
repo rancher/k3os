@@ -16,7 +16,13 @@ setup_ttys()
             ;;
         console=*)
             CONSOLE_SPEC=${x#console=}
-            IFS=, read TTY BAUDRATE _ <<<"${CONSOLE_SPEC},9600"
+            IFS=, read TTY BAUDRATE _ <<<"${CONSOLE_SPEC}"
+
+            if [ -n "$BAUDRATE" ]; then
+                BAUDRATE=$(grep -o '^[0-9]*' <<< "$BAUDRATE")
+            else
+                BAUDRATE=9600
+            fi
             if [ -e /dev/${TTY} ] && ! grep -q "^${TTY}::" /etc/inittab; then
                 echo "${TTY}::respawn:/sbin/getty -L ${BAUDRATE} ${TTY} vt100" >> /etc/inittab
                 echo ${TTY} >> /etc/securetty
