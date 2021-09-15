@@ -65,9 +65,12 @@ spec:
         - key: "node-role.kubernetes.io/master"
           operator: "Exists"
           effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
       containers:
         - name: system-upgrade-controller
-          image: rancher/system-upgrade-controller:v0.7.0
+          image: rancher/system-upgrade-controller:v0.7.5
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
