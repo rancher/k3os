@@ -5,10 +5,7 @@
 1. Build vagrant box image using [Packer](https://www.packer.io/): 
 
 ```bash
-# JSON syntax
-packer build template.json
-# HCL syntax
-packer build template.pkr.hcl
+packer build .
 ```
 
 2. Import vagrant box
