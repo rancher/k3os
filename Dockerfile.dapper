@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine3.12
+FROM golang:1.16-alpine3.14
 
 ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
