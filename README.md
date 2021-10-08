@@ -320,7 +320,7 @@ are supported in each phase.
 | k3os.data_sources    |        |      |    x    |
 | k3os.modules         |    x   |  x   |    x    |
 | k3os.sysctls         |    x   |  x   |    x    |
-| k3os.ntp_services    |        |  x   |    x    |
+| k3os.ntp_servers     |        |  x   |    x    |
 | k3os.dns_nameservers |        |  x   |    x    |
 | k3os.wifi            |        |  x   |    x    |
 | k3os.password        |    x   |  x   |    x    |
