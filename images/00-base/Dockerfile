@@ -60,6 +60,7 @@ RUN apk --no-cache add \
     tzdata \
     util-linux \
     vim \
+    cryptsetup \
     wireguard-tools \
     wpa_supplicant \
     xfsprogs \
