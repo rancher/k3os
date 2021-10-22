@@ -266,7 +266,7 @@ k3os:
     somekey: somevalue
   k3s_args:
   - server
-  - "--disable-agent"
+  - "--cluster-init"
   environment:
     http_proxy: http://myserver
     https_proxy: http://myserver
