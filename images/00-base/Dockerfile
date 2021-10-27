@@ -10,6 +10,7 @@ RUN apk --no-cache add \
     connman \
     conntrack-tools \
     coreutils \
+    cryptsetup \
     curl \
     dbus \
     dmidecode \
