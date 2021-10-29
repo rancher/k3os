@@ -88,17 +88,16 @@ func AskInstallDevice(cfg *config.CloudConfig) error {
 		return nil
 	}
 
-	output, err := exec.Command("/bin/sh", "-c", "lsblk -r -o NAME,TYPE | grep -w disk | awk '{print $1}'").CombinedOutput()
+	disks, err := util.AvailableDisks()
 	if err != nil {
 		return err
 	}
-	fields := strings.Fields(string(output))
-	i, err := questions.PromptFormattedOptions("Installation target. Device will be formatted", -1, fields...)
+	i, err := questions.PromptFormattedOptions("Installation target. Device will be formatted", -1, disks...)
 	if err != nil {
 		return err
 	}
 
-	cfg.K3OS.Install.Device = "/dev/" + fields[i]
+	cfg.K3OS.Install.Device = "/dev/" + disks[i]
 	return nil
 }
 
