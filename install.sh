@@ -227,7 +227,14 @@ EOF
 
 get_iso()
 {
-    ISO_DEVICE=$(blkid -L K3OS || true)
+
+    ### When booting install media from USB, there is a chance that the K3OS label
+    ### will detect the proper partition.  For that reason, we allow the admin
+    ### to explicitly set the ISO_DEVICE variable before invoking install
+    if [ -z "${ISO_DEVICE}" ]; then
+        ISO_DEVICE=$(blkid -L K3OS || true)
+    fi
+
     if [ -z "${ISO_DEVICE}" ]; then
         for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
             mkdir -p ${DISTRO}
