@@ -146,6 +146,22 @@ takeover()
     fi
 }
 
+### For boot from SAN, we need to ensure that the multipath devices are setup
+### while termporarily in mode=disk so that the mount & pivot_root for mode=local
+### will be the proper multipath device (rather than a single path)
+setup_multipath()
+{
+  modprobe dm-multipath
+  udevd -d
+  udevadm settle
+  udevadm trigger --type=devices --action=add
+  udevadm settle
+  multipath -v3
+  udevadm settle
+  udevadm control --exit
+}
+
+setup_multipath
 setup_mounts
 setup_k3os
 setup_kernel_squashfs
