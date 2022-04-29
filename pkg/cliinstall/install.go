@@ -9,6 +9,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/rancher/k3os/pkg/questions"
+	"github.com/rancher/k3os/pkg/util"
 )
 
 func Run() error {
@@ -64,12 +65,21 @@ func runInstall(cfg config.CloudConfig) error {
 		tempFile *os.File
 	)
 
-	installBytes, err := config.PrintInstall(cfg)
-	if err != nil {
-		return err
+	// If silent and no device set fallback to first disk available
+	if cfg.K3OS.Install.Silent && cfg.K3OS.Install.Device == "" {
+		disks, err := util.AvailableDisks()
+		if err != nil {
+			return err
+		}
+		cfg.K3OS.Install.Device = "/dev/" + disks[0]
 	}
 
 	if !cfg.K3OS.Install.Silent {
+		installBytes, err := config.PrintInstall(cfg)
+		if err != nil {
+			return err
+		}
+
 		val, err := questions.PromptBool("\nConfiguration\n"+"-------------\n\n"+
 			string(installBytes)+
 			"\nYour disk will be formatted and k3OS will be installed with the above configuration.\nContinue?", false)

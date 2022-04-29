@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 )
 
 func WriteFileAtomic(filename string, data []byte, perm os.FileMode) error {
@@ -110,4 +111,14 @@ func EnsureDirectoryExists(dir string) error {
 		}
 	}
 	return nil
+}
+
+// AvailableDisks finds and returns an array of all available disk(s) in the current environment.
+// It returns an array of available disk(s) and any error encountered.
+func AvailableDisks() ([]string, error) {
+	output, err := exec.Command("/bin/sh", "-c", "lsblk -r -o NAME,TYPE | grep -w disk | awk '{print $1}'").CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+	return strings.Fields(string(output)), nil
 }

@@ -107,11 +107,11 @@ Below is a reference of all cmdline args used to automate installation
 |:------------------------|---------|---------------------------------------------------|---------------------------------|
 | k3os.mode               |         | install                                           | Boot k3OS to the installer, not an interactive session |
 | k3os.fallback_mode      |         | install                                           | If a valid K3OS_STATE partition is not found to boot from, run the installation |
-| k3os.install.silent     | false   | true                                              | Ensure no questions will be asked |
+| k3os.install.silent     | false   | true                                              | Ensure no questions will be asked. <br/> :warning: When ```true``` and ```k3os.install.device``` **not** provided set to the first one available (e.g /dev/sda). |
 | k3os.install.force_efi  | false   | true                                              | Force EFI installation even when EFI is not detected |
-| k3os.install.device     |         | /dev/vda                                          | Device to partition and format (/dev/sda, /dev/vda) |
+| k3os.install.device     |         | /dev/vda                                          | Device to partition and format (/dev/sda, /dev/vda). <br/> :warning: When ```k3os.install.silent=true``` and *device* **not** provided set to the first one available (e.g /dev/sda). |
 | k3os.install.config_url |         | [https://gist.github.com/.../dweomer.yaml](https://gist.github.com/dweomer/8750d56fb21a3fbc8d888609d6e74296#file-dweomer-yaml) | The URL of the config to be installed at `/k3os/system/config.yaml` |
-| k3os.install.iso_url    |         | https://github.com/rancher/k3os/../k3os-amd64.iso | ISO to download and install from if booting from kernel/vmlinuz and not ISO. |
+| k3os.install.iso_url    |         | https://github.com/rancher/k3os/../k3os-amd64.iso | ISO to download and install from if booting from kernel/vmlinuz and not ISO |
 | k3os.install.no_format  |         | true                                              | Do not partition and format, assume layout exists already |
 | k3os.install.tty        | auto    | ttyS0                                             | The tty device used for console |
 | k3os.install.debug      | false   | true                                              | Run installation with more logging and configure debug for installed system |
