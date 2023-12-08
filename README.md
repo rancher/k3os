@@ -2,6 +2,12 @@
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/rancher/k3os)
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/rancher/k3os?include_prereleases&label=release&sort=semver)
 
+
+# Project Status
+
+**k3os is no longer maintained and has been superceeded by [Elemental] (https://elemental.docs.rancher.com/).
+Please do not submit PRs or issues to this repo.**
+
 # k3OS
 
 k3OS is a Linux distribution designed to remove as much OS maintenance
