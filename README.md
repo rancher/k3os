@@ -564,7 +564,8 @@ k3os:
 
 ### `k3os.password`
 
-The password for the `rancher` user. By default there is no password for the `rancher` user.
+The password for the `rancher` user. By default there is no password for the `rancher` user, and 
+password authentication is disabled (i.e. `PasswordAuthentication no`).
 If you set a password at runtime it will be reset on next boot because `/etc` is ephemeral. The
 value of the password can be clear text or an encrypted form. The easiest way to get this encrypted
 form is to just change your password on a Linux system and copy the value of the second field from
