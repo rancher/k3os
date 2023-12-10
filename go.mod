@@ -3,11 +3,12 @@ module github.com/rancher/k3os
 go 1.16
 
 require (
-	github.com/docker/docker v1.13.1
+	github.com/docker/docker v20.10.24+incompatible
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-isatty v0.0.10
+	github.com/moby/sys/mount v0.3.3 // indirect
 	github.com/otiai10/copy v1.0.2
 	github.com/paultag/go-modprobe v0.0.0-20180523225901-7ccf6a1b5271
 	github.com/pkg/errors v0.8.1
@@ -16,9 +17,10 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/urfave/cli v1.22.2
-	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
-	golang.org/x/sys v0.0.0-20191127021746-63cb32ae39b2
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 	gopkg.in/freddierice/go-losetup.v1 v1.0.0-20170407175016-fc9adea44124
+	gotest.tools/v3 v3.4.0 // indirect
 	pault.ag/go/topsort v0.0.0-20160530003732-f98d2ad46e1a // indirect
 )
 

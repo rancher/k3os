@@ -1,6 +1,7 @@
-// +build freebsd solaris darwin
+//go:build freebsd || darwin
+// +build freebsd darwin
 
-package reexec
+package reexec // import "github.com/docker/docker/pkg/reexec"
 
 import (
 	"os/exec"
