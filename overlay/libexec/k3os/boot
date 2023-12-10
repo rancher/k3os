@@ -44,6 +44,12 @@ setup_services()
         ln -s /etc/init.d/$i /etc/runlevels/sysinit
     done
 
+    if [ "$K3OS_MODE" = "local" ]; then
+      for i in udev-trigger multipath multipathd; do
+        ln -s /etc/init.d/$i /etc/runlevels/sysinit
+      done
+    fi
+
     for i in acpid hwclock syslog bootmisc hostname sysctl modules connman dbus haveged issue; do
         ln -s /etc/init.d/$i /etc/runlevels/boot
     done

@@ -10,6 +10,7 @@ RUN apt-get --assume-yes update \
     lz4 \
     rsync \
     xz-utils \
+    multipath-tools-boot \
  && echo 'r8152' >> /etc/initramfs-tools/modules \
  && echo 'hfs' >> /etc/initramfs-tools/modules \
  && echo 'hfsplus' >> /etc/initramfs-tools/modules \
